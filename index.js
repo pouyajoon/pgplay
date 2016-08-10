@@ -49,7 +49,7 @@
   function getFortBoost(socket, fortId, lat, lon) {
     pokeio.GetFortSearch(fortId, lat, lon, function(err, fort) {
       if (err) {
-        console.log('getFortBoost', err, fort);
+        return console.log('getFortBoost', err, fort);
       }
       console.log('[*] Get Fort Boost', fortId);
       data.fortsById[fortId].CooldownCompleteMs = fort.cooldown_complete_timestamp_ms;

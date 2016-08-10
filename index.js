@@ -270,6 +270,7 @@
     // assert.ifError(err);
     // result = data;
     console.log(err, data);
+    console.log(data.routes[0].overview_polyline);
     // done();
   });
 

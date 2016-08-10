@@ -7,7 +7,7 @@
 
 
   socket.on('user-new-position', function(position) {
-    console.log('user position');
+    // console.log('user position');
     me.setPosition(new google.maps.LatLng(position.lat, position.lon));
   });
 
@@ -153,10 +153,10 @@
       res.data.forts.forEach(function(f) {
         var marker = addMarker(map, f.Latitude, f.Longitude, f.Latitude + ', ' + f.Longitude, 'blue', f.FortId);
         fortMarkers[f.FortId] = marker;
-        if (f.CooldownCompleteMs && f.CooldownCompleteMs_TimeStamp) {
+        if (f.CooldownCompleteMs_TimeStamp) {
           console.log(f.CooldownCompleteMs_TimeStamp);
-          if (Date.now() > f.CooldownCompleteMs_TimeStamp) {
-            console.log(f, Date.now(), parseInt(f.CooldownCompleteMs.toString(), 10));
+          if (Date.now() < f.CooldownCompleteMs_TimeStamp) {
+            console.log(f, Date.now(), f.CooldownCompleteMs_TimeStamp);
             setMarkerColor(marker, 'yellow');
           }
         }

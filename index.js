@@ -48,7 +48,10 @@
 
   function getFortBoost(socket, fortId, lat, lon) {
     pokeio.GetFortSearch(fortId, lat, lon, function(err, fort) {
-      console.log('getFortBoost', err, fort);
+      if (err) {
+        console.log('getFortBoost', err, fort);
+      }
+      console.log('[*] Get Fort Boost', fortId);
       data.fortsById[fortId].CooldownCompleteMs = fort.cooldown_complete_timestamp_ms;
       socket.emit('fort-taken', fortId);
     });
@@ -57,13 +60,13 @@
   function takeNearForts(socket) {
     var fortId, fort, dist,
       readyTimeStamp;
-    console.log('takeNearForts');
+    // console.log('takeNearForts');
     for (fortId in data.fortsById) {
       if (data.fortsById.hasOwnProperty(fortId)) {
         fort = data.fortsById[fortId];
         dist = distance(pokeio.playerInfo.latitude, pokeio.playerInfo.longitude, fort.Latitude, fort.Longitude);
         if (dist < close_distance) {
-          console.log('distance ok', dist, fort.FortId, fort.CooldownCompleteMs);
+          // console.log('distance ok', dist, fort.FortId, fort.CooldownCompleteMs);
           if (fort.CooldownCompleteMs) {
             readyTimeStamp = parseInt(fort.CooldownCompleteMs.toString(), 10);
             if (Date.now() > readyTimeStamp) {
@@ -77,6 +80,67 @@
     }
     // return nearFortsId();
   }
+
+
+  function catchPokemonInterval(socket) {
+    setInterval(function() {
+      takeNearForts(socket);
+      pokeio.Heartbeat(function(err, hb) {
+        if (err || !hb) {
+          return console.log(err);
+        }
+
+        for (var i = hb.cells.length - 1; i >= 0; i--) {
+          if (hb.cells[i].NearbyPokemon[0]) {
+            //console.log(a.pokemonlist[0])
+            var pokemon = pokeio.pokemonlist[parseInt(hb.cells[i].NearbyPokemon[0].PokedexNumber) - 1];
+            // console.log(pokemon, hb.cells[i]);
+            console.log('[+] There is a ' + pokemon.name + ' near you.');
+          }
+        }
+
+        var alltocatch = [];
+
+        // Show MapPokemons (catchable) & catch
+        for (i = hb.cells.length - 1; i >= 0; i--) {
+          // console.log(hb.cells[i].MapPokemon);
+          for (var j = hb.cells[i].MapPokemon.length - 1; j >= 0; j--) {
+            // use async lib with each or eachSeries should be better :)
+            var currentPokemon = hb.cells[i].MapPokemon[j];
+            alltocatch.push(currentPokemon);
+
+            // (function(currentPokemon) {
+
+            // })(currentPokemon);
+
+          }
+        }
+
+        function catchPokemon(currentPokemon) {
+          var pokedexInfo = pokeio.pokemonlist[parseInt(currentPokemon.PokedexTypeId) - 1];
+          console.log('[+] There is a ' + pokedexInfo.name + ' near!! I can try to catch it!');
+
+          pokeio.EncounterPokemon(currentPokemon, function(suc, dat) {
+            console.log('Encountering pokemon ' + pokedexInfo.name + '...');
+            pokeio.CatchPokemon(currentPokemon, 1, 1.950, 1, 1, function(xsuc, xdat) {
+              if (xsuc) {
+                return console.log('CatchPokemon', xsuc);
+              }
+              var status = ['Unexpected error', 'Successful catch', 'Catch Escape', 'Catch Flee', 'Missed Catch'];
+              console.log(status[xdat.Status]);
+            });
+          });
+
+        }
+
+        if (alltocatch.length > 0) {
+          alltocatch = [alltocatch[0]];
+          alltocatch.forEach(catchPokemon);
+        }
+      });
+    }, 5000);
+  }
+
 
   function setupExpress() {
     var express, app, http, io;
@@ -96,6 +160,9 @@
       socket.on('disconnect', function() {
         console.log('user disconnected');
       });
+
+      catchPokemonInterval(socket);
+
       socket.on('get-profile', function(callback) {
         return callback && callback({
           all: pokeio,
@@ -135,7 +202,6 @@
             lon: source.lon
           });
         }
-        console.log(points.length, source, target);
 
         function doMove() {
           var start, duration, first, modulo = 0;
@@ -165,11 +231,11 @@
             modulo += 1;
             if (points.length === 0) {
               duration = Date.now() - start;
-              console.log('timing of move', (total_distance * 1000).toFixed(2), duration, total_distance / (duration / (1000 * 60 * 60)), ' km/h');
+              console.log('MoveTo Done.', (total_distance * 1000).toFixed(2), 'meter', duration, 'ms', total_distance / (duration / (1000 * 60 * 60)), 'km/h');
               clearInterval(interval);
               return callback && callback(null);
             }
-          }, 60);
+          }, 70);
         }
 
         doMove();
@@ -186,6 +252,26 @@
     });
   }
 
+  var GoogleMapsAPI = require('googlemaps');
+
+  var publicConfig = {
+    key: 'AIzaSyANeH7BcfpYR4E36ZHpmrRWjZEW83hZdew',
+    stagger_time: 1000, // for elevationPath
+    encode_polylines: false,
+    secure: true // use https
+      // proxy: 'http://127.0.0.1:9999' // optional, set a proxy for HTTP requests
+  };
+  var gmAPI = new GoogleMapsAPI(publicConfig);
+
+  gmAPI.directions({
+    origin: pos_lat + ',' + pos_lon,
+    destination: "115 rue d'avron 75020 paris"
+  }, function(err, data) {
+    // assert.ifError(err);
+    // result = data;
+    console.log(err, data);
+    // done();
+  });
 
 
   pokeio.init('pouyapokemon', 'pokemonGO', current_pos, 'google', function(err) {
@@ -230,6 +316,10 @@
         if (err) {
           return console.log('Heartbeat', err);
         }
+        data.forts = [];
+        data.fortsById = {};
+        data.cforts = [];
+        data.cdownforts = [];
 
         hb.cells.forEach(function(o) {
           if (o.Fort.length > 0) {
@@ -237,9 +327,7 @@
             o.Fort.forEach(function(f) {
 
               var dist = distance(current_pos.coords.latitude, current_pos.coords.longitude, f.Latitude, f.Longitude);
-              // console.log(f.FortId, f.FortType, f.Enabled, dist, current_pos.coords.latitude, current_pos.coords.longitude, f.Latitude, f.Longitude);
-              // console.log(f.FortId, f.FortType, f.Enabled, dist);
-              if (f.CooldownCompleteMs !== null) {
+              if (f.CooldownCompleteMs) {
                 f.CooldownCompleteMs_TimeStamp = parseInt(f.CooldownCompleteMs.toString(), 10);
                 data.cdownforts.push(f);
               }
@@ -254,12 +342,9 @@
       });
     }
 
-    // getProfile();
     getInventory();
+    // setInterval(getForts, 30 * 1e3);
     getForts();
-
-
-    // getFortBoost('cde87c1bd69a43dea74dc4756b8856c9.16', 48.85261, 2.408995);
 
 
   });

@@ -23,6 +23,31 @@
 	<div id="map" style="width: 100%; height: 400px;"></div>
 
 	<div ng-controller="MainController">
+
+		<h5>Number Of Pokemons {{pokemons.length}}</h5>
+		<table class="mdl-data-table">
+			<tr>
+				<th>Image</th>			
+				<th>Name</th>
+				<th>Type Id</th>
+				<th>Number</th>
+				<th>Pokemons</th>
+			</tr>
+			<tr ng-repeat="(pId, pList) in pokemonsById">
+				<td><img class="p-img" ng-src="{{allPokemons[pId].img}}"></td>
+				<td>#{{allPokemons[pId].name}}</td>
+				<td>#{{allPokemons[pId].id}}</td>
+				<td>{{pList.length}}</td>
+				<td>
+					<ul class="sub-pokemon-list">
+						<li ng-repeat="p in pList">
+							{{p.cp}} - {{p.height_m.toFixed(2)}} m - {{p.weight_kg.toFixed(2)}} kg
+						</li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+
 	
 		<table class="mdl-data-table">
 			<tr>			

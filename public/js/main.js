@@ -7,18 +7,95 @@
 
 
   socket.on('user-new-position', function(position) {
-    // console.log('user position');
-    me.setPosition(new google.maps.LatLng(position.lat, position.lon));
+    // console.log('user position', position);
+    me.setPosition(new google.maps.LatLng(position.lat, position.lng));
   });
 
 
   function setMarkerColor(marker, color) {
+    if (marker === undefined) {
+      debugger;
+    }
+
     marker.setIcon('http://maps.google.com/mapfiles/ms/icons/' + color + '-dot.png');
   }
 
   socket.on('fort-taken', function(fortId) {
     console.log('fort-taken', fortId);
-    setMarkerColor(fortMarkers[fortId], 'red');
+    if (fortMarkers) {
+      setMarkerColor(fortMarkers[fortId], 'red');
+    }
+  });
+
+
+
+  socket.on('get-forts', function(fortsById) {
+    var f, fortId, marker;
+    for (var fortId in fortsById) {
+      if (fortsById.hasOwnProperty(fortId)) {
+        f = fortsById[fortId];
+        if (fortMarkers[f.FortId] === undefined) {
+          fortMarkers[f.FortId] = addMarker(map, f.Latitude, f.Longitude, f.Latitude + ', ' + f.Longitude, 'blue', f.FortId);
+        }
+        marker = fortMarkers[f.FortId];
+
+        if (f.CooldownCompleteMs_TimeStamp) {
+          // console.log(f.CooldownCompleteMs_TimeStamp, Date.now() < f.CooldownCompleteMs_TimeStamp);
+          if (Date.now() < f.CooldownCompleteMs_TimeStamp) {
+            // console.log(f, Date.now(), f.CooldownCompleteMs_TimeStamp);
+            setMarkerColor(marker, 'red');
+          } else {
+            setMarkerColor(marker, 'blue');
+          }
+        }
+      }
+    }
+  });
+
+
+  var streetPoints = [];
+  var paths = {};
+
+  socket.on('g-move-path', function(positions) {
+    console.log('g-move-path', positions);
+
+    if (paths.old) {
+      paths.old.setMap(null);
+    }
+    if (paths.new) {
+      paths.new.setMap(null);
+    }
+
+    var flightPath = new google.maps.Polyline({
+      path: positions.oldPositions,
+      geodesic: true,
+      strokeColor: '#00FF00',
+      strokeOpacity: 0.5,
+      strokeWeight: 10
+    });
+    flightPath.setMap(map);
+    paths.old = flightPath;
+
+    var flightPath2 = new google.maps.Polyline({
+      path: positions.newPositions,
+      geodesic: true,
+      strokeColor: '#FF0000',
+      strokeOpacity: 1.0,
+      strokeWeight: 2
+    });
+    flightPath2.setMap(map);
+    paths.new = flightPath2;
+
+
+    streetPoints.forEach(function(p) {
+      p.setMap(null);
+    });
+    streetPoints = [];
+
+    positions.oldPositions.forEach(function(pos) {
+      // var marker = addMarker(map, pos.lat, pos.lng, 'inital position', 'blue');
+      // streetPoints.push(marker);
+    })
   });
 
   // function distance(lat1, lon1, lat2, lon2) {
@@ -54,83 +131,53 @@
     return marker;
   }
 
-  // function getListOfPoints(source, target) {
-  //   var points = [],
-  //     dist = 2 / 1e6,
-  //     move = dist,
-  //     total_distance = distance(source.lat, source.lon, target.lat, target.lon);
-
-  //   while (Math.abs(source.lat - target.lat) > dist || Math.abs(source.lon - target.lon) > dist) {
-  //     console.log('still work');
-  //     if (source.lat > target.lat) {
-  //       source.lat -= move;
-  //     } else {
-  //       source.lat += move;
-  //     }
-  //     if (source.lon > target.lon) {
-  //       source.lon -= move;
-  //     } else {
-  //       source.lon += move;
-  //     }
-  //     points.push({
-  //       lat: source.lat,
-  //       lon: source.lon
-  //     });
-  //   }
-  //   console.log(points.length, source, target);
-
-  //   var start = Date.now();
-
-  //   var interval = setInterval(function() {
-  //     var first = points.shift();
-  //     if (first) {
-  //       me.setPosition(new google.maps.LatLng(first.lat, first.lon));
-  //     }
-  //     // console.log('move', first);
-  //     if (points.length === 0) {
-  //       console.log('end of move', me.position.lat() - target.lat, me.position.lng() - target.lon);
-  //       var duration = Date.now() - start;
-  //       console.log('timing', (total_distance * 1000).toFixed(2), duration, total_distance / (duration / (1000 * 60 * 60)));
-  //       clearInterval(interval);
-  //     }
-  //   }, 60);
-  // }
 
   function setMap(lat, lon) {
     var options;
     options = {
-      zoom: 18,
+      zoom: 17,
       center: new google.maps.LatLng(lat, lon),
-      mapTypeControl: false
+      mapTypeControl: true
     };
     // init map
     map = new google.maps.Map(document.getElementById('map'), options);
+
+    map.setOptions({
+      styles: [{
+        "featureType": "poi",
+        "stylers": [{
+          "visibility": "off"
+        }]
+      }]
+    });
+
     me = addMarker(map, lat, lon, 'myPosition', 'green', 'Me!!');
-    // user_pos = {
-    //   lat: lat,
-    //   lon: lon
-    // };
 
     google.maps.event.addListener(map, 'click', function(event) {
       var target = {
         lat: event.latLng.lat(),
-        lon: event.latLng.lng()
+        lng: event.latLng.lng()
       };
-      console.log(target);
       socket.emit('move-to', target, function(res) {
         console.log('move-to', 'done', res);
       });
-
-      // getListOfPoints(user_pos, target);
     });
   }
 
 
-
-  // setTimeout(setMap, 500);
-
   app = angular.module('myApp', []);
   app.controller('MainController', function($scope) {
+
+
+
+    var $on = function(key, callback) {
+      socket.on(key, function(res) {
+        $scope.$apply(function() {
+          return callback(res);
+        });
+      });
+    }
+
 
     var $emit = function(key, callback) {
       socket.emit(key, function(res) {
@@ -140,27 +187,34 @@
       });
     };
 
+    $on('catch-pokemon', function(pokedex, pokemon) {
+      console.log(pokedex, pokemon);
+    });
+
+    $on('get-inventory', function(data) {
+      console.log('get-inventory', data);
+      $scope.pokemons = data.pokemons;
+      $scope.pokemonsById = data.pokemonsById;
+      $scope.allPokemons = data.all_pokemons;
+    })
+
     $emit('get-user-position', function(res) {
       console.log('set map', res);
-      setMap(res.lat, res.lon);
+      setMap(res.lat, res.lng);
     });
+
 
     $emit('get-profile', function(res) {
       console.log(res);
-
       $scope.pokemons = res.data.pokemons;
+      $scope.pokemonsById = res.data.pokemonsById;
+      $scope.allPokemons = res.data.all_pokemons;
+      // res.data.inventory.inventory_delta.inventory_items.forEach(function(i){
+      //   if (i.inventory_item_data.item){
+      //     console.log(i.inventory_item_data);
+      //   }
+      // })
 
-      res.data.forts.forEach(function(f) {
-        var marker = addMarker(map, f.Latitude, f.Longitude, f.Latitude + ', ' + f.Longitude, 'blue', f.FortId);
-        fortMarkers[f.FortId] = marker;
-        if (f.CooldownCompleteMs_TimeStamp) {
-          console.log(f.CooldownCompleteMs_TimeStamp);
-          if (Date.now() < f.CooldownCompleteMs_TimeStamp) {
-            console.log(f, Date.now(), f.CooldownCompleteMs_TimeStamp);
-            setMarkerColor(marker, 'yellow');
-          }
-        }
-      });
     });
 
   });

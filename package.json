@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "colors": "^1.1.2",
     "express": "^4.14.0",
     "googlemaps": "^1.11.1",
     "socket.io": "^1.4.8"

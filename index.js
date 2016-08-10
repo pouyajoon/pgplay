@@ -22,9 +22,10 @@
   inventoryItemTypesMax[inventoryItemTypes.ITEM_POKE_BALL] = 25;
   inventoryItemTypesMax[inventoryItemTypes.ITEM_GREAT_BALL] = 100;
   inventoryItemTypesMax[inventoryItemTypes.ITEM_POTION] = 5;
-  inventoryItemTypesMax[inventoryItemTypes.ITEM_SUPER_POTION] = 25;
+  inventoryItemTypesMax[inventoryItemTypes.ITEM_SUPER_POTION] = 10;
+  inventoryItemTypesMax[inventoryItemTypes.ITEM_HYPER_POTION] = 10;
   inventoryItemTypesMax[inventoryItemTypes.ITEM_REVIVE] = 5;
-  inventoryItemTypesMax[inventoryItemTypes.RAZZ_BERRY] = 100;
+  inventoryItemTypesMax[inventoryItemTypes.RAZZ_BERRY] = 25;
 
 
   var maximunPokemonsStorage = {
@@ -44,10 +45,10 @@
     114: 2,
     118: 2,
     120: 2
-  }
+  };
 
 
-  console.log('hello pokebot'.blue);
+  console.log('Hello Pokebot'.blue);
 
 
   function Timer(callback, delay) {
@@ -92,29 +93,47 @@
   Pokeio = require('./Pokemon-GO-node-api/poke.io.js');
 
   // 5 rue scribe
-  pos_lat = 48.871146;
-  pos_lon = 2.330233;
+  // pos_lat = 48.871146;
+  // pos_lon = 2.330233;
 
   // rue avron
-  // pos_lat = 48.852846;
-  // pos_lon = 2.409021;
+  pos_lat = 48.852846;
+  pos_lon = 2.409021;
 
+  // rue scribe round
+  // var round1 = [{
+  //   lat: 48.870495,
+  //   lng: 2.330228
+  // }, {
+  //   lat: 48.8723199,
+  //   lng: 2.3284151
+  // }, {
+  //   lat: 48.8702046,
+  //   lng: 2.3278585
+  // }, {
+  //   lat: 48.8675866,
+  //   lng: 2.3335069
+  // }, {
+  //   lat: 48.8706952,
+  //   lng: 2.3319797
+  // }];
 
+  // home round
   var round1 = [{
-    lat: 48.870495,
-    lng: 2.330228
+    lat: 48.8530701,
+    lng: 2.4089785
   }, {
-    lat: 48.8723199,
-    lng: 2.3284151
+    lat: 48.8515537,
+    lng: 2.4099224
   }, {
-    lat: 48.8702046,
-    lng: 2.3278585
+    lat: 48.8537921,
+    lng: 2.4111323
   }, {
-    lat: 48.8675866,
-    lng: 2.3335069
+    lat: 48.8529217,
+    lng: 2.4064246
   }, {
-    lat: 48.8706952,
-    lng: 2.3319797
+    lat: 48.8526173,
+    lng: 2.4079283
   }];
 
   var pos1 = {
@@ -205,40 +224,31 @@
   }
 
   function catchPokemonInterval() {
-    var socket = g_socket;
     setInterval(function() {
       takeNearForts(g_socket);
 
       if (g_socket) {
-        g_socket.emit('get-forts', data.fortsById)
+        g_socket.emit('get-forts', data.fortsById);
       }
 
       pokeio.Heartbeat(function(err, hb) {
+        var alltocatch, allforts, i, o, j, currentPokemon;
         if (err || !hb) {
           return console.log(err);
         }
 
-        // for (var i = hb.cells.length - 1; i >= 0; i--) {
-        //   if (hb.cells[i].NearbyPokemon[0]) {
-        //     //console.log(a.pokemonlist[0])
-        //     var pokemon = pokeio.pokemonlist[parseInt(hb.cells[i].NearbyPokemon[0].PokedexNumber) - 1];
-        //     // console.log(pokemon, hb.cells[i]);
-        //     console.log('[+] There is a ' + pokemon.name + ' near you.');
-        //   }
-        // }
-
-        var alltocatch = [];
-        var allforts = [];
+        alltocatch = [];
+        allforts = [];
         // Show MapPokemons (catchable) & catch
-        for (var i = hb.cells.length - 1; i >= 0; i--) {
+        for (i = hb.cells.length - 1; i >= 0; i -= 1) {
           // console.log(hb.cells[i].MapPokemon);
-          var o = hb.cells[i];
+          o = hb.cells[i];
           if (o.Fort.length > 0) {
             allforts = allforts.concat(o.Fort);
           }
-          for (var j = hb.cells[i].MapPokemon.length - 1; j >= 0; j--) {
+          for (j = hb.cells[i].MapPokemon.length - 1; j >= 0; j -= 1) {
             // use async lib with each or eachSeries should be better :)
-            var currentPokemon = hb.cells[i].MapPokemon[j];
+            currentPokemon = hb.cells[i].MapPokemon[j];
             alltocatch.push(currentPokemon);
           }
         }
@@ -254,40 +264,24 @@
           });
         }
 
-        function tryCatch(currentPokemon, callback) {
-          catchPokemon(currentPokemon, function(catched) {
-            if (catched === true) {
-              return callback && callback(true);
-            }
-            catchPokemon(currentPokemon, function(catched) {
-              if (catched === true) {
-                return callback && callback(true);
-              }
-              catchPokemon(currentPokemon, function(catched) {
-                return callback && callback(true);
-              })
-            })
-          })
-        }
 
         function catchPokemon(currentPokemon, callback) {
-          var pokedexInfo = pokeio.pokemonlist[parseInt(currentPokemon.PokedexTypeId) - 1];
+          var pokedexInfo = pokeio.pokemonlist[parseInt(currentPokemon.PokedexTypeId, 10) - 1];
           console.log('[+] There is a ' + pokedexInfo.name + ' near!! I can try to catch it!');
-
           pokeio.EncounterPokemon(currentPokemon, function(suc, dat) {
             console.log(('[*] Encountering pokemon ' + pokedexInfo.name + '...').magenta);
-
             var pokeball = 1;
             if (data.items[inventoryItemTypes.ITEM_GREAT_BALL] && data.items[inventoryItemTypes.ITEM_GREAT_BALL] > 0) {
               pokeball = inventoryItemTypes.ITEM_GREAT_BALL;
             }
-            pokeio.CatchPokemon(currentPokemon, 1, 1.950, 1, 1, function(xsuc, xdat) {
+            pokeio.CatchPokemon(currentPokemon, 1, 1.950, 1, pokeball, function(xsuc, xdat) {
+              var res, status;
               if (xsuc) {
                 return console.log('CatchPokemon', xsuc);
               }
               console.log(xdat);
-              var status = ['Unexpected error', 'Successful catch', 'Catch Escape', 'Catch Flee', 'Missed Catch'];
-              var res = status[xdat.Status] === 'Successful catch';
+              status = ['Unexpected error', 'Successful catch', 'Catch Escape', 'Catch Flee', 'Missed Catch'];
+              res = status[xdat.Status] === 'Successful catch';
               if (res === true) {
                 console.log(('[*] Pokemon Catch Result' + status[xdat.Status]).green);
                 if (g_socket) {
@@ -296,11 +290,15 @@
               } else {
                 console.log(('[*] Pokemon Catch Result' + status[xdat.Status]).gray);
               }
-
               return callback && callback(res);
             });
           });
+        }
 
+        function tryCatch(currentPokemon, callback) {
+          catchPokemon(currentPokemon, function(catched) {
+            return callback && callback(catched);
+          });
         }
 
         if (alltocatch.length > 0) {
@@ -309,7 +307,7 @@
             interval.pause();
           }
           alltocatch.forEach(function(p) {
-            tryCatch(p, function(res) {
+            tryCatch(p, function() {
               if (interval) {
                 interval.resume();
               }
@@ -352,7 +350,7 @@
             var steps = parseInt(dist_m / dist_step, 10);
             var gap = {
               lat: nextPos.lat - lastPos.lat,
-              lng: nextPos.lng - lastPos.lng,
+              lng: nextPos.lng - lastPos.lng
             };
             var gapStep = {
               lat: gap.lat / steps,
@@ -363,8 +361,8 @@
 
               var iPos = {
                 lat: lastPos.lat + gapStep.lat * i,
-                lng: lastPos.lng + gapStep.lng * i,
-              }
+                lng: lastPos.lng + gapStep.lng * i
+              };
 
               // console.log('add position', iPos, gap, i);
               if (isFloat(iPos.lat) && isFloat(iPos.lng)) {
@@ -390,8 +388,6 @@
 
     }
 
-
-
     function getCustomPoints(source, target) {
       var points = [],
         dist = 2 / 1e6,
@@ -416,8 +412,7 @@
     }
 
     function doMove(points, intervalTime) {
-      var start, duration, nextPos, modulo = 0,
-        lastPos;
+      var start, duration, nextPos, lastPos;
       start = Date.now();
 
       console.log('[>] Start Move', points.length);
@@ -426,11 +421,9 @@
         nextPos = points.shift();
         if (nextPos) {
           // console.log('[>] Move To', nextPos, socket !== undefined);
-
           if (g_socket) {
             g_socket.emit('user-new-position', nextPos);
           }
-          // console.log('Set Location', nextPos);
           pokeio.SetLocation({
             type: 'coords',
             coords: {
@@ -443,16 +436,10 @@
               console.log('setLocation', err, res);
             }
           });
-          if (modulo % 20 === 0) {
-
-            takeNearForts(socket);
-          }
           lastPos = nextPos;
         }
-        modulo += 1;
         if (points.length === 0) {
           duration = Date.now() - start;
-          // console.log('MoveTo Done.', (total_distance * 1000).toFixed(2), 'meter', duration, 'ms', total_distance / (duration / (1000 * 60 * 60)), 'km/h');
           console.log('[>] MoveTo Done.');
           return callback && callback(null);
         } else {
@@ -460,7 +447,6 @@
           interval = new Timer(nextMove, nextMoveTime);
         }
       }
-
       nextMove();
     }
 
@@ -476,8 +462,6 @@
     });
 
   }
-
-
 
   function setupExpress() {
     var express, app, http, io;
@@ -579,11 +563,9 @@
     }, function(err, data) {
       console.log(err);
       console.log('geolocation', address, data.results[0].geometry.location);
-      return callback && callback(data.results[0].geometry.location)
+      return callback && callback(data.results[0].geometry.location);
     });
   }
-
-
 
   function getLatLngForAddressList(address_list, callback) {
     var latLngList = [];
@@ -602,8 +584,6 @@
     }
     next(-1);
   }
-
-
 
   function setupGMap() {
     var GoogleMapsAPI = require('googlemaps');
@@ -627,6 +607,14 @@
     //   console.log('round1', latlng);
     // });
 
+    // getLatLngForAddressList(['132 Rue d\'Avron, 75020 Paris',
+    //   '9-11 Rue Henri Tomasi, 75020 Paris',
+    //   '1 Avenue de la Porte de Montreuil, 75020 Paris',
+    //   '103 Rue d\'Avron, 75020 Paris', '48 Rue du Volga, 75020 Paris'
+    // ], function(latlng) {
+    //   console.log('round1', latlng);
+    // });
+
   }
 
   setupGMap();
@@ -640,11 +628,8 @@
       destination: to,
       mode: 'walking'
     }, function(err, data) {
-      // console.log('getPathForDirection', err, from, to);
       if (data.routes && data.routes[0]) {
         var points = decodePolyline(data.routes[0].overview_polyline.points);
-        console.log(data.routes[0].overview_polyline);
-        console.log(points);
         return callback && callback(points);
       }
     });
@@ -670,25 +655,21 @@
     }
   }
 
-
-
   var asyncActionList = [];
 
   setInterval(function() {
     if (asyncActionList.length) {
       var action = asyncActionList.shift();
-      // console.log('ASYNC ACTIONS', asyncActionList.length, action.name);
-
       var args = action.args;
       args.push(function(err, res) {
         if (err) {
-          return console.log('ASYNC ACTION ERROR'.red, err);
+          return console.log('ASYNC ACTION ERROR'.red, err, action.name);
         }
         console.log('ASYNC ACTION DONE'.green, action.name);
       });
       action.m.apply(pokeio, action.args);
     }
-  }, 2000 + Math.floor(Math.random() * 200) + 1)
+  }, 2000 + Math.floor(Math.random() * 200) + 1);
 
 
   function initPGApi() {
@@ -716,43 +697,30 @@
 
 
       function cleanPokemons() {
+        function releaePokemons(pId, transferPokemons) {
+          transferPokemons.forEach(function(p) {
+            asyncActionList.push({
+              m: pokeio.TransferPokemon,
+              args: [p.id],
+              name: 'Transfer Pokemon With Type Id ' + pId + ', CP ' + p.cp
+            });
+          });
+        }
         var pId, samePokemons = [];
-        for (var pId in data.pokemonsById) {
+        for (pId in data.pokemonsById) {
           if (data.pokemonsById.hasOwnProperty(pId)) {
             samePokemons = data.pokemonsById[pId];
             if (maximunPokemonsStorage[pId] !== undefined) {
               var transferPokemons = samePokemons.slice(maximunPokemonsStorage[pId]);
-              // console.log('transferPokemons', pId, maximunPokemonsStorage[pId], samePokemons.length, transferPokemons.length);
-              // if (transferPokemons[0]) {
-              //   var id = parseInt(transferPokemons[0].id.toString());
-              //   console.log(id);
-              //   pokeio.TransferPokemon(transferPokemons[0].id, function(err, res) {
-              //     if (err){
-              //       return console.log('TransferPokemon ERROR'.red, err, res);  
-              //     }
-              //     console.log('TransferPokemon', err, res);  
-                  
-              //   })
-              //   return;
-              // }
-
-              transferPokemons.forEach(function(p) {
-                asyncActionList.push({
-                  m: pokeio.TransferPokemon,
-                  args: [p.id],
-                  name: 'Transfer Pokemon With Type Id ' + pId + ', CP ' + p.cp
-                });
-              });
-
+              releaePokemons(pId, transferPokemons);
             }
           }
         }
       }
 
-
       function cleanItems() {
         var itemId, itemCount, diff;
-        for (var itemId in data.items) {
+        for (itemId in data.items) {
           if (data.items.hasOwnProperty(itemId)) {
             if (inventoryItemTypesMax[itemId]) {
               itemCount = data.items[itemId];
@@ -772,7 +740,7 @@
 
       function cleanInventory() {
         cleanItems();
-        cleanPokemons();
+        // cleanPokemons();
       }
 
       function getInventory() {
@@ -782,21 +750,46 @@
             return console.error('GetInventory', err);
           }
           var p, item;
-          // console.log('get invetenory', err, inventory);
           data.inventory = inventory;
           data.items = {};
           data.pokemons = [];
+          data.eggs = {};
+
+          data.incubators = {};
+          data.user_stats = {};
+
+          data.candies = [];
           data.pokemonsById = {};
           inventory.inventory_delta.inventory_items.forEach(function(i) {
             p = i.inventory_item_data.pokemon;
-            if (p !== null && p.is_egg === null) {
-              data.pokemons.push(p);
+            if (p !== null) {
+              if (p.is_egg === null) {
+                data.pokemons.push(p);
+              } else {
+                if (data.eggs[p.egg_km_walked_target] === undefined) {
+                  data.eggs[p.egg_km_walked_target] = [];
+                }
+                if (p.egg_incubator_id === null) {
+                  data.eggs[p.egg_km_walked_target].push(p);
+                }
+              }
             }
             item = i.inventory_item_data.item;
             if (item !== null) {
               data.items[item.item_id] = item.count;
-              // console.log('GOT IN INVENTORY', item.item_id, item.count);
             }
+            if (i.inventory_item_data.player_stats) {
+              data.user_stats = i.inventory_item_data.player_stats;
+            }
+
+            if (i.inventory_item_data.egg_incubators) {
+              data.incubators = i.inventory_item_data.egg_incubators.egg_incubator;
+            }
+            if (i.inventory_item_data.pokemon_family) {
+              var candy = i.inventory_item_data.pokemon_family;
+              data.candies[candy.family_id] = candy.candy;
+            }
+
           });
           data.pokemons = data.pokemons.sort(function(a, b) {
             return a.pokemon_id - b.pokemon_id;
@@ -809,14 +802,46 @@
             data.pokemonsById[p.pokemon_id].push(p);
           });
 
+          function sortByCp(a, b) {
+            return b.cp - a.cp;
+          }
           // sort pokemons by cp
           for (var pId in data.pokemonsById) {
             if (data.pokemonsById.hasOwnProperty(pId)) {
-              data.pokemonsById[pId] = data.pokemonsById[pId].sort(function(a, b) {
-                return b.cp - a.cp;
+              data.pokemonsById[pId] = data.pokemonsById[pId].sort(sortByCp);
+            }
+          }
+
+          function setEgg(incubator, p1, p2, p3) {
+            var egg = null;
+            if (data.eggs[p1] && data.eggs[p1][0]) {
+              egg = data.eggs[p1][0];
+            } else if (data.eggs[p2] && data.eggs[p2][0]) {
+              egg = data.eggs[p2][0];
+            } else if (data.eggs[p3] && data.eggs[p3][0]) {
+              egg = data.eggs[p3][0];
+            }
+            // console.log('SEARCH FOR EGG', p1, p2, p3, data.eggs);
+            if (egg) {
+              // console.log('SET EGG'.red, egg.id, incubator.item_id);
+              var remaining = (incubator.uses_remaining === null) ? 'Infinity' : incubator.uses_remaining;
+              asyncActionList.push({
+                m: pokeio.UseItemEggIncubator,
+                args: [incubator.item_id, egg.id.toString()],
+                name: 'Set Egg ' + egg.egg_km_walked_target + ' km In Incubator > Remaining ' + remaining
               });
             }
           }
+
+          data.incubators.forEach(function(incubator) {
+            if (incubator.pokemon_id === null) {
+              if (incubator.uses_remaining === null) {
+                setEgg(incubator, 2, 10, 5);
+              } else {
+                setEgg(incubator, 10, 5, 2);
+              }
+            }
+          });
 
           if (g_socket) {
             g_socket.emit('get-inventory', data);
@@ -847,8 +872,17 @@
         });
       }
 
+      function getHatchedEggs() {
+        pokeio.GetHatchedEggs(function(err, res) {
+          console.log('GetHatchedEggs', err, res);
+        });
+      }
+
+      setInterval(getHatchedEggs, 20 * 1e3);
+      setTimeout(getHatchedEggs, 0);
+
       setInterval(getInventory, 30 * 1e3);
-      getInventory();
+      setTimeout(getInventory, 1000);
       // setInterval(getForts, 30 * 1e3);
       // getForts();
     });
@@ -860,4 +894,4 @@
   initPGApi();
 
 
-}())
+}());

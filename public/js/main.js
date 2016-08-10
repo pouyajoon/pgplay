@@ -13,10 +13,6 @@
 
 
   function setMarkerColor(marker, color) {
-    if (marker === undefined) {
-      debugger;
-    }
-
     marker.setIcon('http://maps.google.com/mapfiles/ms/icons/' + color + '-dot.png');
   }
 
@@ -27,11 +23,29 @@
     }
   });
 
+  function addMarker(map, lat, lon, title, color, infoContent) {
+    var marker, infowindow;
+    infowindow = new google.maps.InfoWindow({
+      content: '<h5>' + title + '</h5>' + infoContent
+    });
+
+    marker = new google.maps.Marker({
+      position: new google.maps.LatLng(lat, lon),
+      map: map,
+      title: title,
+      icon: 'http://maps.google.com/mapfiles/ms/icons/' + color + '-dot.png'
+    });
+
+    marker.addListener('click', function() {
+      infowindow.open(map, marker);
+    });
+    return marker;
+  }
 
 
   socket.on('get-forts', function(fortsById) {
     var f, fortId, marker;
-    for (var fortId in fortsById) {
+    for (fortId in fortsById) {
       if (fortsById.hasOwnProperty(fortId)) {
         f = fortsById[fortId];
         if (fortMarkers[f.FortId] === undefined) {
@@ -40,12 +54,10 @@
         marker = fortMarkers[f.FortId];
 
         if (f.CooldownCompleteMs_TimeStamp) {
-          // console.log(f.CooldownCompleteMs_TimeStamp, Date.now() < f.CooldownCompleteMs_TimeStamp);
           if (Date.now() < f.CooldownCompleteMs_TimeStamp) {
-            // console.log(f, Date.now(), f.CooldownCompleteMs_TimeStamp);
             setMarkerColor(marker, 'red');
           } else {
-            setMarkerColor(marker, 'blue');
+            setMarkerColor(marker, 'yellow');
           }
         }
       }
@@ -53,11 +65,13 @@
   });
 
 
-  var streetPoints = [];
+  // var streetPoints = [];
   var paths = {};
 
   socket.on('g-move-path', function(positions) {
     console.log('g-move-path', positions);
+
+    var flightPath, flightPath2;
 
     if (paths.old) {
       paths.old.setMap(null);
@@ -66,7 +80,7 @@
       paths.new.setMap(null);
     }
 
-    var flightPath = new google.maps.Polyline({
+    flightPath = new google.maps.Polyline({
       path: positions.oldPositions,
       geodesic: true,
       strokeColor: '#00FF00',
@@ -76,7 +90,7 @@
     flightPath.setMap(map);
     paths.old = flightPath;
 
-    var flightPath2 = new google.maps.Polyline({
+    flightPath2 = new google.maps.Polyline({
       path: positions.newPositions,
       geodesic: true,
       strokeColor: '#FF0000',
@@ -87,15 +101,15 @@
     paths.new = flightPath2;
 
 
-    streetPoints.forEach(function(p) {
-      p.setMap(null);
-    });
-    streetPoints = [];
+    // streetPoints.forEach(function(p) {
+    //   p.setMap(null);
+    // });
+    // streetPoints = [];
 
-    positions.oldPositions.forEach(function(pos) {
-      // var marker = addMarker(map, pos.lat, pos.lng, 'inital position', 'blue');
-      // streetPoints.push(marker);
-    })
+    // positions.oldPositions.forEach(function(pos) {
+    // var marker = addMarker(map, pos.lat, pos.lng, 'inital position', 'blue');
+    // streetPoints.push(marker);
+    // })
   });
 
   // function distance(lat1, lon1, lat2, lon2) {
@@ -110,28 +124,6 @@
 
 
 
-  function addMarker(map, lat, lon, title, color, infoContent) {
-    var marker, infowindow;
-    // console.log('add marker', lat, lon, color);
-    infowindow = new google.maps.InfoWindow({
-      content: '<h5>' + title + '</h5>' + infoContent
-    });
-
-    marker = new google.maps.Marker({
-      position: new google.maps.LatLng(lat, lon),
-      map: map,
-      title: title,
-      icon: 'http://maps.google.com/mapfiles/ms/icons/' + color + '-dot.png'
-    });
-
-
-    marker.addListener('click', function() {
-      infowindow.open(map, marker);
-    });
-    return marker;
-  }
-
-
   function setMap(lat, lon) {
     var options;
     options = {
@@ -144,9 +136,9 @@
 
     map.setOptions({
       styles: [{
-        "featureType": "poi",
-        "stylers": [{
-          "visibility": "off"
+        'featureType': 'poi',
+        'stylers': [{
+          'visibility': 'off'
         }]
       }]
     });
@@ -169,15 +161,13 @@
   app.controller('MainController', function($scope) {
 
 
-
     var $on = function(key, callback) {
       socket.on(key, function(res) {
         $scope.$apply(function() {
           return callback(res);
         });
       });
-    }
-
+    };
 
     var $emit = function(key, callback) {
       socket.emit(key, function(res) {
@@ -191,29 +181,43 @@
       console.log(pokedex, pokemon);
     });
 
-    $on('get-inventory', function(data) {
-      console.log('get-inventory', data);
+    function updateScopeWithData(data) {
       $scope.pokemons = data.pokemons;
       $scope.pokemonsById = data.pokemonsById;
       $scope.allPokemons = data.all_pokemons;
-    })
+
+      console.log(data.user_stats.km_walked);
+      console.log(data.incubators.map(function(inc) {
+        return inc.target_km_walked;
+      }));
+    }
+
+    $on('get-inventory', function(data) {
+      console.log('get-inventory', data);
+      updateScopeWithData(data);
+    });
 
     $emit('get-user-position', function(res) {
       console.log('set map', res);
       setMap(res.lat, res.lng);
     });
 
-
     $emit('get-profile', function(res) {
       console.log(res);
-      $scope.pokemons = res.data.pokemons;
-      $scope.pokemonsById = res.data.pokemonsById;
-      $scope.allPokemons = res.data.all_pokemons;
-      // res.data.inventory.inventory_delta.inventory_items.forEach(function(i){
-      //   if (i.inventory_item_data.item){
-      //     console.log(i.inventory_item_data);
-      //   }
-      // })
+      updateScopeWithData(res.data);
+      // res.data.inventory.inventory_delta.inventory_items.forEach(function(i) {
+      // if (i.inventory_item_data.pokemon_family) {
+      //   console.log(i.inventory_item_data);
+      // }
+      // if (i.inventory_item_data.player_stats) {
+      //   console.log(i.inventory_item_data.player_stats.km_walked);
+      // }
+      // if (i.inventory_item_data.egg_incubators) {
+      //   console.log(i.inventory_item_data.egg_incubators.egg_incubator.map(function(inc) {
+      //     return inc.target_km_walked;
+      //   }));
+      // }
+      // });
 
     });
 

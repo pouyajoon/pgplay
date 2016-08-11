@@ -11,7 +11,6 @@
     me.setPosition(new google.maps.LatLng(position.lat, position.lng));
   });
 
-
   function setMarkerColor(marker, color) {
     marker.setIcon('http://maps.google.com/mapfiles/ms/icons/' + color + '-dot.png');
   }
@@ -53,11 +52,15 @@
         }
         marker = fortMarkers[f.FortId];
 
-        if (f.CooldownCompleteMs_TimeStamp) {
-          if (Date.now() < f.CooldownCompleteMs_TimeStamp) {
-            setMarkerColor(marker, 'red');
-          } else {
-            setMarkerColor(marker, 'yellow');
+        if (f.FortType !== 1){
+          setMarkerColor(marker, 'yellow');
+        } else {
+          if (f.CooldownCompleteMs_TimeStamp) {
+            if (Date.now() < f.CooldownCompleteMs_TimeStamp) {
+              setMarkerColor(marker, 'red');
+            } else {
+              setMarkerColor(marker, 'purple');
+            }
           }
         }
       }
@@ -122,8 +125,6 @@
   //   return 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
   // }
 
-
-
   function setMap(lat, lon) {
     var options;
     options = {
@@ -156,10 +157,18 @@
     });
   }
 
-
   app = angular.module('myApp', []);
-  app.controller('MainController', function($scope) {
+  app.controller('MainController', function($scope, $http) {
 
+
+    $http.get('https://raw.githubusercontent.com/Armax/Pokemon-GO-node-api/master/items.json').success(function(res) {
+      var items = {};
+      res.items.forEach(function(i) {
+        items[i.id] = i;
+      })
+      $scope.itemsReference = items;
+      // console.log('OK', $scope.itemsReference, items);
+    })
 
     var $on = function(key, callback) {
       socket.on(key, function(res) {
@@ -188,6 +197,14 @@
       $scope.candies = data.candies;
       $scope.data = data;
 
+      $scope.pokemons_sorted_by_capture_date = data.pokemons.sort(function(a, b) {
+        return b.creation_time_ms_Timestamp - a.creation_time_ms_Timestamp;
+      });
+
+      $scope.pokemons_sorted_by_capture_date.forEach(function(p) {
+        p.catched_time_from_now = moment(p.creation_time_ms_Timestamp).fromNow();
+      })
+
       // console.log(data.user_stats.km_walked);
       // console.log(data.incubators.map(function(inc) {
       //   return inc.target_km_walked;
@@ -208,17 +225,21 @@
       console.log(res);
       updateScopeWithData(res.data);
       // res.data.inventory.inventory_delta.inventory_items.forEach(function(i) {
-      // if (i.inventory_item_data.pokemon_family) {
-      //   console.log(i.inventory_item_data);
-      // }
-      // if (i.inventory_item_data.player_stats) {
-      //   console.log(i.inventory_item_data.player_stats.km_walked);
-      // }
-      // if (i.inventory_item_data.egg_incubators) {
-      //   console.log(i.inventory_item_data.egg_incubators.egg_incubator.map(function(inc) {
-      //     return inc.target_km_walked;
-      //   }));
-      // }
+        // if (i.inventory_item_data.pokemon_family) {
+        //   console.log(i.inventory_item_data);
+        // }
+        // if (i.inventory_item_data.player_stats) {
+        //   console.log(i.inventory_item_data.player_stats.km_walked);
+        // }
+        // if (i.inventory_item_data.applied_items) {
+        //   console.log(i.inventory_item_data);
+        // }
+
+        // if (i.inventory_item_data.egg_incubators) {
+        //   console.log(i.inventory_item_data.egg_incubators.egg_incubator.map(function(inc) {
+        //     return inc.target_km_walked;
+        //   }));
+        // }
       // });
 
     });

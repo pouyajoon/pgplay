@@ -5,3 +5,23 @@
 .sub-pokemon-list{
 	text-align: left;
 }
+
+.items-list{
+	display: flex;
+	width:100%;
+}
+
+.items-list img{
+	width:40px;
+	/*height: 60px;*/
+
+}
+
+.items-list > div{
+	/*background-repeat: no-repeat;*/
+    /*background-size: contain;*/
+    margin: 2px;
+    padding: 2px;
+    text-align: center;
+    /*background-position: center center;*/
+}

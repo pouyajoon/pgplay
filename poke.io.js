@@ -375,7 +375,7 @@ function Pokeio() {
       if (err) {
         return callback(err);
       } else if (!f_ret || !f_ret.payload || !f_ret.payload[0]) {
-        return callback('No result');
+        return callback('No result', f_ret);
       }
 
       var dErr, heartbeat;
@@ -496,6 +496,7 @@ function Pokeio() {
     var req = new RequestEnvelop.Requests(125, evolvePokemon.encode().toBuffer());
 
     api_req(apiEndpoint, accessToken, req, function(err, f_ret) {
+      // console.log('evolve', err, f_ret);
       if (err) {
         return callback(err);
       } else if (!f_ret || !f_ret.payload || !f_ret.payload[0]) {
@@ -628,18 +629,24 @@ function Pokeio() {
 
     api_req(apiEndpoint, accessToken, req, function(err, f_ret) {
       if (err) {
+        // console.log('EncounterPokemon', err, f_ret)
         return callback(err);
       } else if (!f_ret || !f_ret.payload || !f_ret.payload[0]) {
+        // console.log('NO RESULT EncounterPokemon'.red, err, f_ret)
         return callback('No result');
       }
-
       var dErr, response;
       try {
+        // console.log('RESPONSE EncounterPokemon'.red, err, f_ret)
         response = ResponseEnvelop.EncounterResponse.decode(f_ret.payload[0]);
+        return callback(null, response);
+        // console.log('RESPONSE ENVELOP EncounterPokemon'.red, err, response)
       } catch (err) {
         dErr = err;
+        // console.log('FAILED RESPONSE ENVELOP EncounterPokemon'.red, dErr)
+        return callback(dErr, response);
       }
-      callback(dErr, response);
+
 
     });
   };
@@ -791,6 +798,72 @@ function Pokeio() {
     });
 
   };
+
+  self.StartGymBattle = function(gym, attacking_pokemons, defending_pokemon, callback) {
+    // start_gym_battle
+    var attacking_pokemons_id = null;
+    var defending_pokemon_id = null;
+    if (attacking_pokemons) {
+      attacking_pokemons_id = attacking_pokemons.map(function(p) {
+        return p.id;
+      });
+    }
+    if (defending_pokemon) {
+      defending_pokemon_id = defending_pokemon.id
+    }
+    doApiCall(135, 'StartGymBattleRequest', 'StartGymBattleResponse', {
+      gym_id: gym.FortId,
+      attacking_pokemons_id: attacking_pokemons_id,
+      defending_pokemon_id: defending_pokemon_id,
+      player_latitude: self.playerInfo.latitude,
+      player_longitude: self.playerInfo.longitude
+    }, callback);
+  };
+
+
+  self.GetGymDetails = function(gym, callback) {
+    //get_gym_details
+    doApiCall(134, 'GymDetailsRequest', 'GymDetailsResponse', {
+      gym_id: gym.FortId,
+      player_latitude: self.playerInfo.latitude,
+      player_longitude: self.playerInfo.longitude,
+      gym_latitude: gym.Latitude,
+      gym_longitude: gym.Longitude
+    }, callback);
+  }
+
+
+  function doApiCall(id, messageType, responseType, argData, callback) {
+    var message = new RequestEnvelop[messageType](argData);
+
+    var req = new RequestEnvelop.Requests(id, message.encode().toBuffer());
+
+    var _self$playerInfo3 = self.playerInfo;
+    var apiEndpoint = _self$playerInfo3.apiEndpoint;
+    var accessToken = _self$playerInfo3.accessToken;
+
+    api_req(apiEndpoint, accessToken, req, function(err, f_ret) {
+
+      if (err) {
+        return callback(err);
+      } else if (!f_ret || !f_ret.payload || !f_ret.payload[0]) {
+        return callback('No result');
+      }
+      var dErr, response;
+      try {
+        response = ResponseEnvelop[responseType].decode(f_ret.payload[0]);
+      } catch (err) {
+        dErr = err;
+        console.log('ERROR ON CALL', id, err);
+      }
+      callback(dErr, response);
+    });
+  }
+
+  // self.GetExperienceReward = function(callback){
+  //   doApiCall(128, )
+  // }
+
 
   self.UseItemXpBoost = function(itemId, count, callback) {
 

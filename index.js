@@ -1,6 +1,8 @@
 (function() {
   'use strict';
 
+  var evolvingPokemons = {};
+
   var colors = require('colors');
 
   var candidateForEvolution = {
@@ -22,12 +24,15 @@
     ITEM_HYPER_POTION: 103,
     ITEM_MAX_POTION: 104,
     ITEM_REVIVE: 201,
-    RAZZ_BERRY: 701
+    RAZZ_BERRY: 701,
+    ITEM_LUCKY_EGG: 301
   };
 
   var inventoryItemTypesMax = {};
   inventoryItemTypesMax[inventoryItemTypes.ITEM_POKE_BALL] = 25;
-  inventoryItemTypesMax[inventoryItemTypes.ITEM_GREAT_BALL] = 100;
+  inventoryItemTypesMax[inventoryItemTypes.ITEM_GREAT_BALL] = 75;
+  inventoryItemTypesMax[inventoryItemTypes.ITEM_ULTRA_BALL] = 100;
+  inventoryItemTypesMax[inventoryItemTypes.ITEM_MASTER_BALL] = 100;
   inventoryItemTypesMax[inventoryItemTypes.ITEM_POTION] = 5;
   inventoryItemTypesMax[inventoryItemTypes.ITEM_SUPER_POTION] = 10;
   inventoryItemTypesMax[inventoryItemTypes.ITEM_HYPER_POTION] = 10;
@@ -36,22 +41,40 @@
 
 
   var maximunPokemonsStorage = {
+    1: 5,
+    4: 5,
+    7: 5,
     13: 2, //Weedle
     10: 2,
-    14: 2,
+    11: 3,
+    14: 3,
     16: 5,
-    17: 2,
+    17: 3,
     19: 5,
-    20: 2,
+    20: 3,
     21: 2,
+    22: 3,
+    23: 3,
+    32: 3,
     41: 2,
+    42: 3,
+    43: 3,
     46: 2,
     48: 2,
+    52: 3,
+    60: 3,
+    69: 3,
+    74: 3,
     92: 2,
+    96: 3,
+    98: 3,
     102: 2,
     114: 2,
+    116: 3,
     118: 2,
     120: 2,
+    126: 3,
+    127: 3,
     129: 2, // magicarp
     133: 5 //evoli
   };
@@ -86,8 +109,6 @@
     this.resume(true);
   }
 
-
-
   var Pokeio, current_pos, pos_lat, pos_lon, pokeio, g_socket, data, close_distance = 0.039,
     interval, gmAPI, consts = {
       step_distance_meter: {
@@ -101,15 +122,39 @@
     };
 
   var asyncActionList = [],
+    parkedAsyncActionList = [],
     executeAsyncActionList;
 
-  function setupNextAsyncCall() {
-    // console.log('setupNextAsyncCall');
-    setTimeout(executeAsyncActionList, 500 + Math.floor(Math.random() * 200) + 1);
+
+  function flushParkedList() {
+    asyncActionList = asyncActionList.concat(parkedAsyncActionList);
+    parkedAsyncActionList = [];
+  }
+
+  function setupNextAsyncCall(nextAsyncTime) {
+    var nextTimeMin = nextAsyncTime || 500;
+    setTimeout(executeAsyncActionList, nextTimeMin + Math.floor(Math.random() * 200) + 1);
+  }
+
+  function appendAsyncAction(action) {
+    if (Object.keys(evolvingPokemons).length > 0) {
+      if (action.type === 'MOVE') {
+        console.log('Park Action For Later', action.name);
+        parkedAsyncActionList.push(action);
+      }
+      return console.log('Evolving Right Now ... Escape ' + action.name);
+    }
+    asyncActionList.push(action);
+  }
+
+  function prependAsyncAction(action) {
+    if (Object.keys(evolvingPokemons).length > 0) {
+      return console.log('Evolving Right Now ... Escape ' + action.name);
+    }
+    asyncActionList.unshift(action);
   }
 
   executeAsyncActionList = function() {
-    // console.log('Tick', asyncActionList.length);
     var action, args;
     if (asyncActionList.length) {
       action = asyncActionList.shift();
@@ -118,14 +163,23 @@
         if (err) {
           console.log('ASYNC ACTION ERROR'.red, err, action.name);
         } else {
-          console.log('ASYNC ACTION DONE'.green, action.name);
+          if (action.silence === true) {
+            process.stdout.write('.');
+          } else {
+            console.log('ASYNC ACTION DONE'.green, action.name);
+          }
+
           if (action.callback) {
             action.callback(err, res);
           }
         }
-        setupNextAsyncCall();
+        setupNextAsyncCall(action.nextAsyncTime);
       });
-      console.log('APPLY ASYNC'.cyan, asyncActionList.length, action.name);
+      if (action.silence === true) {
+        process.stdout.write('.');
+      } else {
+        console.log('APPLY ASYNC'.cyan, asyncActionList.length, action.name);
+      }
       action.m.apply(pokeio, action.args);
     } else {
       setupNextAsyncCall();
@@ -140,45 +194,53 @@
   // pos_lat = 48.871146;
   // pos_lon = 2.330233;
 
+  // gym madelaine
+  pos_lat = 48.869420;
+  pos_lon = 2.324004;
+
+  // gym vendom
+  // pos_lat = 48.867530;
+  // pos_lon = 2.329288;
+
   // rue avron
-  pos_lat = 48.852846;
-  pos_lon = 2.409021;
+  // pos_lat = 48.852846;
+  // pos_lon = 2.409021;
 
   // rue scribe round
-  // var round1 = [{
-  //   lat: 48.870495,
-  //   lng: 2.330228
-  // }, {
-  //   lat: 48.8723199,
-  //   lng: 2.3284151
-  // }, {
-  //   lat: 48.8702046,
-  //   lng: 2.3278585
-  // }, {
-  //   lat: 48.8675866,
-  //   lng: 2.3335069
-  // }, {
-  //   lat: 48.8706952,
-  //   lng: 2.3319797
-  // }];
+  var round1 = [{
+    lat: 48.870495,
+    lng: 2.330228
+  }, {
+    lat: 48.8723199,
+    lng: 2.3284151
+  }, {
+    lat: 48.8702046,
+    lng: 2.3278585
+  }, {
+    lat: 48.8675866,
+    lng: 2.3335069
+  }, {
+    lat: 48.8706952,
+    lng: 2.3319797
+  }];
 
   // home round
-  var round1 = [{
-    lat: 48.8530701,
-    lng: 2.4089785
-  }, {
-    lat: 48.8515537,
-    lng: 2.4099224
-  }, {
-    lat: 48.8537921,
-    lng: 2.4111323
-  }, {
-    lat: 48.8529217,
-    lng: 2.4064246
-  }, {
-    lat: 48.8526173,
-    lng: 2.4079283
-  }];
+  // var round1 = [{
+  //   lat: 48.8530701,
+  //   lng: 2.4089785
+  // }, {
+  //   lat: 48.8515537,
+  //   lng: 2.4099224
+  // }, {
+  //   lat: 48.8537921,
+  //   lng: 2.4111323
+  // }, {
+  //   lat: 48.8529217,
+  //   lng: 2.4064246
+  // }, {
+  //   lat: 48.8526173,
+  //   lng: 2.4079283
+  // }];
 
   var pos1 = {
     lat: 48.870265,
@@ -228,7 +290,7 @@
   function getFortBoost(socket, fortId, lat, lon) {
 
 
-    asyncActionList.push({
+    appendAsyncAction({
       m: pokeio.GetFortSearch,
       args: [fortId, lat, lon],
       name: 'Get Fort Boost : ' + fortId,
@@ -288,9 +350,11 @@
     pokeio.Heartbeat(function(err, hb) {
       var alltocatch, allforts, i, o, j, currentPokemon;
       if (err || !hb) {
-        console.log('Heartbeat', err);
-        return callback && callback(err);
+        // console.log('Heartbeat', err);
+        return callback && callback(err, hb);
       }
+
+      // console.log(hb.cells[0]);
 
       alltocatch = [];
       allforts = [];
@@ -308,6 +372,7 @@
         }
       }
 
+
       if (allforts.length > 0) {
         console.log('UPDATE FORTS', allforts.length);
         data.fortsById = {};
@@ -323,12 +388,17 @@
       function catchPokemon(currentPokemon, callback) {
         var pokedexInfo = pokeio.pokemonlist[parseInt(currentPokemon.PokedexTypeId, 10) - 1];
         console.log('[+] There is a ' + pokedexInfo.name + ' near!! I can try to catch it!');
-        pokeio.EncounterPokemon(currentPokemon, function(suc, dat) {
-          console.log(('[*] Encountering pokemon ' + pokedexInfo.name + '...').magenta);
+        pokeio.EncounterPokemon(currentPokemon, function(err, encounterData) {
+          var cp = encounterData.WildPokemon.pokemon.cp;
           var pokeball = 1;
-          if (data.items[inventoryItemTypes.ITEM_GREAT_BALL] && data.items[inventoryItemTypes.ITEM_GREAT_BALL] > 0) {
+          if (cp > 150 && data.items[inventoryItemTypes.ITEM_GREAT_BALL] && data.items[inventoryItemTypes.ITEM_GREAT_BALL] > 0) {
             pokeball = inventoryItemTypes.ITEM_GREAT_BALL;
           }
+          if (cp > 500 && data.items[inventoryItemTypes.ITEM_ULTRA_BALL] && data.items[inventoryItemTypes.ITEM_ULTRA_BALL] > 0) {
+            pokeball = inventoryItemTypes.ITEM_ULTRA_BALL;
+          }
+          console.log(('[*] Encountering pokemon ' + pokedexInfo.name + '... With CP (' + cp + ') Catch Will Ball (' + pokeball + ')').magenta);
+
           pokeio.CatchPokemon(currentPokemon, 1, 1.950, 1, pokeball, function(xsuc, xdat) {
             var res, status;
             if (xsuc) {
@@ -485,8 +555,9 @@
         if (nextPos) {
           // console.log('[>] Move To', nextPos, points.length);
 
-          asyncActionList.push({
+          appendAsyncAction({
             m: pokeio.SetLocation,
+            type: 'MOVE',
             args: [{
               type: 'coords',
               coords: {
@@ -495,6 +566,7 @@
                 altitude: 0
               }
             }],
+            silence: true,
             name: 'Move To : ' + nextPos.lat + ', ' + nextPos.lng + ' | Remaining Points :' + points.length,
             callback: function(err, res) {
               if (g_socket) {
@@ -511,12 +583,9 @@
                 if (moves[myMoveId]) {
                   nextMove();
                 }
-
-                // var nextMoveTime = intervalTime || consts.walking_interval.value + Math.floor(Math.random() * consts.walking_interval.length) + 1;
-                // interval = new Timer(nextMove, nextMoveTime);
               }
             }
-          });
+          })
         }
       }
       nextMove();
@@ -733,6 +802,32 @@
     }
   }
 
+  var evolvingPokemonId = 0;
+
+  function evolvePokemon(typeId, pokemon) {
+    var pokemonId = pokemon.id;
+    evolvingPokemonId += 1;
+    console.log('TRY EVOLVE'.red, data.all_pokemons[typeId].name, '(', pokemon.cp, ')');
+    evolvingPokemons[evolvingPokemonId] = true;
+    appendAsyncAction({
+      m: pokeio.EvolvePokemon,
+      args: [pokemonId],
+      name: 'EVOLVE POKEMON ' + data.all_pokemons[typeId].name,
+      nextAsyncTime: 5000,
+      callback: function(err, res) {
+        if (!err) {
+          console.log('EVOLUTION DONE'.green, res);
+        }
+        delete evolvingPokemons[evolvingPokemonId];
+        if (Object.keys(evolvingPokemons).length === 0) {
+          console.log('**** EVOLUTION ARE DONE ****'.red);
+          flushParkedList();
+        }
+      }
+    });
+  }
+
+
 
   function initPGApi() {
     // console.log('initPGApi');
@@ -745,19 +840,16 @@
         data.all_pokemons[p.id] = p;
       });
 
-      setTimeout(goNextRound, 2500);
-
-
+      // setTimeout(goNextRound, 2500);
 
       function asyncCatchPokemonInterval() {
-        asyncActionList.unshift({
+        prependAsyncAction({
           m: catchPokemonInterval,
           args: [],
           name: 'Catch Pokemon Interval'
         });
       }
 
-      setInterval(asyncCatchPokemonInterval, 5000);
 
       function getProfile() {
         pokeio.GetProfile(function(err, p) {
@@ -772,7 +864,7 @@
       function cleanPokemons() {
         function releaePokemons(pId, transferPokemons) {
           transferPokemons.forEach(function(p) {
-            asyncActionList.push({
+            appendAsyncAction({
               m: pokeio.TransferPokemon,
               args: [p.id],
               name: 'Transfer Pokemon With Type Id ' + pId + ', CP ' + p.cp
@@ -788,7 +880,7 @@
               var max = maximunPokemonsStorage[pId];
               if (candidateForEvolution[pId] !== undefined) {
                 max = Math.ceil(data.candies[pId] / candidateForEvolution[pId]);
-                console.log('MAX IS', pId, max, Math.max(max, maximunPokemonsStorage[pId]), samePokemons.length);
+                // console.log('MAX IS', pId, max, Math.max(max, maximunPokemonsStorage[pId]), samePokemons.length);
                 if (samePokemons.length >= max) {
                   evolutionsNum += max;
                 } else {
@@ -803,8 +895,46 @@
             }
           }
         }
-        console.log('EVOLUTION NUM IS'.green, evolutionsNum);
+        console.log('EVOLUTION NUM IS'.magenta, evolutionsNum);
+
+        if (evolutionsNum > 60) {
+          // evolutionTime();
+        }
       }
+
+      function evolveThemAll() {
+        var pId, samePokemons;
+        for (pId in data.pokemonsById) {
+          if (data.pokemonsById.hasOwnProperty(pId)) {
+            if (candidateForEvolution[pId] !== undefined) {
+              samePokemons = data.pokemonsById[pId];
+              samePokemons.forEach(function(p) {
+                evolvePokemon(pId, p);
+              });
+            }
+          }
+        }
+      }
+
+      function evolutionTime() {
+
+        console.log('***** EVOLUTION TIME *****'.red);
+
+        prependAsyncAction({
+          m: pokeio.UseItemXpBoost,
+          args: [inventoryItemTypes.ITEM_LUCKY_EGG, 1],
+          name: 'USE ITEM_LUCKY_EGG',
+          nextAsyncTime: 2000,
+          callback: function(err, res) {
+            if (!err) {
+              console.log('LUGY EGG ENABLED'.green, res);
+              evolveThemAll();
+            }
+          }
+        });
+      }
+
+
 
       function cleanItems() {
         var itemId, itemCount, diff;
@@ -815,7 +945,7 @@
               diff = itemCount - inventoryItemTypesMax[itemId];
               // console.log(itemId, itemCount, inventoryItemTypesMax[itemId], diff)
               if (diff > 0) {
-                asyncActionList.push({
+                appendAsyncAction({
                   m: pokeio.DropItem,
                   args: [parseInt(itemId, 10), diff],
                   name: 'Clean Inventory For ' + itemId + ', Remove ' + diff + ' Items'
@@ -832,7 +962,7 @@
       }
 
       function getInventory(callback) {
-        console.log('GET INVENTORY');
+        // console.log('GET INVENTORY');
         pokeio.GetInventory(function(err, inventory) {
           if (err) {
             console.error('GetInventory', err);
@@ -854,6 +984,7 @@
             p = i.inventory_item_data.pokemon;
             if (p !== null) {
               if (p.is_egg === null) {
+                p.creation_time_ms_Timestamp = parseInt(p.creation_time_ms.toString(), 10);
                 data.pokemons.push(p);
               } else {
                 if (data.eggs[p.egg_km_walked_target] === undefined) {
@@ -915,7 +1046,7 @@
             if (egg) {
               // console.log('SET EGG'.red, egg.id, incubator.item_id);
               var remaining = (incubator.uses_remaining === null) ? 'Infinity' : incubator.uses_remaining;
-              asyncActionList.push({
+              appendAsyncAction({
                 m: pokeio.UseItemEggIncubator,
                 args: [incubator.item_id, egg.id.toString()],
                 name: 'Set Egg ' + egg.egg_km_walked_target + ' km In Incubator > Remaining ' + remaining
@@ -942,27 +1073,6 @@
         });
       }
 
-      function getForts() {
-        pokeio.Heartbeat(function(err, hb) {
-          if (err) {
-            return console.error('Heartbeat', err);
-          }
-          data.fortsById = {};
-
-          hb.cells.forEach(function(o) {
-            if (o.Fort.length > 0) {
-              o.Fort.forEach(function(f) {
-                if (f.CooldownCompleteMs) {
-                  f.CooldownCompleteMs_TimeStamp = parseInt(f.CooldownCompleteMs.toString(), 10);
-                }
-                data.fortsById[f.FortId] = f;
-              });
-            }
-          });
-          console.log('Load Forts', Object.keys(data.fortsById).length);
-        });
-      }
-
       function getHatchedEggs(callback) {
         pokeio.GetHatchedEggs(function(err, res) {
           // console.log('GetHatchedEggs', err, res);
@@ -970,9 +1080,84 @@
         });
       }
 
+      function getListOfBestPokemons(num) {
+        var pokemonsByCp = data.pokemons.sort(function(a, b) {
+          return b.cp - a.cp;
+        });
+        return pokemonsByCp.slice(0, num);
+      }
+
+
+      function getPrettyPokemonName(p) {
+        return p.reference.name + ' (' + p.cp + ')';
+      }
+
+
+      function addExtraInfoToGym(f) {
+
+        var dist = distance(pokeio.playerInfo.latitude, pokeio.playerInfo.longitude, f.Latitude, f.Longitude);
+        if (dist * 1e3 > 15 || f.IsInBattle !== null) {
+          return;
+        }
+
+        appendAsyncAction({
+          m: pokeio.GetGymDetails,
+          args: [f],
+          name: 'Get Gym Details ' + f.FortId,
+          callback: function(err, res) {
+            // console.log('GYM DETAILS'.red, err, res);
+            // console.log(res.gym_state.memberships);
+            f.info = res;
+
+            console.log('Distance With Gym', f.FortId, (dist * 1e3).toFixed(2), 'meters', 'Team Is', f.Team);
+
+            var args = [],
+              bestPokemons = [];
+            if (f.Team !== 1) {
+              bestPokemons = getListOfBestPokemons(6);
+              args = [f, bestPokemons, null];
+            } else {
+              bestPokemons = getListOfBestPokemons(1);
+              args = [f, null, bestPokemons[0]];              
+            }
+
+            console.log(f);
+            var message = 'Start Gym ' + f.info.name + ' Battle With ' + bestPokemons.map(getPrettyPokemonName).join(', ');
+            console.log(message);
+            appendAsyncAction({
+              m: pokeio.StartGymBattle,
+              args: args,
+              name: message,
+              callback: function(err, res) {
+                console.log('Attack Gym Result'.red, err, res);
+              }
+            });
+
+          }
+        });
+      }
+
+      function updateGyms() {
+        var fortId, fort, dist, allgyms = [];
+        for (fortId in data.fortsById) {
+          if (data.fortsById.hasOwnProperty(fortId)) {
+            fort = data.fortsById[fortId];
+            if (fort.FortType !== 1) {
+              if (fort.GymPoints) {
+                fort.GymPointsInt = parseInt(fort.GymPoints.toString(), 10);
+              }
+              addExtraInfoToGym(fort);
+              allgyms.push(fort);
+            }
+          }
+        }
+        data.allgyms = allgyms;
+      }
+
+
 
       function asyncHatchedEggs() {
-        asyncActionList.push({
+        appendAsyncAction({
           m: getHatchedEggs,
           args: [],
           name: 'getHatchedEggs'
@@ -980,7 +1165,7 @@
       }
 
       function asyncGetInventory() {
-        asyncActionList.push({
+        appendAsyncAction({
           m: getInventory,
           args: [],
           name: 'getInventory'
@@ -988,7 +1173,7 @@
       }
 
       function asyncTakeNearForts() {
-        asyncActionList.push({
+        appendAsyncAction({
           m: takeNearForts,
           args: [],
           name: 'Take Near Forts'
@@ -996,13 +1181,14 @@
       }
 
 
+      // setInterval(asyncHatchedEggs, 60 * 1e3);
+      // setInterval(asyncGetInventory, 30 * 1e3);
+      // setInterval(asyncTakeNearForts, 8 * 1e3);
+      // setInterval(asyncCatchPokemonInterval, 3000);
 
-      setInterval(asyncHatchedEggs, 20 * 1e3);
-      setInterval(asyncGetInventory, 30 * 1e3);
-      setInterval(asyncTakeNearForts, 5 * 1e3);
-
-
-      asyncHatchedEggs();
+      setTimeout(updateGyms, 5000);
+      setTimeout(asyncCatchPokemonInterval, 1000);
+      // asyncHatchedEggs();
       asyncGetInventory();
 
     });

@@ -24,13 +24,15 @@
 
 	<div ng-controller="MainController">
 
-		<h5>Number Of Pokemons {{pokemons.length}}</h5>
+		<div>Number Of Pokemons {{pokemons.length}} - Km Walked {{data.user_stats.km_walked.toFixed(2)}}</div>
+		<div>Incubators (km) > <span ng-repeat="incubator in data.incubators">({{(incubator.target_km_walked - data.user_stats.km_walked).toFixed(2)}})</span></div>
 		<table class="mdl-data-table">
 			<tr>
 				<th>Image</th>			
 				<th>Name</th>
 				<th>Type Id</th>
 				<th>Number</th>
+				<th>Candies</th>
 				<th>Pokemons</th>
 			</tr>
 			<tr ng-repeat="(pId, pList) in pokemonsById">
@@ -38,6 +40,7 @@
 				<td>#{{allPokemons[pId].name}}</td>
 				<td>#{{allPokemons[pId].id}}</td>
 				<td>{{pList.length}}</td>
+				<td>{{candies[pId]}}</td>
 				<td>
 					<ul class="sub-pokemon-list">
 						<li ng-repeat="p in pList">

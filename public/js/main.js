@@ -69,7 +69,7 @@
   var paths = {};
 
   socket.on('g-move-path', function(positions) {
-    console.log('g-move-path', positions);
+    // console.log('g-move-path', positions);
 
     var flightPath, flightPath2;
 
@@ -185,11 +185,13 @@
       $scope.pokemons = data.pokemons;
       $scope.pokemonsById = data.pokemonsById;
       $scope.allPokemons = data.all_pokemons;
+      $scope.candies = data.candies;
+      $scope.data = data;
 
-      console.log(data.user_stats.km_walked);
-      console.log(data.incubators.map(function(inc) {
-        return inc.target_km_walked;
-      }));
+      // console.log(data.user_stats.km_walked);
+      // console.log(data.incubators.map(function(inc) {
+      //   return inc.target_km_walked;
+      // }));
     }
 
     $on('get-inventory', function(data) {

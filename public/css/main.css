@@ -30,6 +30,16 @@ tr.candidate-evolution{
 	background-color: rgba(240,240,240,0.5);
 }
 
+tr.missing-pokemon{
+  opacity: 0.25;
+  transition: opacity 2s ;
+}
+
+tr.missing-pokemon:hover{
+  opacity: 0.5;
+}
+
+
 .next-evolution-zone{
 	text-align: center;	
 }
@@ -42,3 +52,30 @@ tr.candidate-evolution{
 	opacity: 0.25;
 }
 
+
+
+.logs-table img{
+  width: 80px;
+}
+
+
+div.top-bar{
+  position: fixed;
+  background-color: white;
+  padding:2px;
+  text-align: center;
+  z-index: 999;
+  width: 100%;
+}
+
+.mdl-tabs{
+  padding-top: 25px;
+}
+
+
+[ng-click]{
+    cursor: pointer;
+}
+[ng-click]:hover{
+    text-decoration: underline;
+}

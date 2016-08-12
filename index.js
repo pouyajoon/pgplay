@@ -50,55 +50,69 @@
 
 
   var maximunPokemonsStorage = {
-    1: 5,
-    4: 5,
-    7: 5,
-    13: 2, //Weedle
+    1: 3,
+    4: 3,
+    7: 3,
     10: 2,
     11: 3,
-    14: 3,
+    13: 2, //Weedle
+    14: 2,
+    15: 2,
     16: 5,
     17: 3,
+    18: 2,
     19: 5,
-    20: 3,
+    20: 2,
     21: 2,
     22: 3,
-    23: 3,
-    27: 3,
-    29: 3,
-    32: 3,
-    39: 3,
+    23: 2,
+    24: 2,
+    27: 2,
+    29: 2,
+    30: 2,
+    32: 2,
+    33: 2,
+    35: 2,
+    39: 2,
     41: 2,
-    42: 3,
-    43: 3,
+    42: 2,
+    43: 2,
     46: 2,
     48: 2,
-    52: 3,
-    54: 3,
-    56: 3,
-    60: 3,
-    61: 3,
-    69: 3,
-    70: 3,
+    52: 2,
+    53: 2,
+    54: 2,
+    56: 2,
+    58: 2,
+    60: 2,
+    61: 2,
+    63: 2,
+    69: 2,
+    70: 2,
     72: 3,
-    74: 3,
-    79: 3,
+    74: 2,
+    77: 2,
+    79: 2,
     85: 3,
     92: 2,
-    96: 3,
-    98: 3,
+    96: 2,
+    98: 2,
     102: 2,
-    109: 3,
+    104: 2,
+    109: 2,
     111: 3,
     114: 2,
-    116: 3,
+    116: 2,
+    117: 2,
     118: 2,
     120: 2,
+    121: 3,
     124: 3,
     126: 3,
     127: 3,
     129: 2, // magicarp
-    133: 8 //evoli
+    133: 8, //evoli
+    147: 2
   };
 
 
@@ -427,7 +441,11 @@
             if (res === true) {
               console.log(('[*] Pokemon Catch Result' + status[xdat.Status]).green);
               if (g_socket) {
-                g_socket.emit('catch-pokemon', pokedexInfo);
+                g_socket.emit('catch-pokemon', {
+                  pokemon: pokedexInfo,
+                  cp: cp,
+                  when: Date.now()
+                });
               }
             } else {
               console.log(('[*] Pokemon Catch Result' + status[xdat.Status]).gray);
@@ -653,6 +671,12 @@
         return callback && callback(positionToGo);
       });
 
+      socket.on('evolve-pokemon', function(pokemon) {
+        console.log('evolve-pokemon'.blue, pokemon.reference.id, pokemon.id);
+        evolvePokemon(pokemon.reference.id, pokemon);
+        asyncGetInventory();
+      });
+
       socket.on('get-profile', function(callback) {
         return callback && callback({
           all: pokeio,
@@ -857,14 +881,8 @@
         }
       });
     }
-
     startEvolution(evolvingPokemonId, pokemon);
-
-
-
   }
-
-
 
   function initPGApi() {
     var position = saveManager.getPGPosition() || current_pos;
@@ -932,6 +950,7 @@
             }
           }
         }
+        data.evolutionsNum = evolutionsNum;
         console.log('EVOLUTION NUM IS'.magenta, evolutionsNum);
 
         if (evolutionsNum >= 60) {
@@ -957,20 +976,21 @@
 
         console.log('***** EVOLUTION TIME *****'.red);
 
-        evolveThemAll();
+        saveManager.extendBoomTime(6);
 
-        // prependAsyncAction({
-        //   m: pokeio.UseItemXpBoost,
-        //   args: [inventoryItemTypes.ITEM_LUCKY_EGG, 1],
-        //   name: 'USE ITEM_LUCKY_EGG',
-        //   nextAsyncTime: 2000,
-        //   callback: function(err, res) {
-        //     if (!err) {
-        //       console.log('LUGY EGG ENABLED'.green, res);
-        //       evolveThemAll();
-        //     }
-        //   }
-        // });
+
+        prependAsyncAction({
+          m: pokeio.UseItemXpBoost,
+          args: [inventoryItemTypes.ITEM_LUCKY_EGG, 1],
+          name: 'USE ITEM_LUCKY_EGG',
+          nextAsyncTime: 2000,
+          callback: function(err, res) {
+            if (!err) {
+              console.log('LUGY EGG ENABLED'.green, res);
+              evolveThemAll();
+            }
+          }
+        });
       }
 
 

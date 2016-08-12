@@ -58,7 +58,7 @@
       fm = fortMarkers[fId];
       fm.setMap(null);
       delete fortMarkers[fId];
-    })
+    });
   }
 
   socket.on('get-forts', function(fortsById) {
@@ -187,18 +187,20 @@
     return {
       restrict: 'A',
       templateUrl: '/templates/single.pokemon.ng.html'
-    }
+    };
   });
 
   app.directive('tableList', function() {
     return {
       restrict: 'A',
       templateUrl: '/templates/table-list.ng.html'
-    }
+    };
   });
 
-  app.controller('MainController', function($scope, $http) {
+  app.controller('MainController', function($scope, $http, $rootScope) {
 
+    $rootScope.moment = moment;
+    $scope.logs = [];
 
     $http.get('https://raw.githubusercontent.com/Armax/Pokemon-GO-node-api/master/items.json').success(function(res) {
       var items = {};
@@ -207,7 +209,6 @@
       });
       $scope.itemsReference = items;
       console.log('GET ITEM REFERENCES', items);
-
       // console.log('OK', $scope.itemsReference, items);
     });
 
@@ -224,6 +225,7 @@
         }
       });
       $scope.pokemonsReference = pokemonsReference;
+      $scope.allPokemonsReferenceList = res.pokemon;
       $scope.candiesReference = candiesReference;
       console.log('GET POKEMON REFERENCES', pokemonsReference, candiesReference);
 
@@ -240,13 +242,14 @@
     var $emit = function(key, callback) {
       socket.emit(key, function(res) {
         $scope.$apply(function() {
-          return callback(res);
+          return callback && callback(res);
         });
       });
     };
 
-    $on('catch-pokemon', function(pokedex, pokemon) {
-      console.log(pokedex, pokemon);
+    $on('catch-pokemon', function(info) {
+      console.log(info);
+      $scope.logs.unshift(info);
     });
 
 
@@ -254,28 +257,28 @@
       return $scope.candies[$scope.candiesReference[$scope.pokemonsReference[pId].candy]];
     }
 
-    function updateScopeWithData(data) {
+
+    function updateAllPokemonsById() {
+      $scope.allPokemonsById = {};
+      $scope.allPokemonsReferenceList.forEach(function(p) {
+        if ($scope.pokemonsById[p.id] === undefined) {
+          $scope.allPokemonsById[p.id] = p;
+        } else {
+          $scope.allPokemonsById[p.id] = $scope.pokemonsById[p.id];
+        }
+      });
+    }
+
+    function updateNextEvolutions(data) {
       var nextPokemon, nextId;
-      $scope.pokemons = data.pokemons;
-
-
-      $scope.pokemonsById = data.pokemonsById;
-      $scope.allPokemons = data.all_pokemons;
-      $scope.candies = data.candies;
-      $scope.data = data;
-      $scope.nextEvolutions = {};
-      $scope.maximunPokemonsStorage = data.maximunPokemonsStorage;
-      $scope.candidateForEvolution = data.candidateForEvolution;
-
       if ($scope.pokemonsReference) {
-
         Object.keys(data.pokemonsById).forEach(function(pId) {
-          var currentPokemonRef = $scope.pokemonsReference[pId];
+          var currentPokemonRef, candyCountForPId, candyCountForNextPId;
+          currentPokemonRef = $scope.pokemonsReference[pId];
           if (currentPokemonRef && currentPokemonRef.next_evolution) {
             nextPokemon = currentPokemonRef.next_evolution[0];
             nextId = parseInt(nextPokemon.num, 10);
-            var candyCountForPId = getCandyCountFor(pId);
-            // console.log(currentPokemonRef, nextPokemon, currentPokemonRef.candy_count);
+            candyCountForPId = getCandyCountFor(pId);
             if (currentPokemonRef.candy_count) {
               if (data.pokemonsById[nextId] === undefined) {
                 $scope.nextEvolutions[pId] = {
@@ -287,7 +290,7 @@
               }
             } else {
               if (data.pokemonsById[nextId] === undefined) {
-                var candyCountForNextPId = getCandyCountFor(pId);
+                candyCountForNextPId = getCandyCountFor(pId);
                 $scope.nextEvolutions[pId] = {
                   p: $scope.pokemonsReference[nextId],
                   can: candyCountForNextPId >= currentPokemonRef.candy_count,
@@ -298,15 +301,31 @@
             }
           }
         });
-        // console.log('nextEvolutions', $scope.nextEvolutions);
       }
+    }
+
+    function updateScopeWithData(data) {
+
+      $scope.pokemons = data.pokemons;
+
+
+      $scope.pokemonsById = data.pokemonsById;
+      $scope.allPokemons = data.all_pokemons;
+      $scope.candies = data.candies;
+      $scope.data = data;
+      $scope.nextEvolutions = {};
+      $scope.maximunPokemonsStorage = data.maximunPokemonsStorage;
+      $scope.candidateForEvolution = data.candidateForEvolution;
+
+      updateNextEvolutions(data);
+      updateAllPokemonsById();
 
       $scope.pokemons_sorted_by_capture_date = JSON.parse(JSON.stringify(data.pokemons));
 
       $scope.pokemons_sorted_by_capture_date.sort(function(a, b) {
         return b.creation_time_ms_Timestamp - a.creation_time_ms_Timestamp;
       });
-      
+
       $scope.pokemons_sorted_by_capture_date.forEach(function(p) {
         p.catched_time_from_now = moment(p.creation_time_ms_Timestamp).fromNow();
       });
@@ -332,6 +351,11 @@
       console.log('get-user-position', res);
       setMap(res.lat, res.lng);
     });
+
+    $scope.evolvePokemon = function(p) {
+      console.log('evolve-pokemon', p);
+      socket.emit('evolve-pokemon', p);
+    };
 
     $emit('get-profile', function(res) {
       console.log(res);

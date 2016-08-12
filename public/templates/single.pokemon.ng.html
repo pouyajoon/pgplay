@@ -1,0 +1,8 @@
+<td><img class="p-img" ng-src="{{p.reference.img}}"></td>
+<td>#{{p.reference.name}}</td>
+<td>#{{p.pokemon_id}}</td>
+<td>{{p.cp}}</td>
+<td>{{p.height_m.toFixed(2)}} m</td>
+<td>{{p.weight_kg.toFixed(2)}} kg</td>
+<td ng-if="show_date === true">{{p.catched_time_from_now}}</td>
+

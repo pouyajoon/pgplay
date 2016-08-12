@@ -20,51 +20,65 @@
 
 </head>
 <body ng-app="myApp">
-  <div id="map" style="width: 100%; height: 400px;"></div>
 
   <div ng-controller="MainController">
-
     <div>
       Number Of Pokemons {{pokemons.length}} - Km Walked {{data.user_stats.km_walked.toFixed(2)}}
-    </div>
-    <div>Incubators (km) > 
+      - Incubators (km) > 
       <span ng-repeat="incubator in data.incubators">
         ({{(
-        incubator.target_km_walked - data.user_stats.km_walked).toFixed(2)}})</span>
-      </div>
-      <div ng-if="itemsReference" class="items-list"><div ng-repeat="(itemId, count) in data.items">
-        {{itemsReference[itemId].name}}
-        <br/>
-        {{count}}
-        <br/>
-        <img ng-src="{{itemsReference[itemId].img}}"/>
-      </div>
+        incubator.target_km_walked - data.user_stats.km_walked).toFixed(2)}})
+      </span>
     </div>
 
     <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
-      <div class="mdl-tabs__tab-bar">
-        <a href="#group-panel" class="mdl-tabs__tab is-active">Grouped</a>
-        <a href="#single-panel" class="mdl-tabs__tab">Single</a>
+      <div class="mdl-tabs__tab-bar">      
+        <a href="#map-panel" class="mdl-tabs__tab  is-active">Map</a>
+        <a href="#items-panel" class="mdl-tabs__tab">Items</a>
+        <a href="#group-panel" class="mdl-tabs__tab">Grouped</a>
+        <a href="#cp-panel" class="mdl-tabs__tab">By CP</a>
         <a href="#date-panel" class="mdl-tabs__tab">By Date</a>
       </div>
-      <div class="mdl-tabs__panel is-active" id="group-panel">
+
+      <div class="mdl-tabs__panel  is-active" id="map-panel">
+        <div id="map" style="width: 100%; height: 400px"></div>
+      </div>
+
+
+      <div class="mdl-tabs__panel" id="items-panel">
+        <div ng-if="itemsReference" class="items-list">
+          <div ng-repeat="(itemId, count) in data.items">
+            {{itemsReference[itemId].name}}
+            <br/>
+            {{count}}
+            <br/>
+            <img ng-src="{{itemsReference[itemId].img}}"/>
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class="mdl-tabs__panel" id="group-panel">
         <table class="mdl-data-table">
           <tr>
             <th>Image</th>      
             <th>Name</th>
             <th>Type Id</th>
             <th>Number</th>
+            <th>Limit</th>
             <th>Candies</th>
             <th>Pokemons</th>
             <th>Next Evolution</th>
             <th>Evolution</th>
           </tr>
-          <tr ng-repeat="(pId, pList) in pokemonsById">
+          <tr ng-repeat="(pId, pList) in pokemonsById" ng-class="{'candidate-evolution':candidateForEvolution[pId] !== undefined}">
             <td><img class="p-img" ng-src="{{allPokemons[pId].img}}"></td>
             <td>#{{allPokemons[pId].name}}</td>
             <td>#{{allPokemons[pId].id}}</td>
             <td>{{pList.length}}</td>
-            <td>{{candies[pId]}}</td>
+            <td>{{maximunPokemonsStorage[pId]}}</td>
+            <td>{{candies[candiesReference[pokemonsReference[pId].candy]]}}</td>
             <td>
               <ul class="sub-pokemon-list">
                 <li ng-repeat="p in pList">
@@ -73,59 +87,27 @@
               </ul>
             </td>
             <td>{{pokemonReference[pId].candy_count}}</td>
-            <td><img title="{{nextEvolutions[pId].name}}" ng-if="nextEvolutions[pId]" ng-src="{{nextEvolutions[pId].img}}"></td>
+            <td>
+            <div ng-if="nextEvolutions[pId]" ng-class="{'can-not-evolve':nextEvolutions[pId].can === false}" class="next-evolution-zone">
+              <img title="{{nextEvolutions[pId].p.name}}" ng-src="{{nextEvolutions[pId].p.img}}"><br/>
+              {{nextEvolutions[pId].candy_count_required}}
+              ({{nextEvolutions[pId].candy_available - nextEvolutions[pId].candy_count_required}})
+            </div>
+            </td>
           </tr>
         </table>
       </div>
-      <div class="mdl-tabs__panel" id="single-panel">
-        <table class="mdl-data-table">
-          <tr>      
-            <th>Image</th>
-            <th>Name</th>
-            <th>Type Id</th>
-            <th>CP</th>
-            <th>Height</th>
-            <th>Weight</th>
-          </tr>
-          <tr ng-repeat="p in pokemons">
-            <td><img class="p-img" ng-src="{{p.reference.img}}"></td>
-            <td>#{{p.reference.name}}</td>
-            <td>#{{p.pokemon_id}}</td>
-            <td>{{p.cp}}</td>
-            <td>{{p.height_m.toFixed(2)}} m</td>
-            <td>{{p.weight_kg.toFixed(2)}} kg</td>
-          </tr>
-        </table>  
+
+      <div class="mdl-tabs__panel" id="cp-panel">
+        <div ng-if="pokemons_sorted_by_cp" table-list ng-init="list = pokemons_sorted_by_cp"></div>
       </div>
-      
+
       <div class="mdl-tabs__panel" id="date-panel">
-        <table class="mdl-data-table">
-          <tr>      
-            <th>Image</th>
-            <th>Name</th>
-            <th>Type Id</th>
-            <th>CP</th>
-            <th>Height</th>
-            <th>Weight</th>
-            <th>Capture Date</th>
-          </tr>
-          <tr ng-repeat="p in pokemons_sorted_by_capture_date">
-            <td><img class="p-img" ng-src="{{p.reference.img}}"></td>
-            <td>#{{p.reference.name}}</td>
-            <td>#{{p.pokemon_id}}</td>
-            <td>{{p.cp}}</td>
-            <td>{{p.height_m.toFixed(2)}} m</td>
-            <td>{{p.weight_kg.toFixed(2)}} kg</td>
-            <td>{{p.catched_time_from_now}}</td>
-          </tr>
-        </table>  
+        <div ng-if="pokemons_sorted_by_capture_date" table-list ng-init="list = pokemons_sorted_by_capture_date;show_date=true"></div>
       </div>
 
 
     </div>
-
-
-    
 
 
 

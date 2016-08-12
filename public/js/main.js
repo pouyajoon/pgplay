@@ -8,7 +8,9 @@
 
   socket.on('user-new-position', function(position) {
     // console.log('user position', position);
-    me.setPosition(new google.maps.LatLng(position.lat, position.lng));
+    if (me) {
+      me.setPosition(new google.maps.LatLng(position.lat, position.lng));
+    }
   });
 
   function setMarkerColor(marker, color) {
@@ -42,8 +44,26 @@
   }
 
 
+  function removeAllFortMarkers(fortsById) {
+    var fortId, fm, removeList = [];
+    for (fortId in fortMarkers) {
+      if (fortMarkers.hasOwnProperty(fortId)) {
+        fm = fortMarkers[fortId];
+        if (fortsById[fortId] === undefined) {
+          removeList.push(fortId);
+        }
+      }
+    }
+    removeList.forEach(function(fId) {
+      fm = fortMarkers[fId];
+      fm.setMap(null);
+      delete fortMarkers[fId];
+    })
+  }
+
   socket.on('get-forts', function(fortsById) {
     var f, fortId, marker;
+    removeAllFortMarkers(fortsById);
     for (fortId in fortsById) {
       if (fortsById.hasOwnProperty(fortId)) {
         f = fortsById[fortId];
@@ -131,7 +151,10 @@
     options = {
       zoom: 17,
       center: new google.maps.LatLng(lat, lon),
-      mapTypeControl: true
+      mapTypeControl: true,
+      zoomControlOptions: {
+        position: google.maps.ControlPosition.TOP_RIGHT
+      }
     };
     // init map
     map = new google.maps.Map(document.getElementById('map'), options);
@@ -160,6 +183,20 @@
   }
 
   app = angular.module('myApp', []);
+  app.directive('singlePokemon', function() {
+    return {
+      restrict: 'A',
+      templateUrl: '/templates/single.pokemon.ng.html'
+    }
+  });
+
+  app.directive('tableList', function() {
+    return {
+      restrict: 'A',
+      templateUrl: '/templates/table-list.ng.html'
+    }
+  });
+
   app.controller('MainController', function($scope, $http) {
 
 
@@ -169,18 +206,27 @@
         items[i.id] = i;
       });
       $scope.itemsReference = items;
-      console.log('GET ITEM REFERENCES');
+      console.log('GET ITEM REFERENCES', items);
 
       // console.log('OK', $scope.itemsReference, items);
     });
 
     $http.get('https://raw.githubusercontent.com/Biuni/PokemonGO-Pokedex/master/pokedex.json').success(function(res) {
-      var pokemonsReference = {};
+      var pokemonsReference = {},
+        candiesReference = {};
       res.pokemon.forEach(function(i) {
         pokemonsReference[i.id] = i;
+        if (candiesReference[i.candy] === undefined) {
+          candiesReference[i.candy] = -1;
+        }
+        if (i.prev_evolution === undefined) {
+          candiesReference[i.candy] = i.id;
+        }
       });
       $scope.pokemonsReference = pokemonsReference;
-      console.log('GET POKEMON REFERENCES');
+      $scope.candiesReference = candiesReference;
+      console.log('GET POKEMON REFERENCES', pokemonsReference, candiesReference);
+
     });
 
     var $on = function(key, callback) {
@@ -203,14 +249,23 @@
       console.log(pokedex, pokemon);
     });
 
+
+    function getCandyCountFor(pId) {
+      return $scope.candies[$scope.candiesReference[$scope.pokemonsReference[pId].candy]];
+    }
+
     function updateScopeWithData(data) {
       var nextPokemon, nextId;
       $scope.pokemons = data.pokemons;
+
+
       $scope.pokemonsById = data.pokemonsById;
       $scope.allPokemons = data.all_pokemons;
       $scope.candies = data.candies;
       $scope.data = data;
       $scope.nextEvolutions = {};
+      $scope.maximunPokemonsStorage = data.maximunPokemonsStorage;
+      $scope.candidateForEvolution = data.candidateForEvolution;
 
       if ($scope.pokemonsReference) {
 
@@ -218,11 +273,27 @@
           var currentPokemonRef = $scope.pokemonsReference[pId];
           if (currentPokemonRef && currentPokemonRef.next_evolution) {
             nextPokemon = currentPokemonRef.next_evolution[0];
+            nextId = parseInt(nextPokemon.num, 10);
+            var candyCountForPId = getCandyCountFor(pId);
             // console.log(currentPokemonRef, nextPokemon, currentPokemonRef.candy_count);
-            if (currentPokemonRef.candy_count && $scope.candies[pId] > currentPokemonRef.candy_count) {
-              nextId = parseInt(nextPokemon.num, 10);
+            if (currentPokemonRef.candy_count) {
               if (data.pokemonsById[nextId] === undefined) {
-                $scope.nextEvolutions[pId] = $scope.pokemonsReference[nextId];
+                $scope.nextEvolutions[pId] = {
+                  p: $scope.pokemonsReference[nextId],
+                  can: candyCountForPId > currentPokemonRef.candy_count,
+                  candy_available: candyCountForPId,
+                  candy_count_required: currentPokemonRef.candy_count
+                };
+              }
+            } else {
+              if (data.pokemonsById[nextId] === undefined) {
+                var candyCountForNextPId = getCandyCountFor(pId);
+                $scope.nextEvolutions[pId] = {
+                  p: $scope.pokemonsReference[nextId],
+                  can: candyCountForNextPId >= currentPokemonRef.candy_count,
+                  candy_available: candyCountForPId,
+                  candy_count_required: currentPokemonRef.candy_count
+                };
               }
             }
           }
@@ -230,12 +301,20 @@
         // console.log('nextEvolutions', $scope.nextEvolutions);
       }
 
-      $scope.pokemons_sorted_by_capture_date = data.pokemons.sort(function(a, b) {
+      $scope.pokemons_sorted_by_capture_date = JSON.parse(JSON.stringify(data.pokemons));
+
+      $scope.pokemons_sorted_by_capture_date.sort(function(a, b) {
         return b.creation_time_ms_Timestamp - a.creation_time_ms_Timestamp;
       });
-
+      
       $scope.pokemons_sorted_by_capture_date.forEach(function(p) {
         p.catched_time_from_now = moment(p.creation_time_ms_Timestamp).fromNow();
+      });
+
+      $scope.pokemons_sorted_by_cp = JSON.parse(JSON.stringify(data.pokemons));
+
+      $scope.pokemons_sorted_by_cp.sort(function(a, b) {
+        return b.cp - a.cp;
       });
 
       // console.log(data.user_stats.km_walked);
@@ -250,7 +329,7 @@
     });
 
     $emit('get-user-position', function(res) {
-      console.log('set map', res);
+      console.log('get-user-position', res);
       setMap(res.lat, res.lng);
     });
 

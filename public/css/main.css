@@ -25,3 +25,20 @@
     text-align: center;
     /*background-position: center center;*/
 }
+
+tr.candidate-evolution{
+	background-color: rgba(240,240,240,0.5);
+}
+
+.next-evolution-zone{
+	text-align: center;	
+}
+
+.next-evolution-zone img{
+	width: 90px;
+}
+
+.next-evolution-zone.can-not-evolve{
+	opacity: 0.25;
+}
+

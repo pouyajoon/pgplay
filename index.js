@@ -2,22 +2,15 @@
   'use strict';
 
 
+
+  var saveManager = require('./libs/SaveManager').SaveManager;
+
   var moment = require('moment');
 
   var evolvingPokemons = {};
 
   var allIntervals = [];
-  var boomMode = false;
 
-  var save = {};
-
-  function initSave() {
-    save = {};
-    save.start = Date.now();
-    boomMode = false;
-  }
-
-  initSave();
 
   var colors = require('colors');
 
@@ -71,32 +64,43 @@
     21: 2,
     22: 3,
     23: 3,
+    27: 3,
+    29: 3,
     32: 3,
+    39: 3,
     41: 2,
     42: 3,
     43: 3,
     46: 2,
     48: 2,
     52: 3,
+    54: 3,
+    56: 3,
     60: 3,
+    61: 3,
     69: 3,
+    70: 3,
+    72: 3,
     74: 3,
+    79: 3,
+    85: 3,
     92: 2,
     96: 3,
     98: 3,
     102: 2,
+    109: 3,
+    111: 3,
     114: 2,
     116: 3,
     118: 2,
     120: 2,
+    124: 3,
     126: 3,
     127: 3,
     129: 2, // magicarp
     133: 8 //evoli
   };
 
-
-  console.log('Hello Pokebot'.blue);
 
 
   function Timer(callback, delay) {
@@ -207,8 +211,8 @@
   Pokeio = require('./Pokemon-GO-node-api/poke.io.js');
 
   // 5 rue scribe
-  // pos_lat = 48.871146;
-  // pos_lon = 2.330233;
+  pos_lat = 48.871146;
+  pos_lon = 2.330233;
 
   // gym madelaine
   // pos_lat = 48.869420;
@@ -219,54 +223,44 @@
   // pos_lon = 2.329288;
 
   // rue avron
-  pos_lat = 48.852846;
-  pos_lon = 2.409021;
+  // pos_lat = 48.852846;
+  // pos_lon = 2.409021;
 
   // rue scribe round
-  // var round1 = [{
-  //   lat: 48.870495,
-  //   lng: 2.330228
-  // }, {
-  //   lat: 48.8723199,
-  //   lng: 2.3284151
-  // }, {
-  //   lat: 48.8702046,
-  //   lng: 2.3278585
-  // }, {
-  //   lat: 48.8675866,
-  //   lng: 2.3335069
-  // }, {
-  //   lat: 48.8706952,
-  //   lng: 2.3319797
-  // }];
-
-  // home round
   var round1 = [{
-    lat: 48.8530701,
-    lng: 2.4089785
+    lat: 48.870495,
+    lng: 2.330228
   }, {
-    lat: 48.8515537,
-    lng: 2.4099224
+    lat: 48.8723199,
+    lng: 2.3284151
   }, {
-    lat: 48.8537921,
-    lng: 2.4111323
+    lat: 48.8702046,
+    lng: 2.3278585
   }, {
-    lat: 48.8529217,
-    lng: 2.4064246
+    lat: 48.8675866,
+    lng: 2.3335069
   }, {
-    lat: 48.8526173,
-    lng: 2.4079283
+    lat: 48.8706952,
+    lng: 2.3319797
   }];
 
-  var pos1 = {
-    lat: 48.870265,
-    lng: 2.32996
-  };
-
-  var pos0 = {
-    lat: pos_lat,
-    lng: pos_lon
-  };
+  // home round
+  // var round1 = [{
+  //   lat: 48.8530701,
+  //   lng: 2.4089785
+  // }, {
+  //   lat: 48.8515537,
+  //   lng: 2.4099224
+  // }, {
+  //   lat: 48.8537921,
+  //   lng: 2.4111323
+  // }, {
+  //   lat: 48.8529217,
+  //   lng: 2.4064246
+  // }, {
+  //   lat: 48.8526173,
+  //   lng: 2.4079283
+  // }];
 
   current_pos = {
     type: 'coords',
@@ -482,14 +476,8 @@
     var myMoveId = moveId;
     moves[myMoveId] = true;
 
-    save.destination = {
-      lat: target.lat,
-      lng: target.lng
-    };
-    // if (interval) {
-    //   interval.stop();
-    //   interval = undefined;
-    // }
+
+    saveManager.updateDestination(target);
 
     function addExtraPointsOnDirectionPoints(points) {
 
@@ -579,9 +567,6 @@
       console.log('[>] Start Move', points.length);
 
       function nextMove() {
-        if (boomMode === true) {
-          return false;
-        }
         nextPos = points.shift();
         if (nextPos) {
           // console.log('[>] Move To', nextPos, points.length);
@@ -603,10 +588,10 @@
               if (g_socket) {
                 g_socket.emit('user-new-position', nextPos);
               }
-              save.current_position = {
-                lat: nextPos.lat,
-                lng: nextPos.lng
-              };
+
+
+              saveManager.updatePosition(nextPos);
+
               lastPos = nextPos;
 
               if (points.length === 0) {
@@ -806,7 +791,6 @@
 
   }
 
-  setupGMap();
 
 
   function getPathForDirection(sourceLatLng, targetLatLng, callback) {
@@ -847,45 +831,45 @@
   var evolvingPokemonId = 0;
 
   function evolvePokemon(typeId, pokemon) {
-    var pokemonId = pokemon.id;
     evolvingPokemonId += 1;
     console.log('TRY EVOLVE'.red, data.all_pokemons[typeId].name, '(', pokemon.cp, ')');
-    evolvingPokemons[evolvingPokemonId] = true;
-    appendAsyncAction({
-      m: pokeio.EvolvePokemon,
-      args: [pokemonId],
-      type: 'EVOLVE',
-      name: 'EVOLVE POKEMON ' + data.all_pokemons[typeId].name,
-      nextAsyncTime: 5000,
-      callback: function(err, res) {
-        if (!err) {
-          console.log('EVOLUTION DONE'.green, res);
+
+    function startEvolution(evolutionId, pokemon) {
+      evolvingPokemons[evolutionId] = true;
+
+      var pokemonId = pokemon.id;
+      appendAsyncAction({
+        m: pokeio.EvolvePokemon,
+        args: [pokemonId],
+        type: 'EVOLVE',
+        name: 'EVOLVE POKEMON ' + data.all_pokemons[typeId].name,
+        nextAsyncTime: 5000,
+        callback: function(err, res) {
+          if (!err) {
+            console.log('EVOLUTION DONE'.green, 'ID IS', evolutionId.toString().blue, res);
+          }
+          delete evolvingPokemons[evolutionId];
+          console.log('REMAINING EVOLUTION', Object.keys(evolvingPokemons).length);
+          if (Object.keys(evolvingPokemons).length === 0) {
+            console.log('**** EVOLUTION ARE DONE ****'.red);
+            flushParkedList();
+          }
         }
-        delete evolvingPokemons[evolvingPokemonId];
-        if (Object.keys(evolvingPokemons).length === 0) {
-          console.log('**** EVOLUTION ARE DONE ****'.red);
-          flushParkedList();
-        }
-      }
-    });
+      });
+    }
+
+    startEvolution(evolvingPokemonId, pokemon);
+
+
+
   }
 
 
 
   function initPGApi() {
-    var pos = current_pos;
+    var position = saveManager.getPGPosition() || current_pos;
 
-    if (save.current_position) {
-      pos = {
-        type: 'coords',
-        coords: {
-          latitude: save.current_position.lat,
-          longitude: save.current_position.lng,
-          altitude: 0
-        }
-      };
-    }
-    pokeio.init('pouyapokemon', 'pokemonGO', current_pos, 'google', function(err) {
+    pokeio.init('pouyapokemon', 'pokemonGO', position, 'google', function(err) {
       if (err) {
         return console.log('initPG', err);
       }
@@ -950,8 +934,8 @@
         }
         console.log('EVOLUTION NUM IS'.magenta, evolutionsNum);
 
-        if (evolutionsNum > 60) {
-          // evolutionTime();
+        if (evolutionsNum >= 60) {
+          evolutionTime();
         }
       }
 
@@ -973,20 +957,20 @@
 
         console.log('***** EVOLUTION TIME *****'.red);
 
-        // evolveThemAll();
+        evolveThemAll();
 
-        prependAsyncAction({
-          m: pokeio.UseItemXpBoost,
-          args: [inventoryItemTypes.ITEM_LUCKY_EGG, 1],
-          name: 'USE ITEM_LUCKY_EGG',
-          nextAsyncTime: 2000,
-          callback: function(err, res) {
-            if (!err) {
-              console.log('LUGY EGG ENABLED'.green, res);
-              evolveThemAll();
-            }
-          }
-        });
+        // prependAsyncAction({
+        //   m: pokeio.UseItemXpBoost,
+        //   args: [inventoryItemTypes.ITEM_LUCKY_EGG, 1],
+        //   name: 'USE ITEM_LUCKY_EGG',
+        //   nextAsyncTime: 2000,
+        //   callback: function(err, res) {
+        //     if (!err) {
+        //       console.log('LUGY EGG ENABLED'.green, res);
+        //       evolveThemAll();
+        //     }
+        //   }
+        // });
       }
 
 
@@ -1024,11 +1008,12 @@
             return callback && callback(err);
           }
           var p, item;
+          data.maximunPokemonsStorage = maximunPokemonsStorage;
+          data.candidateForEvolution = candidateForEvolution;
           data.inventory = inventory;
           data.items = {};
           data.pokemons = [];
           data.eggs = {};
-          data.candidateForEvolution = {};
 
           data.incubators = {};
           data.user_stats = {};
@@ -1068,7 +1053,7 @@
 
           });
           data.pokemons = data.pokemons.sort(function(a, b) {
-            return a.pokemon_id - b.pokemon_id;
+            return a.pokemonid - b.pokemon_id;
           });
           data.pokemons.forEach(function(p) {
             p.reference = data.all_pokemons[p.pokemon_id];
@@ -1246,39 +1231,12 @@
       setTimeout(asyncHatchedEggs, 1000);
       setTimeout(asyncGetInventory, 0);
 
-
-      var resetTimer = setInterval(function() {
-        var diff = Date.now() - save.start;
-        console.log('CHECK TIMER'.red, moment().diff(save.start, 'minutes'), 'minutes');
-        if (diff > 8 * 60 * 1e3) {
-          console.log('BOOM RESET WORLD'.red);
-          boomMode = true;
-          clearInterval(resetTimer);
-          asyncActionList = [];
-          parkedAsyncActionList = [];
-          allIntervals.forEach(function(i) {
-            clearInterval(i);
-          });
-          setTimeout(function() {
-            console.log('SAVE'.green, save);
-            initPGApi();
-          }, 20 * 1e3);
-        }
-      }, 30 * 1e3);
-
-      if (save.destination) {
-        var dest = {
-          lat: save.destination.lat,
-          lng: save.destination.lng
-        };
+      var destination = saveManager.getDestination();
+      if (destination) {
         setTimeout(function() {
-          var source = {
-            lat: save.current_position.lat,
-            lng: save.current_position.lng
-          };
-          initSave();
-          doGlobalMove(g_socket, source, dest);
-
+          doGlobalMove(g_socket, saveManager.getPosition(), destination, function() {
+            setTimeout(goNextRound, 2500);
+          });
         }, 2500);
       } else {
         setTimeout(goNextRound, 2500);
@@ -1286,10 +1244,42 @@
     });
   }
 
-  setupExpress();
 
-  // doGlobalMove(null, pos0, pos1);
-  initPGApi();
+  function startCluster() {
+    var cluster = require('cluster');
+    console.log('cluster', cluster.isMaster);
+    if (cluster.isMaster) {
+      cluster.fork();
+      //if the worker dies, restart it.
+      cluster.on('exit', function(worker) {
+        console.log('Worker ' + worker.id + ' died..'.red);
+        console.log('Start Next Session In 10 Seconds'.green);
+        setTimeout(function() {
+          cluster.fork();
+        }, 10 * 1e3);
+      });
+    } else {
+      console.log('Hello Pokebot'.blue);
+
+      saveManager.load();
+      setupGMap();
+      setupExpress();
+      initPGApi();
+
+      process.on('uncaughtException', function(err) {
+        if (err) {
+          console.log(err);
+        }
+        //Send some notification about the error  
+        process.exit(1);
+      });
+    }
+  }
+
+
+  // setupExpress();
+  // initPGApi();
+  startCluster();
 
 
 }());

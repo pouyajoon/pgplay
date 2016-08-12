@@ -884,7 +884,6 @@
           altitude: 0
         }
       };
-
     }
     pokeio.init('pouyapokemon', 'pokemonGO', current_pos, 'google', function(err) {
       if (err) {
@@ -952,7 +951,7 @@
         console.log('EVOLUTION NUM IS'.magenta, evolutionsNum);
 
         if (evolutionsNum > 60) {
-          evolutionTime();
+          // evolutionTime();
         }
       }
 
@@ -1251,7 +1250,7 @@
       var resetTimer = setInterval(function() {
         var diff = Date.now() - save.start;
         console.log('CHECK TIMER'.red, moment().diff(save.start, 'minutes'), 'minutes');
-        if (diff > 3 * 60 * 1e3) {
+        if (diff > 8 * 60 * 1e3) {
           console.log('BOOM RESET WORLD'.red);
           boomMode = true;
           clearInterval(resetTimer);
@@ -1261,16 +1260,25 @@
             clearInterval(i);
           });
           setTimeout(function() {
+            console.log('SAVE'.green, save);
             initPGApi();
           }, 20 * 1e3);
         }
       }, 30 * 1e3);
 
       if (save.destination) {
-        var dest = save.destination;
+        var dest = {
+          lat: save.destination.lat,
+          lng: save.destination.lng
+        };
         setTimeout(function() {
+          var source = {
+            lat: save.current_position.lat,
+            lng: save.current_position.lng
+          };
           initSave();
-          doGlobalMove(g_socket, save.current_position, dest);
+          doGlobalMove(g_socket, source, dest);
+
         }, 2500);
       } else {
         setTimeout(goNextRound, 2500);

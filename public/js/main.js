@@ -52,9 +52,10 @@
         }
         marker = fortMarkers[f.FortId];
 
-        if (f.FortType !== 1){
+        if (f.FortType !== 1) {
           setMarkerColor(marker, 'yellow');
         } else {
+          fortMarkers[f.FortId].setOpacity(0.25);
           if (f.CooldownCompleteMs_TimeStamp) {
             if (Date.now() < f.CooldownCompleteMs_TimeStamp) {
               setMarkerColor(marker, 'red');
@@ -145,6 +146,7 @@
     });
 
     me = addMarker(map, lat, lon, 'myPosition', 'green', 'Me!!');
+    me.setZIndex(1000);
 
     google.maps.event.addListener(map, 'click', function(event) {
       var target = {
@@ -165,10 +167,21 @@
       var items = {};
       res.items.forEach(function(i) {
         items[i.id] = i;
-      })
+      });
       $scope.itemsReference = items;
+      console.log('GET ITEM REFERENCES');
+
       // console.log('OK', $scope.itemsReference, items);
-    })
+    });
+
+    $http.get('https://raw.githubusercontent.com/Biuni/PokemonGO-Pokedex/master/pokedex.json').success(function(res) {
+      var pokemonsReference = {};
+      res.pokemon.forEach(function(i) {
+        pokemonsReference[i.id] = i;
+      });
+      $scope.pokemonsReference = pokemonsReference;
+      console.log('GET POKEMON REFERENCES');
+    });
 
     var $on = function(key, callback) {
       socket.on(key, function(res) {
@@ -191,11 +204,31 @@
     });
 
     function updateScopeWithData(data) {
+      var nextPokemon, nextId;
       $scope.pokemons = data.pokemons;
       $scope.pokemonsById = data.pokemonsById;
       $scope.allPokemons = data.all_pokemons;
       $scope.candies = data.candies;
       $scope.data = data;
+      $scope.nextEvolutions = {};
+
+      if ($scope.pokemonsReference) {
+
+        Object.keys(data.pokemonsById).forEach(function(pId) {
+          var currentPokemonRef = $scope.pokemonsReference[pId];
+          if (currentPokemonRef && currentPokemonRef.next_evolution) {
+            nextPokemon = currentPokemonRef.next_evolution[0];
+            // console.log(currentPokemonRef, nextPokemon, currentPokemonRef.candy_count);
+            if (currentPokemonRef.candy_count && $scope.candies[pId] > currentPokemonRef.candy_count) {
+              nextId = parseInt(nextPokemon.num, 10);
+              if (data.pokemonsById[nextId] === undefined) {
+                $scope.nextEvolutions[pId] = $scope.pokemonsReference[nextId];
+              }
+            }
+          }
+        });
+        // console.log('nextEvolutions', $scope.nextEvolutions);
+      }
 
       $scope.pokemons_sorted_by_capture_date = data.pokemons.sort(function(a, b) {
         return b.creation_time_ms_Timestamp - a.creation_time_ms_Timestamp;
@@ -203,7 +236,7 @@
 
       $scope.pokemons_sorted_by_capture_date.forEach(function(p) {
         p.catched_time_from_now = moment(p.creation_time_ms_Timestamp).fromNow();
-      })
+      });
 
       // console.log(data.user_stats.km_walked);
       // console.log(data.incubators.map(function(inc) {
@@ -225,21 +258,21 @@
       console.log(res);
       updateScopeWithData(res.data);
       // res.data.inventory.inventory_delta.inventory_items.forEach(function(i) {
-        // if (i.inventory_item_data.pokemon_family) {
-        //   console.log(i.inventory_item_data);
-        // }
-        // if (i.inventory_item_data.player_stats) {
-        //   console.log(i.inventory_item_data.player_stats.km_walked);
-        // }
-        // if (i.inventory_item_data.applied_items) {
-        //   console.log(i.inventory_item_data);
-        // }
+      // if (i.inventory_item_data.pokemon_family) {
+      //   console.log(i.inventory_item_data);
+      // }
+      // if (i.inventory_item_data.player_stats) {
+      //   console.log(i.inventory_item_data.player_stats.km_walked);
+      // }
+      // if (i.inventory_item_data.applied_items) {
+      //   console.log(i.inventory_item_data);
+      // }
 
-        // if (i.inventory_item_data.egg_incubators) {
-        //   console.log(i.inventory_item_data.egg_incubators.egg_incubator.map(function(inc) {
-        //     return inc.target_km_walked;
-        //   }));
-        // }
+      // if (i.inventory_item_data.egg_incubators) {
+      //   console.log(i.inventory_item_data.egg_incubators.egg_incubator.map(function(inc) {
+      //     return inc.target_km_walked;
+      //   }));
+      // }
       // });
 
     });

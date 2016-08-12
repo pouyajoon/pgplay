@@ -1,0 +1,22 @@
+-----------------------------
+UPDATE FORTS 85
+ASYNC ACTION DONE Catch Pokemon Interval
+......APPLY ASYNC 1 Catch Pokemon Interval
+ASYNC ACTION DONE Catch Pokemon Interval
+..APPLY ASYNC 1 Take Near Forts
+ASYNC ACTION DONE Take Near Forts
+..APPLY ASYNC 1 Catch Pokemon Interval
+ASYNC ACTION DONE Catch Pokemon Interval
+......APPLY ASYNC 1 Catch Pokemon Interval
+UPDATE FORTS 85
+[+] There is a Caterpie near!! I can try to catch it!
+[*] Encountering pokemon Caterpie... With CP (152) Catch Will Ball (2)
+{ Status: 1, MissPercent: null }
+[*] Pokemon Catch ResultSuccessful catch
+ASYNC ACTION DONE Catch Pokemon Interval
+..APPLY ASYNC 2 getHatchedEggs
+ASYNC ACTION ERROR No result getHatchedEggs
+APPLY ASYNC 3 Catch Pokemon Interval
+ASYNC ACTION ERROR No result Catch Pokemon Interval
+APPLY ASYNC 2 getInventory
+-------------------------------

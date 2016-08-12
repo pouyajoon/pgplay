@@ -1,7 +1,23 @@
 (function() {
   'use strict';
 
+
+  var moment = require('moment');
+
   var evolvingPokemons = {};
+
+  var allIntervals = [];
+  var boomMode = false;
+
+  var save = {};
+
+  function initSave() {
+    save = {};
+    save.start = Date.now();
+    boomMode = false;
+  }
+
+  initSave();
 
   var colors = require('colors');
 
@@ -76,7 +92,7 @@
     126: 3,
     127: 3,
     129: 2, // magicarp
-    133: 5 //evoli
+    133: 8 //evoli
   };
 
 
@@ -137,7 +153,7 @@
   }
 
   function appendAsyncAction(action) {
-    if (Object.keys(evolvingPokemons).length > 0) {
+    if (action.type !== 'EVOLVE' && Object.keys(evolvingPokemons).length > 0) {
       if (action.type === 'MOVE') {
         console.log('Park Action For Later', action.name);
         parkedAsyncActionList.push(action);
@@ -161,12 +177,12 @@
       args = action.args;
       args.push(function(err, res) {
         if (err) {
-          console.log('ASYNC ACTION ERROR'.red, err, action.name);
+          console.log('ASYNC ACTION ERROR'.red, (new Date(Date.now())).toISOString(), err, action.name);
         } else {
           if (action.silence === true) {
             process.stdout.write('.');
           } else {
-            console.log('ASYNC ACTION DONE'.green, action.name);
+            console.log('ASYNC ACTION DONE'.green, (new Date(Date.now())).toISOString(), action.name);
           }
 
           if (action.callback) {
@@ -195,52 +211,52 @@
   // pos_lon = 2.330233;
 
   // gym madelaine
-  pos_lat = 48.869420;
-  pos_lon = 2.324004;
+  // pos_lat = 48.869420;
+  // pos_lon = 2.324004;
 
   // gym vendom
   // pos_lat = 48.867530;
   // pos_lon = 2.329288;
 
   // rue avron
-  // pos_lat = 48.852846;
-  // pos_lon = 2.409021;
+  pos_lat = 48.852846;
+  pos_lon = 2.409021;
 
   // rue scribe round
-  var round1 = [{
-    lat: 48.870495,
-    lng: 2.330228
-  }, {
-    lat: 48.8723199,
-    lng: 2.3284151
-  }, {
-    lat: 48.8702046,
-    lng: 2.3278585
-  }, {
-    lat: 48.8675866,
-    lng: 2.3335069
-  }, {
-    lat: 48.8706952,
-    lng: 2.3319797
-  }];
+  // var round1 = [{
+  //   lat: 48.870495,
+  //   lng: 2.330228
+  // }, {
+  //   lat: 48.8723199,
+  //   lng: 2.3284151
+  // }, {
+  //   lat: 48.8702046,
+  //   lng: 2.3278585
+  // }, {
+  //   lat: 48.8675866,
+  //   lng: 2.3335069
+  // }, {
+  //   lat: 48.8706952,
+  //   lng: 2.3319797
+  // }];
 
   // home round
-  // var round1 = [{
-  //   lat: 48.8530701,
-  //   lng: 2.4089785
-  // }, {
-  //   lat: 48.8515537,
-  //   lng: 2.4099224
-  // }, {
-  //   lat: 48.8537921,
-  //   lng: 2.4111323
-  // }, {
-  //   lat: 48.8529217,
-  //   lng: 2.4064246
-  // }, {
-  //   lat: 48.8526173,
-  //   lng: 2.4079283
-  // }];
+  var round1 = [{
+    lat: 48.8530701,
+    lng: 2.4089785
+  }, {
+    lat: 48.8515537,
+    lng: 2.4099224
+  }, {
+    lat: 48.8537921,
+    lng: 2.4111323
+  }, {
+    lat: 48.8529217,
+    lng: 2.4064246
+  }, {
+    lat: 48.8526173,
+    lng: 2.4079283
+  }];
 
   var pos1 = {
     lat: 48.870265,
@@ -288,15 +304,21 @@
   }
 
   function getFortBoost(socket, fortId, lat, lon) {
-
-
     appendAsyncAction({
       m: pokeio.GetFortSearch,
       args: [fortId, lat, lon],
       name: 'Get Fort Boost : ' + fortId,
-      callback: function(err, fort) {
+      callback: function(err, res) {
         // console.log('[*] Get Fort Boost'.green, fortId);
-        data.fortsById[fortId].CooldownCompleteMs = fort.cooldown_complete_timestamp_ms;
+        if (res.result !== 1) {
+          // console.log('FORT BOOST RESULT IS NOT CORRECT'.red, res);
+        } else {
+          if (data.fortsById[fortId]) {
+            // data.fortsById[fortId].CooldownCompleteMs = res.cooldown_complete_timestamp_ms;
+          } else {
+            console.log('FORT ID IS MISSING'.red, res, fortId);
+          }
+        }
       }
     });
 
@@ -402,7 +424,8 @@
           pokeio.CatchPokemon(currentPokemon, 1, 1.950, 1, pokeball, function(xsuc, xdat) {
             var res, status;
             if (xsuc) {
-              return console.log('CatchPokemon', xsuc);
+              console.log('ERROR CatchPokemon'.red, xsuc);
+              return callback && callback(xsuc);
             }
             console.log(xdat);
             status = ['Unexpected error', 'Successful catch', 'Catch Escape', 'Catch Flee', 'Missed Catch'];
@@ -415,14 +438,14 @@
             } else {
               console.log(('[*] Pokemon Catch Result' + status[xdat.Status]).gray);
             }
-            return callback && callback(res);
+            return callback && callback(null, res);
           });
         });
       }
 
       function tryCatch(currentPokemon, callback) {
-        catchPokemon(currentPokemon, function(catched) {
-          return callback && callback(catched);
+        catchPokemon(currentPokemon, function(err, catched) {
+          return callback && callback(err, catched);
         });
       }
 
@@ -432,11 +455,11 @@
         //   interval.pause();
         // }
         alltocatch.forEach(function(p) {
-          tryCatch(p, function(catched) {
+          tryCatch(p, function(err, catched) {
             // if (interval) {
             //   interval.resume();
             // }
-            return callback && callback(null, catched);
+            return callback && callback(err, catched);
           });
         });
       } else {
@@ -458,6 +481,11 @@
     moveId += 1;
     var myMoveId = moveId;
     moves[myMoveId] = true;
+
+    save.destination = {
+      lat: target.lat,
+      lng: target.lng
+    };
     // if (interval) {
     //   interval.stop();
     //   interval = undefined;
@@ -551,6 +579,9 @@
       console.log('[>] Start Move', points.length);
 
       function nextMove() {
+        if (boomMode === true) {
+          return false;
+        }
         nextPos = points.shift();
         if (nextPos) {
           // console.log('[>] Move To', nextPos, points.length);
@@ -572,6 +603,10 @@
               if (g_socket) {
                 g_socket.emit('user-new-position', nextPos);
               }
+              save.current_position = {
+                lat: nextPos.lat,
+                lng: nextPos.lng
+              };
               lastPos = nextPos;
 
               if (points.length === 0) {
@@ -585,7 +620,7 @@
                 }
               }
             }
-          })
+          });
         }
       }
       nextMove();
@@ -594,11 +629,14 @@
     // var points = getCustomPoints(source, target);
     // doMove(points, 50);
 
+    var positionToGo;
+
     getPathForDirection(source, target, function(points) {
       var positions = addExtraPointsOnDirectionPoints(points);
       if (socket) {
         socket.emit('g-move-path', positions);
       }
+      positionToGo = positions;
       doMove(positions.newPositions);
     });
 
@@ -624,6 +662,10 @@
       console.log('[S] User connected');
       socket.on('disconnect', function() {
         console.log('[S] User disconnected');
+      });
+
+      socket.on('get-move-path', function(callback) {
+        return callback && callback(positionToGo);
       });
 
       socket.on('get-profile', function(callback) {
@@ -812,6 +854,7 @@
     appendAsyncAction({
       m: pokeio.EvolvePokemon,
       args: [pokemonId],
+      type: 'EVOLVE',
       name: 'EVOLVE POKEMON ' + data.all_pokemons[typeId].name,
       nextAsyncTime: 5000,
       callback: function(err, res) {
@@ -830,7 +873,19 @@
 
 
   function initPGApi() {
-    // console.log('initPGApi');
+    var pos = current_pos;
+
+    if (save.current_position) {
+      pos = {
+        type: 'coords',
+        coords: {
+          latitude: save.current_position.lat,
+          longitude: save.current_position.lng,
+          altitude: 0
+        }
+      };
+
+    }
     pokeio.init('pouyapokemon', 'pokemonGO', current_pos, 'google', function(err) {
       if (err) {
         return console.log('initPG', err);
@@ -840,7 +895,6 @@
         data.all_pokemons[p.id] = p;
       });
 
-      // setTimeout(goNextRound, 2500);
 
       function asyncCatchPokemonInterval() {
         prependAsyncAction({
@@ -898,7 +952,7 @@
         console.log('EVOLUTION NUM IS'.magenta, evolutionsNum);
 
         if (evolutionsNum > 60) {
-          // evolutionTime();
+          evolutionTime();
         }
       }
 
@@ -919,6 +973,8 @@
       function evolutionTime() {
 
         console.log('***** EVOLUTION TIME *****'.red);
+
+        // evolveThemAll();
 
         prependAsyncAction({
           m: pokeio.UseItemXpBoost,
@@ -1118,7 +1174,7 @@
               args = [f, bestPokemons, null];
             } else {
               bestPokemons = getListOfBestPokemons(1);
-              args = [f, null, bestPokemons[0]];              
+              args = [f, null, bestPokemons[0]];
             }
 
             console.log(f);
@@ -1181,16 +1237,44 @@
       }
 
 
-      // setInterval(asyncHatchedEggs, 60 * 1e3);
-      // setInterval(asyncGetInventory, 30 * 1e3);
-      // setInterval(asyncTakeNearForts, 8 * 1e3);
-      // setInterval(asyncCatchPokemonInterval, 3000);
+      allIntervals.push(setInterval(asyncHatchedEggs, 60 * 1e3));
+      allIntervals.push(setInterval(asyncGetInventory, 30 * 1e3));
+      allIntervals.push(setInterval(asyncTakeNearForts, 8 * 1e3));
+      allIntervals.push(setInterval(asyncCatchPokemonInterval, 3 * 1e3));
 
-      setTimeout(updateGyms, 5000);
+      // setTimeout(updateGyms, 5000);
       setTimeout(asyncCatchPokemonInterval, 1000);
-      // asyncHatchedEggs();
-      asyncGetInventory();
+      setTimeout(asyncHatchedEggs, 1000);
+      setTimeout(asyncGetInventory, 0);
 
+
+      var resetTimer = setInterval(function() {
+        var diff = Date.now() - save.start;
+        console.log('CHECK TIMER'.red, moment().diff(save.start, 'minutes'), 'minutes');
+        if (diff > 3 * 60 * 1e3) {
+          console.log('BOOM RESET WORLD'.red);
+          boomMode = true;
+          clearInterval(resetTimer);
+          asyncActionList = [];
+          parkedAsyncActionList = [];
+          allIntervals.forEach(function(i) {
+            clearInterval(i);
+          });
+          setTimeout(function() {
+            initPGApi();
+          }, 20 * 1e3);
+        }
+      }, 30 * 1e3);
+
+      if (save.destination) {
+        var dest = save.destination;
+        setTimeout(function() {
+          initSave();
+          doGlobalMove(g_socket, save.current_position, dest);
+        }, 2500);
+      } else {
+        setTimeout(goNextRound, 2500);
+      }
     });
   }
 

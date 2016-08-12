@@ -41,7 +41,6 @@
       </div>
     </div>
 
-
     <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
       <div class="mdl-tabs__tab-bar">
         <a href="#group-panel" class="mdl-tabs__tab is-active">Grouped</a>
@@ -57,6 +56,8 @@
             <th>Number</th>
             <th>Candies</th>
             <th>Pokemons</th>
+            <th>Next Evolution</th>
+            <th>Evolution</th>
           </tr>
           <tr ng-repeat="(pId, pList) in pokemonsById">
             <td><img class="p-img" ng-src="{{allPokemons[pId].img}}"></td>
@@ -71,6 +72,8 @@
                 </li>
               </ul>
             </td>
+            <td>{{pokemonReference[pId].candy_count}}</td>
+            <td><img title="{{nextEvolutions[pId].name}}" ng-if="nextEvolutions[pId]" ng-src="{{nextEvolutions[pId].img}}"></td>
           </tr>
         </table>
       </div>

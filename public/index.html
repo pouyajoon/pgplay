@@ -84,7 +84,9 @@
             <td>
               <ul class="sub-pokemon-list" ng-if="pokemonsById[pId]">
                 <li ng-repeat="p in pList">
-                  <a ng-click="evolvePokemon(p)" title="Evolve This Pokemon">{{p.cp}} - {{p.height_m.toFixed(2)}} m - {{p.weight_kg.toFixed(2)}} kg</a>
+                  <!-- <a ng-click="evolvePokemon(p)" title="Evolve This Pokemon"> -->
+                  {{p.cp}} - {{p.height_m.toFixed(2)}} m - {{p.weight_kg.toFixed(2)}} kg
+                  <!-- </a> -->
                 </li>
               </ul>
             </td>

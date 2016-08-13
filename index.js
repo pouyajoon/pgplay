@@ -20,7 +20,8 @@
     16: 12,
     19: 25,
     21: 50,
-    41: 50
+    41: 50,
+    60: 25
   };
 
   var inventoryItemTypes = {
@@ -42,11 +43,13 @@
   inventoryItemTypesMax[inventoryItemTypes.ITEM_GREAT_BALL] = 75;
   inventoryItemTypesMax[inventoryItemTypes.ITEM_ULTRA_BALL] = 100;
   inventoryItemTypesMax[inventoryItemTypes.ITEM_MASTER_BALL] = 100;
-  inventoryItemTypesMax[inventoryItemTypes.ITEM_POTION] = 5;
+  inventoryItemTypesMax[inventoryItemTypes.ITEM_POTION] = 0;
   inventoryItemTypesMax[inventoryItemTypes.ITEM_SUPER_POTION] = 10;
   inventoryItemTypesMax[inventoryItemTypes.ITEM_HYPER_POTION] = 10;
+  inventoryItemTypesMax[inventoryItemTypes.ITEM_MAX_POTION] = 50;
   inventoryItemTypesMax[inventoryItemTypes.ITEM_REVIVE] = 5;
-  inventoryItemTypesMax[inventoryItemTypes.RAZZ_BERRY] = 25;
+
+  inventoryItemTypesMax[inventoryItemTypes.RAZZ_BERRY] = 15;
 
 
   var maximunPokemonsStorage = {
@@ -93,6 +96,7 @@
     74: 2,
     77: 2,
     79: 2,
+    84: 2,
     85: 3,
     92: 2,
     96: 2,
@@ -225,8 +229,8 @@
   Pokeio = require('./Pokemon-GO-node-api/poke.io.js');
 
   // 5 rue scribe
-  pos_lat = 48.871146;
-  pos_lon = 2.330233;
+  // pos_lat = 48.871146;
+  // pos_lon = 2.330233;
 
   // gym madelaine
   // pos_lat = 48.869420;
@@ -237,44 +241,86 @@
   // pos_lon = 2.329288;
 
   // rue avron
-  // pos_lat = 48.852846;
-  // pos_lon = 2.409021;
+  pos_lat = 48.852846;
+  pos_lon = 2.409021;
 
   // rue scribe round
-  var round1 = [{
-    lat: 48.870495,
-    lng: 2.330228
-  }, {
-    lat: 48.8723199,
-    lng: 2.3284151
-  }, {
-    lat: 48.8702046,
-    lng: 2.3278585
-  }, {
-    lat: 48.8675866,
-    lng: 2.3335069
-  }, {
-    lat: 48.8706952,
-    lng: 2.3319797
-  }];
+  // var round1 = [{
+  //   lat: 48.870495,
+  //   lng: 2.330228
+  // }, {
+  //   lat: 48.8723199,
+  //   lng: 2.3284151
+  // }, {
+  //   lat: 48.8702046,
+  //   lng: 2.3278585
+  // }, {
+  //   lat: 48.8675866,
+  //   lng: 2.3335069
+  // }, {
+  //   lat: 48.8706952,
+  //   lng: 2.3319797
+  // }];
+
+  // paris 
+  // var round1 = [{
+  //   lat: 48.870521,
+  //   lng: 2.330565
+  // }, {
+  //   lat: 48.863534,
+  //   lng: 2.325200
+  // }, {
+  //   lat: 48.853899,
+  //   lng: 2.351872
+  // }, {
+  //   lat: 48.854654,
+  //   lng: 2.347795
+  // }, {
+  //   lat: 48.857012,
+  //   lng: 2.340682
+  // }, {
+  //   lat: 48.845476,
+  //   lng: 2.363502
+  // }, {
+  //   lat: 48.844085,
+  //   lng: 2.359790
+  // }, {
+  //   lat: 48.846606,
+  //   lng: 2.337088
+  // }, {
+  //   lat: 48.845914,
+  //   lng: 2.311875
+  // }, {
+  //   lat: 48.857153,
+  //   lng: 2.312776
+  // }, {
+  //   lat: 48.854640,
+  //   lng: 2.314879
+  // }, {
+  //   lat: 48.855445,
+  //   lng: 2.298893
+  // }, {
+  //   lat: 48.861741,
+  //   lng: 2.289001
+  // }];
 
   // home round
-  // var round1 = [{
-  //   lat: 48.8530701,
-  //   lng: 2.4089785
-  // }, {
-  //   lat: 48.8515537,
-  //   lng: 2.4099224
-  // }, {
-  //   lat: 48.8537921,
-  //   lng: 2.4111323
-  // }, {
-  //   lat: 48.8529217,
-  //   lng: 2.4064246
-  // }, {
-  //   lat: 48.8526173,
-  //   lng: 2.4079283
-  // }];
+  var round1 = [{
+    lat: 48.8530701,
+    lng: 2.4089785
+  }, {
+    lat: 48.8515537,
+    lng: 2.4099224
+  }, {
+    lat: 48.8537921,
+    lng: 2.4111323
+  }, {
+    lat: 48.8529217,
+    lng: 2.4064246
+  }, {
+    lat: 48.8526173,
+    lng: 2.4079283
+  }];
 
   current_pos = {
     type: 'coords',
@@ -315,6 +361,7 @@
     appendAsyncAction({
       m: pokeio.GetFortSearch,
       args: [fortId, lat, lon],
+      silence: true,
       name: 'Get Fort Boost : ' + fortId,
       callback: function(err, res) {
         // console.log('[*] Get Fort Boost'.green, fortId);
@@ -417,7 +464,7 @@
 
       function catchPokemon(currentPokemon, callback) {
         var pokedexInfo = pokeio.pokemonlist[parseInt(currentPokemon.PokedexTypeId, 10) - 1];
-        console.log('[+] There is a ' + pokedexInfo.name + ' near!! I can try to catch it!');
+        console.log('[+] There is a ' + pokedexInfo.name + ' near!! I can try to catch it!', (new Date(Date.now())).toISOString());
         pokeio.EncounterPokemon(currentPokemon, function(err, encounterData) {
           var cp = encounterData.WildPokemon.pokemon.cp;
           var pokeball = 1;
@@ -674,7 +721,6 @@
       socket.on('evolve-pokemon', function(pokemon) {
         console.log('evolve-pokemon'.blue, pokemon.reference.id, pokemon.id);
         evolvePokemon(pokemon.reference.id, pokemon);
-        asyncGetInventory();
       });
 
       socket.on('get-profile', function(callback) {
@@ -901,7 +947,8 @@
         prependAsyncAction({
           m: catchPokemonInterval,
           args: [],
-          name: 'Catch Pokemon Interval'
+          silence: true,
+          name: 'Catch Pokemon'
         });
       }
 
@@ -1006,6 +1053,7 @@
               if (diff > 0) {
                 appendAsyncAction({
                   m: pokeio.DropItem,
+                  silence: true,
                   args: [parseInt(itemId, 10), diff],
                   name: 'Clean Inventory For ' + itemId + ', Remove ' + diff + ' Items'
                 });
@@ -1214,12 +1262,11 @@
         data.allgyms = allgyms;
       }
 
-
-
       function asyncHatchedEggs() {
         appendAsyncAction({
           m: getHatchedEggs,
           args: [],
+          silence: true,
           name: 'getHatchedEggs'
         });
       }
@@ -1228,6 +1275,7 @@
         appendAsyncAction({
           m: getInventory,
           args: [],
+          silence: true,
           name: 'getInventory'
         });
       }
@@ -1235,6 +1283,7 @@
       function asyncTakeNearForts() {
         appendAsyncAction({
           m: takeNearForts,
+          silence: true,
           args: [],
           name: 'Take Near Forts'
         });
@@ -1272,11 +1321,12 @@
       cluster.fork();
       //if the worker dies, restart it.
       cluster.on('exit', function(worker) {
+        var nextRun = 30000 + Math.floor(Math.random() * 30000) + 1;
         console.log('Worker ' + worker.id + ' died..'.red);
-        console.log('Start Next Session In 10 Seconds'.green);
+        console.log('Start Next Session In ' + (nextRun / 1e3) + ' Seconds'.green);
         setTimeout(function() {
           cluster.fork();
-        }, 10 * 1e3);
+        }, nextRun);
       });
     } else {
       console.log('Hello Pokebot'.blue);

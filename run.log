@@ -1,0 +1,328 @@
+cluster true
+cluster false
+Hello Pokebot
+init save manager
+setup gmap
+listening on *:3000
+update location
+[i] Logging with user: pouyapokemon
+[i] Received Google access token!
+[i] Received API Endpoint: https://pgorelease.nianticlabs.com/plfe/117/rpc
+.EVOLUTION NUM IS 21
+.APPLY ASYNC 5 Catch Pokemon Interval
+UPDATE FORTS 119
+[+] There is a Bellsprout near!! I can try to catch it!
+[*] Encountering pokemon Bellsprout... With CP (244) Catch Will Ball (2)
+ERROR CatchPokemon No result
+ASYNC ACTION ERROR 2016-08-13T07:35:52.627Z No result Catch Pokemon Interval
+APPLY ASYNC 4 Clean Inventory For 3, Remove 8 Items
+[>] Go Next Round -1
+[>] Start Move 12
+ASYNC ACTION DONE 2016-08-13T07:35:53.659Z Clean Inventory For 3, Remove 8 Items
+[S] User connected
+APPLY ASYNC 5 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:35:54.710Z Catch Pokemon Interval
+APPLY ASYNC 4 Clean Inventory For 104, Remove 27 Items
+ASYNC ACTION DONE 2016-08-13T07:35:55.659Z Clean Inventory For 104, Remove 27 Items
+APPLY ASYNC 3 Clean Inventory For 201, Remove 10 Items
+ASYNC ACTION DONE 2016-08-13T07:35:56.490Z Clean Inventory For 201, Remove 10 Items
+APPLY ASYNC 3 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:35:57.432Z Catch Pokemon Interval
+APPLY ASYNC 2 Clean Inventory For 701, Remove 25 Items
+ASYNC ACTION DONE 2016-08-13T07:35:58.297Z Clean Inventory For 701, Remove 25 Items
+....APPLY ASYNC 2 Catch Pokemon Interval
+UPDATE FORTS 119
+[+] There is a Bellsprout near!! I can try to catch it!
+[*] Encountering pokemon Bellsprout... With CP (244) Catch Will Ball (2)
+{ Status: 1, MissPercent: null }
+[*] Pokemon Catch ResultSuccessful catch
+ASYNC ACTION DONE 2016-08-13T07:36:01.669Z Catch Pokemon Interval
+..APPLY ASYNC 2 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:36:03.361Z Catch Pokemon Interval
+..APPLY ASYNC 1 Get Fort Boost : cde87c1bd69a43dea74dc4756b8856c9.16
+ASYNC ACTION DONE 2016-08-13T07:36:04.750Z Get Fort Boost : cde87c1bd69a43dea74dc4756b8856c9.16
+..APPLY ASYNC 1 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:36:06.372Z Catch Pokemon Interval
+......APPLY ASYNC 2 Catch Pokemon Interval
+UPDATE FORTS 119
+ASYNC ACTION DONE 2016-08-13T07:36:09.380Z Catch Pokemon Interval
+APPLY ASYNC 1 Get Fort Boost : cde87c1bd69a43dea74dc4756b8856c9.16
+ASYNC ACTION DONE 2016-08-13T07:36:10.310Z Get Fort Boost : cde87c1bd69a43dea74dc4756b8856c9.16
+....APPLY ASYNC 1 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:36:12.487Z Catch Pokemon Interval
+......APPLY ASYNC 2 Catch Pokemon Interval
+UPDATE FORTS 119
+ASYNC ACTION DONE 2016-08-13T07:36:15.681Z Catch Pokemon Interval
+......[>] MoveTo Done.
+[>] Go Next Round 0
+[>] Start Move 52
+APPLY ASYNC 1 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:36:18.663Z Catch Pokemon Interval
+CHECK BOOM TIMER 0 minutes
+......APPLY ASYNC 2 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:36:21.294Z Catch Pokemon Interval
+...EVOLUTION NUM IS 21
+.APPLY ASYNC 4 Catch Pokemon Interval
+UPDATE FORTS 121
+ASYNC ACTION DONE 2016-08-13T07:36:24.592Z Catch Pokemon Interval
+....APPLY ASYNC 2 Clean Inventory For 104, Remove 1 Items
+ASYNC ACTION DONE 2016-08-13T07:36:26.759Z Clean Inventory For 104, Remove 1 Items
+APPLY ASYNC 2 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:36:27.720Z Catch Pokemon Interval
+APPLY ASYNC 1 Transfer Pokemon With Type Id 69, CP 244
+ASYNC ACTION DONE 2016-08-13T07:36:28.627Z Transfer Pokemon With Type Id 69, CP 244
+..APPLY ASYNC 1 Catch Pokemon Interval
+UPDATE FORTS 119
+ASYNC ACTION DONE 2016-08-13T07:36:30.342Z Catch Pokemon Interval
+......APPLY ASYNC 1 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:36:33.189Z Catch Pokemon Interval
+........APPLY ASYNC 1 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:36:36.521Z Catch Pokemon Interval
+......APPLY ASYNC 2 Catch Pokemon Interval
+UPDATE FORTS 119
+ASYNC ACTION DONE 2016-08-13T07:36:39.630Z Catch Pokemon Interval
+......APPLY ASYNC 1 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:36:42.292Z Catch Pokemon Interval
+......APPLY ASYNC 1 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:36:45.184Z Catch Pokemon Interval
+......APPLY ASYNC 2 Catch Pokemon Interval
+UPDATE FORTS 119
+ASYNC ACTION DONE 2016-08-13T07:36:48.278Z Catch Pokemon Interval
+..CHECK BOOM TIMER 1 minutes
+..APPLY ASYNC 2 Get Fort Boost : 16016a8a92714c51a81b821b555c324f.16
+ASYNC ACTION DONE 2016-08-13T07:36:50.266Z Get Fort Boost : 16016a8a92714c51a81b821b555c324f.16
+APPLY ASYNC 4 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:36:51.097Z Catch Pokemon Interval
+APPLY ASYNC 3 Get Fort Boost : 82d7994e177d41d999cb7013f731b398.16
+ASYNC ACTION DONE 2016-08-13T07:36:51.926Z Get Fort Boost : 82d7994e177d41d999cb7013f731b398.16
+....APPLY ASYNC 2 Catch Pokemon Interval
+UPDATE FORTS 119
+ASYNC ACTION DONE 2016-08-13T07:36:54.332Z Catch Pokemon Interval
+.EVOLUTION NUM IS 21
+...APPLY ASYNC 4 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:36:57.609Z Catch Pokemon Interval
+..APPLY ASYNC 2 Clean Inventory For 1, Remove 1 Items
+ASYNC ACTION DONE 2016-08-13T07:36:58.916Z Clean Inventory For 1, Remove 1 Items
+APPLY ASYNC 1 Clean Inventory For 3, Remove 1 Items
+ASYNC ACTION DONE 2016-08-13T07:36:59.810Z Clean Inventory For 3, Remove 1 Items
+APPLY ASYNC 1 Catch Pokemon Interval
+UPDATE FORTS 119
+ASYNC ACTION DONE 2016-08-13T07:37:00.680Z Catch Pokemon Interval
+......APPLY ASYNC 2 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:37:03.502Z Catch Pokemon Interval
+......APPLY ASYNC 1 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:37:06.241Z Catch Pokemon Interval
+........APPLY ASYNC 1 Catch Pokemon Interval
+UPDATE FORTS 115
+ASYNC ACTION DONE 2016-08-13T07:37:09.840Z Catch Pokemon Interval
+....APPLY ASYNC 2 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:37:12.629Z Catch Pokemon Interval
+......APPLY ASYNC 1 Catch Pokemon Interval
+UPDATE FORTS 115
+ASYNC ACTION DONE 2016-08-13T07:37:15.602Z Catch Pokemon Interval
+......APPLY ASYNC 1 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:37:18.650Z Catch Pokemon Interval
+CHECK BOOM TIMER 1 minutes
+......APPLY ASYNC 3 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:37:21.369Z Catch Pokemon Interval
+APPLY ASYNC 2 Get Fort Boost : c49c5c79b0054eb6b0cea4d6c862e371.16
+ASYNC ACTION DONE 2016-08-13T07:37:22.141Z Get Fort Boost : c49c5c79b0054eb6b0cea4d6c862e371.16
+...EVOLUTION NUM IS 21
+.APPLY ASYNC 2 Catch Pokemon Interval
+UPDATE FORTS 115
+ASYNC ACTION DONE 2016-08-13T07:37:25.391Z Catch Pokemon Interval
+..APPLY ASYNC 2 Clean Inventory For 1, Remove 3 Items
+ASYNC ACTION DONE 2016-08-13T07:37:26.983Z Clean Inventory For 1, Remove 3 Items
+APPLY ASYNC 2 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:37:27.972Z Catch Pokemon Interval
+......APPLY ASYNC 1 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:37:30.901Z Catch Pokemon Interval
+......APPLY ASYNC 1 Catch Pokemon Interval
+UPDATE FORTS 115
+ASYNC ACTION DONE 2016-08-13T07:37:33.947Z Catch Pokemon Interval
+..[>] MoveTo Done.
+[>] Go Next Round 1
+[>] Start Move 74
+......APPLY ASYNC 1 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:37:37.376Z Catch Pokemon Interval
+....APPLY ASYNC 1 Catch Pokemon Interval
+UPDATE FORTS 115
+ASYNC ACTION DONE 2016-08-13T07:37:39.974Z Catch Pokemon Interval
+......APPLY ASYNC 1 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:37:42.887Z Catch Pokemon Interval
+........APPLY ASYNC 1 Catch Pokemon Interval
+UPDATE FORTS 115
+ASYNC ACTION DONE 2016-08-13T07:37:46.430Z Catch Pokemon Interval
+......CHECK BOOM TIMER 2 minutes
+APPLY ASYNC 1 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:37:49.358Z Catch Pokemon Interval
+......APPLY ASYNC 4 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:37:52.120Z Catch Pokemon Interval
+...EVOLUTION NUM IS 21
+.APPLY ASYNC 2 Catch Pokemon Interval
+UPDATE FORTS 115
+ASYNC ACTION DONE 2016-08-13T07:37:55.435Z Catch Pokemon Interval
+....APPLY ASYNC 1 Get Fort Boost : d5579aaa5a214dd791d7e86a7c535749.16
+ASYNC ACTION DONE 2016-08-13T07:37:57.513Z Get Fort Boost : d5579aaa5a214dd791d7e86a7c535749.16
+APPLY ASYNC 1 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:37:58.600Z Catch Pokemon Interval
+....APPLY ASYNC 2 Catch Pokemon Interval
+UPDATE FORTS 115
+ASYNC ACTION DONE 2016-08-13T07:38:01.100Z Catch Pokemon Interval
+..APPLY ASYNC 1 Get Fort Boost : d5579aaa5a214dd791d7e86a7c535749.16
+ASYNC ACTION DONE 2016-08-13T07:38:02.888Z Get Fort Boost : d5579aaa5a214dd791d7e86a7c535749.16
+..APPLY ASYNC 1 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:38:04.270Z Catch Pokemon Interval
+......APPLY ASYNC 2 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:38:07.296Z Catch Pokemon Interval
+......APPLY ASYNC 1 Catch Pokemon Interval
+UPDATE FORTS 115
+ASYNC ACTION DONE 2016-08-13T07:38:10.170Z Catch Pokemon Interval
+......APPLY ASYNC 1 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:38:12.875Z Catch Pokemon Interval
+......APPLY ASYNC 2 Catch Pokemon Interval
+UPDATE FORTS 119
+ASYNC ACTION DONE 2016-08-13T07:38:15.889Z Catch Pokemon Interval
+......APPLY ASYNC 1 Catch Pokemon Interval
+CHECK BOOM TIMER 2 minutes
+ASYNC ACTION DONE 2016-08-13T07:38:18.986Z Catch Pokemon Interval
+......APPLY ASYNC 2 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:38:21.830Z Catch Pokemon Interval
+.EVOLUTION NUM IS 21
+...APPLY ASYNC 4 Catch Pokemon Interval
+UPDATE FORTS 119
+ASYNC ACTION DONE 2016-08-13T07:38:25.099Z Catch Pokemon Interval
+APPLY ASYNC 3 Clean Inventory For 104, Remove 1 Items
+ASYNC ACTION DONE 2016-08-13T07:38:25.955Z Clean Inventory For 104, Remove 1 Items
+APPLY ASYNC 2 Clean Inventory For 701, Remove 1 Items
+ASYNC ACTION DONE 2016-08-13T07:38:26.718Z Clean Inventory For 701, Remove 1 Items
+..APPLY ASYNC 2 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:38:28.200Z Catch Pokemon Interval
+..APPLY ASYNC 1 Get Fort Boost : 44df9fe3b76b4cf9ad2cdd654a6c0ca8.16
+ASYNC ACTION DONE 2016-08-13T07:38:29.693Z Get Fort Boost : 44df9fe3b76b4cf9ad2cdd654a6c0ca8.16
+..APPLY ASYNC 1 Catch Pokemon Interval
+UPDATE FORTS 119
+ASYNC ACTION DONE 2016-08-13T07:38:31.471Z Catch Pokemon Interval
+....APPLY ASYNC 1 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:38:33.851Z Catch Pokemon Interval
+........APPLY ASYNC 1 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:38:37.082Z Catch Pokemon Interval
+........APPLY ASYNC 2 Catch Pokemon Interval
+UPDATE FORTS 119
+ASYNC ACTION DONE 2016-08-13T07:38:40.344Z Catch Pokemon Interval
+......APPLY ASYNC 2 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:38:43.151Z Catch Pokemon Interval
+APPLY ASYNC 1 Get Fort Boost : a7d1f57478d84049806b38baa777f6f2.16
+ASYNC ACTION DONE 2016-08-13T07:38:43.988Z Get Fort Boost : a7d1f57478d84049806b38baa777f6f2.16
+....APPLY ASYNC 1 Catch Pokemon Interval
+UPDATE FORTS 119
+ASYNC ACTION DONE 2016-08-13T07:38:46.454Z Catch Pokemon Interval
+......APPLY ASYNC 1 Catch Pokemon Interval
+CHECK BOOM TIMER 3 minutes
+ASYNC ACTION DONE 2016-08-13T07:38:49.201Z Catch Pokemon Interval
+......APPLY ASYNC 3 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:38:51.984Z Catch Pokemon Interval
+...EVOLUTION NUM IS 21
+.APPLY ASYNC 4 Catch Pokemon Interval
+UPDATE FORTS 119
+ASYNC ACTION DONE 2016-08-13T07:38:55.685Z Catch Pokemon Interval
+..APPLY ASYNC 4 Clean Inventory For 1, Remove 4 Items
+ASYNC ACTION DONE 2016-08-13T07:38:57.300Z Clean Inventory For 1, Remove 4 Items
+APPLY ASYNC 4 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:38:58.301Z Catch Pokemon Interval
+APPLY ASYNC 3 Clean Inventory For 103, Remove 1 Items
+ASYNC ACTION DONE 2016-08-13T07:38:59.062Z Clean Inventory For 103, Remove 1 Items
+APPLY ASYNC 2 Clean Inventory For 701, Remove 1 Items
+ASYNC ACTION DONE 2016-08-13T07:38:59.918Z Clean Inventory For 701, Remove 1 Items
+..APPLY ASYNC 1 Catch Pokemon Interval
+UPDATE FORTS 119
+ASYNC ACTION DONE 2016-08-13T07:39:01.472Z Catch Pokemon Interval
+......APPLY ASYNC 2 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:39:04.370Z Catch Pokemon Interval
+......APPLY ASYNC 1 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:39:07.119Z Catch Pokemon Interval
+........APPLY ASYNC 1 Catch Pokemon Interval
+UPDATE FORTS 119
+[+] There is a Drowzee near!! I can try to catch it!
+[*] Encountering pokemon Drowzee... With CP (655) Catch Will Ball (3)
+{ Status: 2, MissPercent: 0.054367125034332275 }
+[*] Pokemon Catch ResultCatch Escape
+ASYNC ACTION DONE 2016-08-13T07:39:11.178Z Catch Pokemon Interval
+....APPLY ASYNC 2 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:39:13.386Z Catch Pokemon Interval
+..APPLY ASYNC 1 Get Fort Boost : b3467a51dc2d47198dd0b0030dd7225e.16
+ASYNC ACTION DONE 2016-08-13T07:39:14.919Z Get Fort Boost : b3467a51dc2d47198dd0b0030dd7225e.16
+..APPLY ASYNC 1 Catch Pokemon Interval
+UPDATE FORTS 119
+[+] There is a Drowzee near!! I can try to catch it!
+[*] Encountering pokemon Drowzee... With CP (655) Catch Will Ball (3)
+{ Status: 1, MissPercent: null }
+[*] Pokemon Catch ResultSuccessful catch
+ASYNC ACTION DONE 2016-08-13T07:39:17.642Z Catch Pokemon Interval
+..APPLY ASYNC 1 Catch Pokemon Interval
+CHECK BOOM TIMER 3 minutes
+ASYNC ACTION DONE 2016-08-13T07:39:19.143Z Catch Pokemon Interval
+......APPLY ASYNC 2 Get Fort Boost : b3467a51dc2d47198dd0b0030dd7225e.16
+ASYNC ACTION DONE 2016-08-13T07:39:21.942Z Get Fort Boost : b3467a51dc2d47198dd0b0030dd7225e.16
+APPLY ASYNC 2 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:39:22.799Z Catch Pokemon Interval
+.EVOLUTION NUM IS 21
+.APPLY ASYNC 2 Catch Pokemon Interval
+UPDATE FORTS 119
+ASYNC ACTION DONE 2016-08-13T07:39:25.647Z Catch Pokemon Interval
+..[>] MoveTo Done.
+[>] Go Next Round 2
+[>] Start Move 105
+APPLY ASYNC 1 Transfer Pokemon With Type Id 96, CP 655
+ASYNC ACTION DONE 2016-08-13T07:39:27.376Z Transfer Pokemon With Type Id 96, CP 655
+APPLY ASYNC 2 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:39:28.295Z Catch Pokemon Interval
+......APPLY ASYNC 2 Catch Pokemon Interval
+UPDATE FORTS 119
+ASYNC ACTION DONE 2016-08-13T07:39:31.195Z Catch Pokemon Interval
+APPLY ASYNC 1 Get Fort Boost : b3467a51dc2d47198dd0b0030dd7225e.16
+ASYNC ACTION DONE 2016-08-13T07:39:31.987Z Get Fort Boost : b3467a51dc2d47198dd0b0030dd7225e.16
+....APPLY ASYNC 1 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:39:34.233Z Catch Pokemon Interval
+......APPLY ASYNC 2 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:39:37.057Z Catch Pokemon Interval
+..APPLY ASYNC 1 Get Fort Boost : b3467a51dc2d47198dd0b0030dd7225e.16
+ASYNC ACTION DONE 2016-08-13T07:39:38.567Z Get Fort Boost : b3467a51dc2d47198dd0b0030dd7225e.16
+..APPLY ASYNC 1 Catch Pokemon Interval
+UPDATE FORTS 119
+ASYNC ACTION DONE 2016-08-13T07:39:40.404Z Catch Pokemon Interval
+......APPLY ASYNC 1 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:39:43.261Z Catch Pokemon Interval
+......APPLY ASYNC 2 Catch Pokemon Interval
+UPDATE FORTS 119
+ASYNC ACTION DONE 2016-08-13T07:39:46.261Z Catch Pokemon Interval
+APPLY ASYNC 1 Get Fort Boost : b3467a51dc2d47198dd0b0030dd7225e.16
+ASYNC ACTION DONE 2016-08-13T07:39:47.106Z Get Fort Boost : b3467a51dc2d47198dd0b0030dd7225e.16
+....CHECK BOOM TIMER 4 minutes
+APPLY ASYNC 1 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:39:49.270Z Catch Pokemon Interval
+......APPLY ASYNC 4 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:39:52.165Z Catch Pokemon Interval
+...EVOLUTION NUM IS 21
+.APPLY ASYNC 2 Catch Pokemon Interval
+UPDATE FORTS 119
+ASYNC ACTION DONE 2016-08-13T07:39:55.833Z Catch Pokemon Interval
+......APPLY ASYNC 2 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:39:58.630Z Catch Pokemon Interval
+APPLY ASYNC 1 Get Fort Boost : fdf86dc287ef4bcd9b9f3be524757393.16
+ASYNC ACTION DONE 2016-08-13T07:39:59.494Z Get Fort Boost : fdf86dc287ef4bcd9b9f3be524757393.16
+....APPLY ASYNC 2 Catch Pokemon Interval
+UPDATE FORTS 119
+ASYNC ACTION DONE 2016-08-13T07:40:01.739Z Catch Pokemon Interval
+..APPLY ASYNC 1 Get Fort Boost : fdf86dc287ef4bcd9b9f3be524757393.16
+ASYNC ACTION DONE 2016-08-13T07:40:03.202Z Get Fort Boost : fdf86dc287ef4bcd9b9f3be524757393.16
+..APPLY ASYNC 1 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:40:04.669Z Catch Pokemon Interval
+......APPLY ASYNC 1 Catch Pokemon Interval
+ASYNC ACTION DONE 2016-08-13T07:40:07.500Z Catch Pokemon Interval
+......APPLY ASYNC 2 Catch Pokemon Interval
+UPDATE FORTS 119
+ASYNC ACTION DONE 2016-08-13T07:40:10.490Z Catch Pokemon Interval
+APPLY ASYNC 1 Get Fort Boost : fdf86dc287ef4bcd9b9f3be524757393.16
+ASYNC ACTION DONE 2016-08-13T07:40:11.315Z Get Fort Boost : fdf86dc287ef4bcd9b9f3be524757393.16
+....

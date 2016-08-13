@@ -9,10 +9,22 @@
       fs = require('fs'),
       moment = require('moment'),
       colors = require('colors'),
-      boomTime = 10;
+      boomTime = 8 + Math.floor(Math.random() * 3) + 1;
 
     function save() {
       fs.writeFileSync(fileName, JSON.stringify(value, null, 2), 'utf8');
+    }
+
+
+    function handleBoomMode() {
+      setInterval(function() {
+        var diff = moment().diff(startTime, 'minutes');
+        console.log('CHECK BOOM TIMER'.magenta, diff, 'minutes');
+        if (diff >= boomTime) {
+          console.log('BOOM RESET WORLD'.red);
+          throw new Error('BOOM BOOM');
+        }
+      }, 30 * 1e3);
     }
 
     function load() {
@@ -66,7 +78,7 @@
             longitude: position.lng,
             altitude: 0
           }
-        }
+        };
       }
     }
 
@@ -74,17 +86,6 @@
       boomTime += extendTime;
     }
 
-    function handleBoomMode() {
-      setInterval(function() {
-        var diff = moment().diff(startTime, 'minutes');
-        console.log('CHECK BOOM TIMER'.magenta, diff, 'minutes');
-        if (diff >= boomTime) {
-          console.log('BOOM RESET WORLD'.red);
-          throw new Error('BOOM BOOM');
-        }
-      }, 30 * 1e3);
-
-    }
 
     return {
       updatePosition: updatePosition,

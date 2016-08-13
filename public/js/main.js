@@ -248,7 +248,7 @@
     };
 
     $on('catch-pokemon', function(info) {
-      console.log(info);
+      // console.log('catch-pokemon', info);
       $scope.logs.unshift(info);
     });
 

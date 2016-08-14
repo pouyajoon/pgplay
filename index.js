@@ -1,332 +1,36 @@
 (function() {
   'use strict';
 
+  var saveManager = require('./libs/SaveManager').SaveManager,
+    AsyncActionHandler = require('./libs/AsyncActionHandler'),
+    moment = require('moment'),
+    colors = require('colors'),
+    constants = require('./libs/Constants').constants,
+    locations = require('./libs/Locations').locations,
+    tools = require('./libs/Tools');
 
-
-  var saveManager = require('./libs/SaveManager').SaveManager;
-
-  var moment = require('moment');
-
-  var evolvingPokemons = {};
+  var evolvingPokemons = {},
+    actionHandler;
 
   var allIntervals = [];
 
+  // var start_point = locations.points.avron,
+  //   round1 = locations.circuits.avron1;
 
-  var colors = require('colors');
-
-  var candidateForEvolution = {
-    10: 12,
-    13: 12,
-    16: 12,
-    19: 25,
-    21: 50,
-    41: 50,
-    60: 25
-  };
-
-  var inventoryItemTypes = {
-    ITEM_POKE_BALL: 1,
-    ITEM_GREAT_BALL: 2,
-    ITEM_ULTRA_BALL: 3,
-    ITEM_MASTER_BALL: 4,
-    ITEM_POTION: 101,
-    ITEM_SUPER_POTION: 102,
-    ITEM_HYPER_POTION: 103,
-    ITEM_MAX_POTION: 104,
-    ITEM_REVIVE: 201,
-    RAZZ_BERRY: 701,
-    ITEM_LUCKY_EGG: 301
-  };
-
-  var inventoryItemTypesMax = {};
-  inventoryItemTypesMax[inventoryItemTypes.ITEM_POKE_BALL] = 25;
-  inventoryItemTypesMax[inventoryItemTypes.ITEM_GREAT_BALL] = 75;
-  inventoryItemTypesMax[inventoryItemTypes.ITEM_ULTRA_BALL] = 100;
-  inventoryItemTypesMax[inventoryItemTypes.ITEM_MASTER_BALL] = 100;
-  inventoryItemTypesMax[inventoryItemTypes.ITEM_POTION] = 0;
-  inventoryItemTypesMax[inventoryItemTypes.ITEM_SUPER_POTION] = 10;
-  inventoryItemTypesMax[inventoryItemTypes.ITEM_HYPER_POTION] = 10;
-  inventoryItemTypesMax[inventoryItemTypes.ITEM_MAX_POTION] = 50;
-  inventoryItemTypesMax[inventoryItemTypes.ITEM_REVIVE] = 5;
-
-  inventoryItemTypesMax[inventoryItemTypes.RAZZ_BERRY] = 15;
+  var start_point = locations.points.jim_morison,
+    round1;
 
 
-  var maximunPokemonsStorage = {
-    1: 3,
-    4: 3,
-    7: 3,
-    10: 2,
-    11: 3,
-    13: 2, //Weedle
-    14: 2,
-    15: 2,
-    16: 5,
-    17: 3,
-    18: 2,
-    19: 5,
-    20: 2,
-    21: 2,
-    22: 3,
-    23: 2,
-    24: 2,
-    27: 2,
-    29: 2,
-    30: 2,
-    32: 2,
-    33: 2,
-    35: 2,
-    39: 2,
-    41: 2,
-    42: 2,
-    43: 2,
-    46: 2,
-    48: 2,
-    52: 2,
-    53: 2,
-    54: 2,
-    56: 2,
-    58: 2,
-    60: 2,
-    61: 2,
-    63: 2,
-    69: 2,
-    70: 2,
-    72: 3,
-    74: 2,
-    77: 2,
-    79: 2,
-    84: 2,
-    85: 3,
-    92: 2,
-    96: 2,
-    98: 2,
-    102: 2,
-    104: 2,
-    109: 2,
-    111: 3,
-    114: 2,
-    116: 2,
-    117: 2,
-    118: 2,
-    120: 2,
-    121: 3,
-    124: 3,
-    126: 3,
-    127: 3,
-    129: 2, // magicarp
-    133: 8, //evoli
-    147: 2
-  };
-
-
-
-  function Timer(callback, delay) {
-    var timerId, start, remaining = delay;
-
-    this.pause = function() {
-      console.log('[>] Pause Timer');
-      clearTimeout(timerId);
-      remaining -= new Date() - start;
-    };
-
-    this.resume = function(start) {
-      if (start === undefined) {
-        console.log('[>] Resume Timer');
-      }
-      start = new Date();
-      clearTimeout(timerId);
-      timerId = setTimeout(callback, remaining);
-    };
-
-    this.stop = function() {
-      console.log('[>] Stop Timer');
-      clearTimeout(timerId);
-    };
-
-    this.resume(true);
-  }
-
-  var Pokeio, current_pos, pos_lat, pos_lon, pokeio, g_socket, data, close_distance = 0.039,
-    interval, gmAPI, consts = {
-      step_distance_meter: {
-        value: 2.5,
-        length: 0.8
-      },
-      walking_interval: {
-        value: 800,
-        length: 400
-      }
-    };
-
-  var asyncActionList = [],
-    parkedAsyncActionList = [],
-    executeAsyncActionList;
-
-
-  function flushParkedList() {
-    asyncActionList = asyncActionList.concat(parkedAsyncActionList);
-    parkedAsyncActionList = [];
-  }
-
-  function setupNextAsyncCall(nextAsyncTime) {
-    var nextTimeMin = nextAsyncTime || 500;
-    setTimeout(executeAsyncActionList, nextTimeMin + Math.floor(Math.random() * 200) + 1);
-  }
-
-  function appendAsyncAction(action) {
-    if (action.type !== 'EVOLVE' && Object.keys(evolvingPokemons).length > 0) {
-      if (action.type === 'MOVE') {
-        console.log('Park Action For Later', action.name);
-        parkedAsyncActionList.push(action);
-      }
-      return console.log('Evolving Right Now ... Escape ' + action.name);
-    }
-    asyncActionList.push(action);
-  }
-
-  function prependAsyncAction(action) {
-    if (Object.keys(evolvingPokemons).length > 0) {
-      return console.log('Evolving Right Now ... Escape ' + action.name);
-    }
-    asyncActionList.unshift(action);
-  }
-
-  executeAsyncActionList = function() {
-    var action, args;
-    if (asyncActionList.length) {
-      action = asyncActionList.shift();
-      args = action.args;
-      args.push(function(err, res) {
-        if (err) {
-          console.log('ASYNC ACTION ERROR'.red, (new Date(Date.now())).toISOString(), err, action.name);
-        } else {
-          if (action.silence === true) {
-            process.stdout.write('.');
-          } else {
-            console.log('ASYNC ACTION DONE'.green, (new Date(Date.now())).toISOString(), action.name);
-          }
-
-          if (action.callback) {
-            action.callback(err, res);
-          }
-        }
-        setupNextAsyncCall(action.nextAsyncTime);
-      });
-      if (action.silence === true) {
-        process.stdout.write('.');
-      } else {
-        console.log('APPLY ASYNC'.cyan, asyncActionList.length, action.name);
-      }
-      action.m.apply(pokeio, action.args);
-    } else {
-      setupNextAsyncCall();
-    }
-  };
-
-  executeAsyncActionList();
+  var Pokeio, current_pos, pokeio, g_socket, data, close_distance = 0.039,
+    interval, gmAPI = new(require('./libs/GMap'))();
 
   Pokeio = require('./Pokemon-GO-node-api/poke.io.js');
-
-  // 5 rue scribe
-  // pos_lat = 48.871146;
-  // pos_lon = 2.330233;
-
-  // gym madelaine
-  // pos_lat = 48.869420;
-  // pos_lon = 2.324004;
-
-  // gym vendom
-  // pos_lat = 48.867530;
-  // pos_lon = 2.329288;
-
-  // rue avron
-  pos_lat = 48.852846;
-  pos_lon = 2.409021;
-
-  // rue scribe round
-  // var round1 = [{
-  //   lat: 48.870495,
-  //   lng: 2.330228
-  // }, {
-  //   lat: 48.8723199,
-  //   lng: 2.3284151
-  // }, {
-  //   lat: 48.8702046,
-  //   lng: 2.3278585
-  // }, {
-  //   lat: 48.8675866,
-  //   lng: 2.3335069
-  // }, {
-  //   lat: 48.8706952,
-  //   lng: 2.3319797
-  // }];
-
-  // paris 
-  // var round1 = [{
-  //   lat: 48.870521,
-  //   lng: 2.330565
-  // }, {
-  //   lat: 48.863534,
-  //   lng: 2.325200
-  // }, {
-  //   lat: 48.853899,
-  //   lng: 2.351872
-  // }, {
-  //   lat: 48.854654,
-  //   lng: 2.347795
-  // }, {
-  //   lat: 48.857012,
-  //   lng: 2.340682
-  // }, {
-  //   lat: 48.845476,
-  //   lng: 2.363502
-  // }, {
-  //   lat: 48.844085,
-  //   lng: 2.359790
-  // }, {
-  //   lat: 48.846606,
-  //   lng: 2.337088
-  // }, {
-  //   lat: 48.845914,
-  //   lng: 2.311875
-  // }, {
-  //   lat: 48.857153,
-  //   lng: 2.312776
-  // }, {
-  //   lat: 48.854640,
-  //   lng: 2.314879
-  // }, {
-  //   lat: 48.855445,
-  //   lng: 2.298893
-  // }, {
-  //   lat: 48.861741,
-  //   lng: 2.289001
-  // }];
-
-  // home round
-  var round1 = [{
-    lat: 48.8530701,
-    lng: 2.4089785
-  }, {
-    lat: 48.8515537,
-    lng: 2.4099224
-  }, {
-    lat: 48.8537921,
-    lng: 2.4111323
-  }, {
-    lat: 48.8529217,
-    lng: 2.4064246
-  }, {
-    lat: 48.8526173,
-    lng: 2.4079283
-  }];
 
   current_pos = {
     type: 'coords',
     coords: {
-      latitude: pos_lat,
-      longitude: pos_lon,
+      latitude: start_point.lat,
+      longitude: start_point.lng,
       altitude: 0
     }
   };
@@ -339,7 +43,6 @@
     fortsById: {}
   };
 
-
   function getCurrentUserPosition() {
     return {
       lat: pokeio.playerInfo.latitude,
@@ -347,18 +50,9 @@
     };
   }
 
-  function distance(lat1, lon1, lat2, lon2) {
-    var p, a;
-    p = 0.017453292519943295; // Math.PI / 180
-    a = 0.5 - Math.cos((lat2 - lat1) * p) / 2 +
-      Math.cos(lat1 * p) * Math.cos(lat2 * p) *
-      (1 - Math.cos((lon2 - lon1) * p)) / 2;
-    // console.log('calc', a, Math.cos((lat2 - lat1) * p), lat2 - lat1, lat2, lat1, Math.cos(lat1 * p) * Math.cos(lat2 * p), (1 - Math.cos((lon2 - lon1) * p)) / 2, 12742 * Math.asin(Math.sqrt(a)));
-    return 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
-  }
 
-  function getFortBoost(socket, fortId, lat, lon) {
-    appendAsyncAction({
+  function getFortBoost(fortId, lat, lon) {
+    actionHandler.appendAsyncAction({
       m: pokeio.GetFortSearch,
       args: [fortId, lat, lon],
       silence: true,
@@ -394,44 +88,33 @@
     for (fortId in data.fortsById) {
       if (data.fortsById.hasOwnProperty(fortId)) {
         fort = data.fortsById[fortId];
-        dist = distance(pokeio.playerInfo.latitude, pokeio.playerInfo.longitude, fort.Latitude, fort.Longitude);
+        dist = tools.distance(pokeio.playerInfo.latitude, pokeio.playerInfo.longitude, fort.Latitude, fort.Longitude);
         if (dist < close_distance) {
           // console.log('distance ok', dist, fort.FortId, fort.CooldownCompleteMs);
           if (fort.CooldownCompleteMs) {
             readyTimeStamp = parseInt(fort.CooldownCompleteMs.toString(), 10);
             if (Date.now() > readyTimeStamp) {
-              getFortBoost(g_socket, fort.FortId, fort.Latitude, fort.Longitude);
+              getFortBoost(fort.FortId, fort.Latitude, fort.Longitude);
             }
           } else {
-            getFortBoost(g_socket, fort.FortId, fort.Latitude, fort.Longitude);
+            getFortBoost(fort.FortId, fort.Latitude, fort.Longitude);
           }
-        } else {
-          // if (fort.CooldownCompleteMs) {
-          //   fort.CooldownCompleteMs_TimeStamp = parseInt(fort.CooldownCompleteMs.toString(), 10);
-          // }
         }
       }
     }
     return callback && callback(null);
-    // return nearFortsId();
   }
 
   function catchPokemonInterval(callback) {
-    // setInterval(function() {
-    // takeNearForts(g_socket);
-
     if (g_socket) {
       g_socket.emit('get-forts', data.fortsById);
     }
-
     pokeio.Heartbeat(function(err, hb) {
       var alltocatch, allforts, i, o, j, currentPokemon;
       if (err || !hb) {
         // console.log('Heartbeat', err);
         return callback && callback(err, hb);
       }
-
-      // console.log(hb.cells[0]);
 
       alltocatch = [];
       allforts = [];
@@ -449,7 +132,6 @@
         }
       }
 
-
       if (allforts.length > 0) {
         console.log('UPDATE FORTS', allforts.length);
         data.fortsById = {};
@@ -461,18 +143,17 @@
         });
       }
 
-
       function catchPokemon(currentPokemon, callback) {
         var pokedexInfo = pokeio.pokemonlist[parseInt(currentPokemon.PokedexTypeId, 10) - 1];
         console.log('[+] There is a ' + pokedexInfo.name + ' near!! I can try to catch it!', (new Date(Date.now())).toISOString());
         pokeio.EncounterPokemon(currentPokemon, function(err, encounterData) {
           var cp = encounterData.WildPokemon.pokemon.cp;
           var pokeball = 1;
-          if (cp > 150 && data.items[inventoryItemTypes.ITEM_GREAT_BALL] && data.items[inventoryItemTypes.ITEM_GREAT_BALL] > 0) {
-            pokeball = inventoryItemTypes.ITEM_GREAT_BALL;
+          if (cp > 150 && data.items && data.items[constants.inventoryItemTypes.ITEM_GREAT_BALL] && data.items[constants.inventoryItemTypes.ITEM_GREAT_BALL] > 0) {
+            pokeball = constants.inventoryItemTypes.ITEM_GREAT_BALL;
           }
-          if (cp > 500 && data.items[inventoryItemTypes.ITEM_ULTRA_BALL] && data.items[inventoryItemTypes.ITEM_ULTRA_BALL] > 0) {
-            pokeball = inventoryItemTypes.ITEM_ULTRA_BALL;
+          if (cp > 500 && data.items && data.items[constants.inventoryItemTypes.ITEM_ULTRA_BALL] && data.items[constants.inventoryItemTypes.ITEM_ULTRA_BALL] > 0) {
+            pokeball = constants.inventoryItemTypes.ITEM_ULTRA_BALL;
           }
           console.log(('[*] Encountering pokemon ' + pokedexInfo.name + '... With CP (' + cp + ') Catch Will Ball (' + pokeball + ')').magenta);
 
@@ -510,14 +191,8 @@
 
       if (alltocatch.length > 0) {
         alltocatch = [alltocatch[0]];
-        // if (interval) {
-        //   interval.pause();
-        // }
         alltocatch.forEach(function(p) {
           tryCatch(p, function(err, catched) {
-            // if (interval) {
-            //   interval.resume();
-            // }
             return callback && callback(err, catched);
           });
         });
@@ -525,13 +200,11 @@
         return callback && callback();
       }
     });
-    // }, 5000);
   }
 
   function isFloat(n) {
     return Number(n) === n && n % 1 !== 0;
   }
-
 
   var moveId = 0;
   var moves = {};
@@ -540,7 +213,6 @@
     moveId += 1;
     var myMoveId = moveId;
     moves[myMoveId] = true;
-
 
     saveManager.updateDestination(target);
 
@@ -553,10 +225,10 @@
         nextPos = points.shift();
         oldPositions.push(nextPos);
 
-        var dist_step = consts.step_distance_meter.value + Math.floor(Math.random() * consts.step_distance_meter.length) + 1;
+        var dist_step = constants.step_distance_meter.getRandom();
 
         if (lastPos) {
-          var dist = distance(lastPos.lat, lastPos.lng, nextPos.lat, nextPos.lng);
+          var dist = tools.distance(lastPos.lat, lastPos.lng, nextPos.lat, nextPos.lng);
           var dist_m = (dist * 1000);
           // console.log('Distance with last point is', dist_m.toFixed(2), 'meter', dist_step);
 
@@ -636,7 +308,7 @@
         if (nextPos) {
           // console.log('[>] Move To', nextPos, points.length);
 
-          appendAsyncAction({
+          actionHandler.appendAsyncAction({
             m: pokeio.SetLocation,
             type: 'MOVE',
             args: [{
@@ -681,7 +353,7 @@
 
     var positionToGo;
 
-    getPathForDirection(source, target, function(points) {
+    gmAPI.getPathForDirection(source, target, function(points) {
       var positions = addExtraPointsOnDirectionPoints(points);
       if (socket) {
         socket.emit('g-move-path', positions);
@@ -754,134 +426,12 @@
     });
   }
 
-
-
-  function decodePolyline(encoded) {
-    if (!encoded) {
-      return [];
-    }
-    var poly = [];
-    var index = 0,
-      len = encoded.length;
-    var lat = 0,
-      lng = 0;
-
-    while (index < len) {
-      var b, shift = 0,
-        result = 0;
-
-      do {
-        b = encoded.charCodeAt(index++) - 63;
-        result = result | ((b & 0x1f) << shift);
-        shift += 5;
-      } while (b >= 0x20);
-
-      var dlat = (result & 1) != 0 ? ~(result >> 1) : (result >> 1);
-      lat += dlat;
-
-      shift = 0;
-      result = 0;
-
-      do {
-        b = encoded.charCodeAt(index++) - 63;
-        result = result | ((b & 0x1f) << shift);
-        shift += 5;
-      } while (b >= 0x20);
-
-      var dlng = (result & 1) != 0 ? ~(result >> 1) : (result >> 1);
-      lng += dlng;
-
-      var p = {
-        lat: lat / 1e5,
-        lng: lng / 1e5,
-      };
-      poly.push(p);
-    }
-    return poly;
-  }
-
-  function getGeoCode(address, callback) {
-    console.log(address);
-    gmAPI.geocode({
-      address: address
-    }, function(err, data) {
-      console.log(err);
-      console.log('geolocation', address, data.results[0].geometry.location);
-      return callback && callback(data.results[0].geometry.location);
-    });
-  }
-
-  function getLatLngForAddressList(address_list, callback) {
-    var latLngList = [];
-
-    function next(index) {
-      console.log(index, address_list.length);
-      if (index >= address_list.length - 1) {
-        return callback && callback(latLngList);
-      } else {
-        index += 1;
-        getGeoCode(address_list[index], function(pos) {
-          latLngList.push(pos);
-          next(index);
-        });
-      }
-    }
-    next(-1);
-  }
-
-  function setupGMap() {
-    var GoogleMapsAPI = require('googlemaps');
-
-    console.log('setup gmap');
-    var publicConfig = {
-      key: 'AIzaSyANeH7BcfpYR4E36ZHpmrRWjZEW83hZdew',
-      stagger_time: 1000, // for elevationPath
-      encode_polylines: false,
-      secure: true // use https
-        // proxy: 'http://127.0.0.1:9999' // optional, set a proxy for HTTP requests
-    };
-    gmAPI = new GoogleMapsAPI(publicConfig);
-
-    // getLatLngForAddressList(['5 rue scribe, 75009 Paris, France',
-    //   '8 Rue Boudreau, 75009 Paris, France',
-    //   '1 Rue de Caumartin, 75009 Paris, France',
-    //   '2 Rue Danielle Casanova, 75002 Paris, France',
-    //   '3 Bis Place de l\'Opéra, 75009 Paris, France'
-    // ], function(latlng) {
-    //   console.log('round1', latlng);
-    // });
-
-    // getLatLngForAddressList(['132 Rue d\'Avron, 75020 Paris',
-    //   '9-11 Rue Henri Tomasi, 75020 Paris',
-    //   '1 Avenue de la Porte de Montreuil, 75020 Paris',
-    //   '103 Rue d\'Avron, 75020 Paris', '48 Rue du Volga, 75020 Paris'
-    // ], function(latlng) {
-    //   console.log('round1', latlng);
-    // });
-
-  }
-
-
-
-  function getPathForDirection(sourceLatLng, targetLatLng, callback) {
-    var from = sourceLatLng.lat + ',' + sourceLatLng.lng;
-    var to = targetLatLng.lat + ',' + targetLatLng.lng;
-    gmAPI.directions({
-      origin: from,
-      destination: to,
-      mode: 'walking'
-    }, function(err, data) {
-      if (data.routes && data.routes[0]) {
-        var points = decodePolyline(data.routes[0].overview_polyline.points);
-        return callback && callback(points);
-      }
-    });
-  }
-
-
   var currentRoundIndex = -1;
 
   function goNextRound() {
+    if (round1 === undefined) {
+      return;
+    }
     console.log('[>] Go Next Round', currentRoundIndex);
     if (currentRoundIndex === -1) {
       currentRoundIndex = 0;
@@ -908,7 +458,7 @@
       evolvingPokemons[evolutionId] = true;
 
       var pokemonId = pokemon.id;
-      appendAsyncAction({
+      actionHandler.appendAsyncAction({
         m: pokeio.EvolvePokemon,
         args: [pokemonId],
         type: 'EVOLVE',
@@ -930,10 +480,16 @@
     startEvolution(evolvingPokemonId, pokemon);
   }
 
+
+
+
   function initPGApi() {
     var position = saveManager.getPGPosition() || current_pos;
 
     pokeio.init('pouyapokemon', 'pokemonGO', position, 'google', function(err) {
+      actionHandler = new AsyncActionHandler(pokeio, evolvingPokemons);
+      var gm = new (require('./libs/GymManager'))(pokeio, actionHandler);
+
       if (err) {
         return console.log('initPG', err);
       }
@@ -942,16 +498,14 @@
         data.all_pokemons[p.id] = p;
       });
 
-
       function asyncCatchPokemonInterval() {
-        prependAsyncAction({
+        actionHandler.prependAsyncAction({
           m: catchPokemonInterval,
           args: [],
           silence: true,
           name: 'Catch Pokemon'
         });
       }
-
 
       function getProfile() {
         pokeio.GetProfile(function(err, p) {
@@ -966,7 +520,7 @@
       function cleanPokemons() {
         function releaePokemons(pId, transferPokemons) {
           transferPokemons.forEach(function(p) {
-            appendAsyncAction({
+            actionHandler.appendAsyncAction({
               m: pokeio.TransferPokemon,
               args: [p.id],
               name: 'Transfer Pokemon With Type Id ' + pId + ', CP ' + p.cp
@@ -978,17 +532,17 @@
         for (pId in data.pokemonsById) {
           if (data.pokemonsById.hasOwnProperty(pId)) {
             samePokemons = data.pokemonsById[pId];
-            if (maximunPokemonsStorage[pId] !== undefined) {
-              var max = maximunPokemonsStorage[pId];
-              if (candidateForEvolution[pId] !== undefined) {
-                max = Math.ceil(data.candies[pId] / candidateForEvolution[pId]);
-                // console.log('MAX IS', pId, max, Math.max(max, maximunPokemonsStorage[pId]), samePokemons.length);
+            if (constants.maximunPokemonsStorage[pId] !== undefined) {
+              var max = constants.maximunPokemonsStorage[pId];
+              if (constants.candidateForEvolution[pId] !== undefined) {
+                max = Math.ceil(data.candies[pId] / constants.candidateForEvolution[pId]);
+                // console.log('MAX IS', pId, max, Math.max(max, constants.maximunPokemonsStorage[pId]), samePokemons.length);
                 if (samePokemons.length >= max) {
                   evolutionsNum += max;
                 } else {
                   evolutionsNum += samePokemons.length;
                 }
-                max = Math.max(max, maximunPokemonsStorage[pId]);
+                max = Math.max(max, constants.maximunPokemonsStorage[pId]);
               }
               if (samePokemons.length > max) {
                 var transferPokemons = samePokemons.slice(max);
@@ -1009,7 +563,7 @@
         var pId, samePokemons;
         for (pId in data.pokemonsById) {
           if (data.pokemonsById.hasOwnProperty(pId)) {
-            if (candidateForEvolution[pId] !== undefined) {
+            if (constants.candidateForEvolution[pId] !== undefined) {
               samePokemons = data.pokemonsById[pId];
               samePokemons.forEach(function(p) {
                 evolvePokemon(pId, p);
@@ -1025,10 +579,9 @@
 
         saveManager.extendBoomTime(6);
 
-
-        prependAsyncAction({
+        actionHandler.prependAsyncAction({
           m: pokeio.UseItemXpBoost,
-          args: [inventoryItemTypes.ITEM_LUCKY_EGG, 1],
+          args: [constants.inventoryItemTypes.ITEM_LUCKY_EGG, 1],
           name: 'USE ITEM_LUCKY_EGG',
           nextAsyncTime: 2000,
           callback: function(err, res) {
@@ -1040,18 +593,15 @@
         });
       }
 
-
-
       function cleanItems() {
         var itemId, itemCount, diff;
         for (itemId in data.items) {
           if (data.items.hasOwnProperty(itemId)) {
-            if (inventoryItemTypesMax[itemId]) {
+            if (constants.inventoryItemTypesMax[itemId]) {
               itemCount = data.items[itemId];
-              diff = itemCount - inventoryItemTypesMax[itemId];
-              // console.log(itemId, itemCount, inventoryItemTypesMax[itemId], diff)
+              diff = itemCount - constants.inventoryItemTypesMax[itemId];
               if (diff > 0) {
-                appendAsyncAction({
+                actionHandler.appendAsyncAction({
                   m: pokeio.DropItem,
                   silence: true,
                   args: [parseInt(itemId, 10), diff],
@@ -1076,8 +626,8 @@
             return callback && callback(err);
           }
           var p, item;
-          data.maximunPokemonsStorage = maximunPokemonsStorage;
-          data.candidateForEvolution = candidateForEvolution;
+          data.maximunPokemonsStorage = constants.maximunPokemonsStorage;
+          data.candidateForEvolution = constants.candidateForEvolution;
           data.inventory = inventory;
           data.items = {};
           data.pokemons = [];
@@ -1154,7 +704,7 @@
             if (egg) {
               // console.log('SET EGG'.red, egg.id, incubator.item_id);
               var remaining = (incubator.uses_remaining === null) ? 'Infinity' : incubator.uses_remaining;
-              appendAsyncAction({
+              actionHandler.appendAsyncAction({
                 m: pokeio.UseItemEggIncubator,
                 args: [incubator.item_id, egg.id.toString()],
                 name: 'Set Egg ' + egg.egg_km_walked_target + ' km In Incubator > Remaining ' + remaining
@@ -1188,63 +738,6 @@
         });
       }
 
-      function getListOfBestPokemons(num) {
-        var pokemonsByCp = data.pokemons.sort(function(a, b) {
-          return b.cp - a.cp;
-        });
-        return pokemonsByCp.slice(0, num);
-      }
-
-
-      function getPrettyPokemonName(p) {
-        return p.reference.name + ' (' + p.cp + ')';
-      }
-
-
-      function addExtraInfoToGym(f) {
-
-        var dist = distance(pokeio.playerInfo.latitude, pokeio.playerInfo.longitude, f.Latitude, f.Longitude);
-        if (dist * 1e3 > 15 || f.IsInBattle !== null) {
-          return;
-        }
-
-        appendAsyncAction({
-          m: pokeio.GetGymDetails,
-          args: [f],
-          name: 'Get Gym Details ' + f.FortId,
-          callback: function(err, res) {
-            // console.log('GYM DETAILS'.red, err, res);
-            // console.log(res.gym_state.memberships);
-            f.info = res;
-
-            console.log('Distance With Gym', f.FortId, (dist * 1e3).toFixed(2), 'meters', 'Team Is', f.Team);
-
-            var args = [],
-              bestPokemons = [];
-            if (f.Team !== 1) {
-              bestPokemons = getListOfBestPokemons(6);
-              args = [f, bestPokemons, null];
-            } else {
-              bestPokemons = getListOfBestPokemons(1);
-              args = [f, null, bestPokemons[0]];
-            }
-
-            console.log(f);
-            var message = 'Start Gym ' + f.info.name + ' Battle With ' + bestPokemons.map(getPrettyPokemonName).join(', ');
-            console.log(message);
-            appendAsyncAction({
-              m: pokeio.StartGymBattle,
-              args: args,
-              name: message,
-              callback: function(err, res) {
-                console.log('Attack Gym Result'.red, err, res);
-              }
-            });
-
-          }
-        });
-      }
-
       function updateGyms() {
         var fortId, fort, dist, allgyms = [];
         for (fortId in data.fortsById) {
@@ -1254,7 +747,8 @@
               if (fort.GymPoints) {
                 fort.GymPointsInt = parseInt(fort.GymPoints.toString(), 10);
               }
-              addExtraInfoToGym(fort);
+              // gm.addExtraInfoToGym(fort);
+              gm.deployPokemon(data, fort);
               allgyms.push(fort);
             }
           }
@@ -1263,7 +757,7 @@
       }
 
       function asyncHatchedEggs() {
-        appendAsyncAction({
+        actionHandler.appendAsyncAction({
           m: getHatchedEggs,
           args: [],
           silence: true,
@@ -1271,17 +765,18 @@
         });
       }
 
-      function asyncGetInventory() {
-        appendAsyncAction({
+      function asyncGetInventory(callback) {
+        actionHandler.appendAsyncAction({
           m: getInventory,
           args: [],
           silence: true,
-          name: 'getInventory'
+          name: 'getInventory',
+          callback: callback
         });
       }
 
       function asyncTakeNearForts() {
-        appendAsyncAction({
+        actionHandler.appendAsyncAction({
           m: takeNearForts,
           silence: true,
           args: [],
@@ -1289,19 +784,27 @@
         });
       }
 
-
       allIntervals.push(setInterval(asyncHatchedEggs, 60 * 1e3));
       allIntervals.push(setInterval(asyncGetInventory, 30 * 1e3));
       allIntervals.push(setInterval(asyncTakeNearForts, 8 * 1e3));
       allIntervals.push(setInterval(asyncCatchPokemonInterval, 3 * 1e3));
 
-      // setTimeout(updateGyms, 5000);
+
+      setTimeout(updateGyms, 10000);
       setTimeout(asyncCatchPokemonInterval, 1000);
       setTimeout(asyncHatchedEggs, 1000);
-      setTimeout(asyncGetInventory, 0);
+      setTimeout(function() {
+        asyncGetInventory(function() {
+          // updateGyms();
+          // gm.addExtraInfoToGym(data, locations.gyms.porte_montreuil);
+          // gm.deployPokemon(data, locations.gyms.jim_morison);
+        });
+      }, 0);
+
+
 
       var destination = saveManager.getDestination();
-      if (destination) {
+      if (destination && saveManager.getPosition()) {
         setTimeout(function() {
           doGlobalMove(g_socket, saveManager.getPosition(), destination, function() {
             setTimeout(goNextRound, 2500);
@@ -1332,7 +835,6 @@
       console.log('Hello Pokebot'.blue);
 
       saveManager.load();
-      setupGMap();
       setupExpress();
       initPGApi();
 

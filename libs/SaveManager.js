@@ -19,7 +19,7 @@
     function handleBoomMode() {
       setInterval(function() {
         var diff = moment().diff(startTime, 'minutes');
-        console.log('CHECK BOOM TIMER'.magenta, diff, 'minutes');
+        console.log('CHECK BOOM TIMER'.magenta, diff, 'minutes', 'WAITING', boomTime, 'minutes');
         if (diff >= boomTime) {
           console.log('BOOM RESET WORLD'.red);
           throw new Error('BOOM BOOM');

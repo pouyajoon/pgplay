@@ -809,12 +809,25 @@ function Pokeio() {
       });
     }
     if (defending_pokemon) {
-      defending_pokemon_id = defending_pokemon.id
+      defending_pokemon_id = defending_pokemon.id;
     }
-    doApiCall(135, 'StartGymBattleRequest', 'StartGymBattleResponse', {
+    var args = {
       gym_id: gym.FortId,
       attacking_pokemons_id: attacking_pokemons_id,
       defending_pokemon_id: defending_pokemon_id,
+      player_latitude: self.playerInfo.latitude,
+      player_longitude: self.playerInfo.longitude
+    };
+    console.log('StartGymBattle ARGS', args);
+    doApiCall(135, 'StartGymBattleRequest', 'StartGymBattleResponse', args, callback);
+  };
+
+
+  self.FortDeployPokemon = function(gym, pokemon, callback) {
+    //get_gym_details
+    doApiCall(110, 'FortDeployPokemonMessage', 'FortDeployPokemonResponse', {
+      fort_id: gym.FortId,
+      pokemon_id: pokemon.id,
       player_latitude: self.playerInfo.latitude,
       player_longitude: self.playerInfo.longitude
     }, callback);
@@ -830,7 +843,7 @@ function Pokeio() {
       gym_latitude: gym.Latitude,
       gym_longitude: gym.Longitude
     }, callback);
-  }
+  };
 
 
   function doApiCall(id, messageType, responseType, argData, callback) {

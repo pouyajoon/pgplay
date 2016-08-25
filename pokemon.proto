@@ -202,7 +202,7 @@ message ResponseEnvelop {
     required string FortId = 1;
     required int64 LastModifiedMs = 2;
     required double Latitude = 3;
-    required double Longitude = 4;
+    required double Longitude = 4;u
     optional int32 Team = 5;
     optional int32 GuardPokemonId = 6;
     optional int32 GuardPokemonLevel = 7;
@@ -1240,10 +1240,12 @@ message FortDeployPokemonResponse {
     optional int32 CandyAwarded = 2;
   }
 
+  //repeated ItemId items_unlocked = 4;
+
+
   message LevelUpRewardsResponse {
     required RewardStatus Status = 1;
     repeated ItemAward items_awarded = 2;
-    repeated ItemId items_unlocked = 4;
 
     enum RewardStatus {
       UNSET = 0;

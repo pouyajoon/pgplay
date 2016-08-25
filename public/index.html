@@ -30,6 +30,9 @@
         incubator.target_km_walked - data.user_stats.km_walked).toFixed(2)}})
       </span> - <span>Evolution [{{data.evolutionsNum}}]</span>
       - <span>Pokedex ({{data.user_stats.unique_pokedex_entries}})</span>
+      - <span>XP : {{data.user_stats.next_level_xp
+.low - data.user_stats.experience.low}}</span>
+      - <span>Level : {{data.user_stats.level}}</span>
     </div>
 
     <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
@@ -57,6 +60,9 @@
             <img ng-src="{{itemsReference[itemId].img}}"/>
           </div>
         </div>
+        <ul>
+          <li ng-repeat="(eggKm, arr) in data.eggs">{{arr.length}} eggs of {{eggKm}} KM</li>
+        </ul>
 
       </div>
 

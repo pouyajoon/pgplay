@@ -246,7 +246,7 @@ function Pokeio() {
     self.playerInfo.provider = provider;
     // Updating location
     self.SetLocation(location, function(err, loc) {
-      console.log('update location');
+      console.log('update location', loc);
       if (err) {
         return callback(err);
       }

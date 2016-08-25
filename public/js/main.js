@@ -2,8 +2,10 @@
   'use strict';
   /*global io, angular, google, moment*/
 
-  var socket, app, map, me, fortMarkers = {};
+  var socket, app, map, me, fortMarkers = {},
+    list = [];
   socket = io();
+
 
 
   socket.on('user-new-position', function(position) {
@@ -68,7 +70,7 @@
       if (fortsById.hasOwnProperty(fortId)) {
         f = fortsById[fortId];
         if (fortMarkers[f.FortId] === undefined) {
-          fortMarkers[f.FortId] = addMarker(map, f.Latitude, f.Longitude, f.Latitude + ', ' + f.Longitude, 'blue', f.FortId);
+          fortMarkers[f.FortId] = addMarker(map, f.Latitude, f.Longitude, f.Latitude + ', ' + f.Longitude, 'blue', JSON.stringify(f, null, 2));
         }
         marker = fortMarkers[f.FortId];
 
@@ -146,6 +148,95 @@
   //   return 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
   // }
 
+  var directionsDisplay = new google.maps.DirectionsRenderer;
+  directionsDisplay.setMap(map);
+
+
+  var getPathForDirection = function(start, end, callback) {
+    var directionsService = new google.maps.DirectionsService();
+    var request = {
+      origin: start,
+      destination: end,
+      travelMode: google.maps.TravelMode.WALKING
+    };
+    directionsService.route(request, function(response, status) {
+
+      if (status === google.maps.DirectionsStatus.OK) {
+        if (response.routes && response.routes[0]) {
+          var points = decodePolyline(response.routes[0].overview_polyline.points);
+          // return callback && callback(points);
+          console.log(points, response, status);
+          directionsDisplay.setDirections(response);
+
+        }
+        // directionsDisplay.setDirections(response);
+      }
+    });
+
+
+    // var from, to;
+    // from = sourceLatLng.lat + ',' + sourceLatLng.lng;
+    // to = targetLatLng.lat + ',' + targetLatLng.lng;
+    // this.gmAPI.directions({
+    //   origin: from,
+    //   destination: to,
+    //   mode: 'walking'
+    // }, function(err, data) {
+    //   if (err || data.error_message) {
+    //     console.log(err, data);
+    //   }
+    //   if (data.routes && data.routes[0]) {
+    //     var points = decodePolyline(data.routes[0].overview_polyline.points);
+    //     return callback && callback(points);
+    //   }
+    // });
+  };
+
+  function decodePolyline(encoded) {
+    if (!encoded) {
+      return [];
+    }
+    var poly = [];
+    var index = 0,
+      len = encoded.length;
+    var lat = 0,
+      lng = 0;
+
+    while (index < len) {
+      var b, shift = 0,
+        result = 0;
+
+      do {
+        b = encoded.charCodeAt(index++) - 63;
+        result = result | ((b & 0x1f) << shift);
+        shift += 5;
+      } while (b >= 0x20);
+
+      var dlat = (result & 1) != 0 ? ~(result >> 1) : (result >> 1);
+      lat += dlat;
+
+      shift = 0;
+      result = 0;
+
+      do {
+        b = encoded.charCodeAt(index++) - 63;
+        result = result | ((b & 0x1f) << shift);
+        shift += 5;
+      } while (b >= 0x20);
+
+      var dlng = (result & 1) != 0 ? ~(result >> 1) : (result >> 1);
+      lng += dlng;
+
+      var p = {
+        lat: lat / 1e5,
+        lng: lng / 1e5,
+      };
+      poly.push(p);
+    }
+    return poly;
+  }
+
+
   function setMap(lat, lon) {
     var options;
     options = {
@@ -176,6 +267,13 @@
         lat: event.latLng.lat(),
         lng: event.latLng.lng()
       };
+
+      // list.push(target);
+      // if (list.length > 1) {
+      //   getPathForDirection(list[0], list[1]);
+      // }
+      // console.log(list, JSON.stringify(list));
+
       socket.emit('move-to', target, function(res) {
         console.log('move-to', 'done', res);
       });

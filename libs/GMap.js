@@ -90,6 +90,9 @@
       destination: to,
       mode: 'walking'
     }, function(err, data) {
+      if (err || data.error_message) {
+        console.log(err, data);
+      }
       if (data.routes && data.routes[0]) {
         var points = decodePolyline(data.routes[0].overview_polyline.points);
         return callback && callback(points);

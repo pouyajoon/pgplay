@@ -14,11 +14,13 @@
 
   var allIntervals = [];
 
-  // var start_point = locations.points.avron,
-  //   round1 = locations.circuits.avron1;
+  var start_point = locations.points.avron,
+    // round1 = locations.circuits.avron1;
+    round1 = locations.circuits.scribe1;
+    // round1 = locations.circuits.paris1;
 
-  var start_point = locations.points.jim_morison,
-    round1;
+  //  var start_point = locations.points.jim_morison,
+  //    round1;
 
 
   var Pokeio, current_pos, pokeio, g_socket, data, close_distance = 0.039,
@@ -214,6 +216,8 @@
     var myMoveId = moveId;
     moves[myMoveId] = true;
 
+    //console.log('GM', target);
+
     saveManager.updateDestination(target);
 
     function addExtraPointsOnDirectionPoints(points) {
@@ -322,6 +326,7 @@
             silence: true,
             name: 'Move To : ' + nextPos.lat + ', ' + nextPos.lng + ' | Remaining Points :' + points.length,
             callback: function(err, res) {
+              //console.log('do move', err, res);
               if (g_socket) {
                 g_socket.emit('user-new-position', nextPos);
               }
@@ -354,6 +359,7 @@
     var positionToGo;
 
     gmAPI.getPathForDirection(source, target, function(points) {
+      //console.log('GPOints', points);
       var positions = addExtraPointsOnDirectionPoints(points);
       if (socket) {
         socket.emit('g-move-path', positions);
@@ -432,7 +438,7 @@
     if (round1 === undefined) {
       return;
     }
-    console.log('[>] Go Next Round', currentRoundIndex);
+    console.log('[>] Go Next Round'.green, currentRoundIndex);
     if (currentRoundIndex === -1) {
       currentRoundIndex = 0;
       return doGlobalMove(g_socket, getCurrentUserPosition(), round1[0], function() {
@@ -463,7 +469,7 @@
         args: [pokemonId],
         type: 'EVOLVE',
         name: 'EVOLVE POKEMON ' + data.all_pokemons[typeId].name,
-        nextAsyncTime: 5000,
+        nextAsyncTime: 10000,
         callback: function(err, res) {
           if (!err) {
             console.log('EVOLUTION DONE'.green, 'ID IS', evolutionId.toString().blue, res);
@@ -482,13 +488,16 @@
 
 
 
-
   function initPGApi() {
     var position = saveManager.getPGPosition() || current_pos;
 
-    pokeio.init('pouyapokemon', 'pokemonGO', position, 'google', function(err) {
+    pokeio.init('pouyapokemon2', 'pokemonGO', position, 'google', function(err) {
+      if (err) {
+        console.log('ERROR ON STARTUP'.red, err);
+        return false;
+      }
       actionHandler = new AsyncActionHandler(pokeio, evolvingPokemons);
-      var gm = new (require('./libs/GymManager'))(pokeio, actionHandler);
+      var gm = new(require('./libs/GymManager'))(pokeio, actionHandler);
 
       if (err) {
         return console.log('initPG', err);
@@ -577,7 +586,8 @@
 
         console.log('***** EVOLUTION TIME *****'.red);
 
-        saveManager.extendBoomTime(6);
+        saveManager.extendBoomTime(8);
+        // return              evolveThemAll();
 
         actionHandler.prependAsyncAction({
           m: pokeio.UseItemXpBoost,
@@ -693,6 +703,14 @@
 
           function setEgg(incubator, p1, p2, p3) {
             var egg = null;
+
+            console.log('SET EGG'.green, p1, p2, p3, data.eggs[p1]);
+
+            if (p2 === undefined && p3 === undefined && data.eggs[p1] !== undefined && data.eggs[p1][0] !== undefined) {
+              console.log('THERE IS NO'.red, p1, 'EGG'.red);
+              return false;
+            }
+
             if (data.eggs[p1] && data.eggs[p1][0]) {
               egg = data.eggs[p1][0];
             } else if (data.eggs[p2] && data.eggs[p2][0]) {
@@ -717,7 +735,7 @@
               if (incubator.uses_remaining === null) {
                 setEgg(incubator, 2, 5, 10);
               } else {
-                setEgg(incubator, 10, 5, 2);
+                setEgg(incubator, 10);
               }
             }
           });
@@ -743,7 +761,7 @@
         for (fortId in data.fortsById) {
           if (data.fortsById.hasOwnProperty(fortId)) {
             fort = data.fortsById[fortId];
-            if (fort.FortType !== 1) {
+            if (fort.FortType !== 1 && fort.Team === 3) {
               if (fort.GymPoints) {
                 fort.GymPointsInt = parseInt(fort.GymPoints.toString(), 10);
               }
@@ -784,13 +802,28 @@
         });
       }
 
+      function asyncGetLevelReward() {
+        actionHandler.appendAsyncAction({
+          m: pokeio.LevelUpRewards,
+          silence: true,
+          args: [data.user_stats.level],
+          name: 'Level Up Rewards',
+          callback: function(err, res) {
+            console.log('LevelUpRewards'.green, err, res);
+          }
+        });
+
+      }
+
+
       allIntervals.push(setInterval(asyncHatchedEggs, 60 * 1e3));
       allIntervals.push(setInterval(asyncGetInventory, 30 * 1e3));
       allIntervals.push(setInterval(asyncTakeNearForts, 8 * 1e3));
       allIntervals.push(setInterval(asyncCatchPokemonInterval, 3 * 1e3));
 
+      setTimeout(asyncGetLevelReward, 30 * 1e3);
 
-      setTimeout(updateGyms, 10000);
+      // setTimeout(updateGyms, 10000);
       setTimeout(asyncCatchPokemonInterval, 1000);
       setTimeout(asyncHatchedEggs, 1000);
       setTimeout(function() {

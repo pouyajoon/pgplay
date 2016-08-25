@@ -47,6 +47,15 @@
       save();
     }
 
+    function updateNextRoundIndex(index) {
+      value.nextRoundIndex = index;
+      save();
+    }
+
+    function getNextRoundIndex() {
+      return value.nextRoundIndex || -1;
+    }
+
     function updateDestination(destination) {
       value.destination = {
         lat: destination.lat,
@@ -86,7 +95,6 @@
       boomTime += extendTime;
     }
 
-
     return {
       updatePosition: updatePosition,
       updateDestination: updateDestination,
@@ -95,7 +103,9 @@
       getPosition: getPosition,
       getPGPosition: getPGPosition,
       getDestination: getDestination,
-      extendBoomTime: extendBoomTime
+      extendBoomTime: extendBoomTime,
+      updateNextRoundIndex: updateNextRoundIndex,
+      getNextRoundIndex: getNextRoundIndex
     };
   }());
 }());

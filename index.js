@@ -16,8 +16,8 @@
 
   var start_point = locations.points.avron,
     // round1 = locations.circuits.avron1;
-    round1 = locations.circuits.scribe1;
-    // round1 = locations.circuits.paris1;
+    // round1 = locations.circuits.scribe1;
+    round1 = locations.circuits.paris1;
 
   //  var start_point = locations.points.jim_morison,
   //    round1;
@@ -328,7 +328,7 @@
             callback: function(err, res) {
               //console.log('do move', err, res);
               if (g_socket) {
-                g_socket.emit('user-new-position', nextPos);
+                g_socket.emit('user-new-position', nextPos, locations);
               }
 
 
@@ -438,20 +438,22 @@
     if (round1 === undefined) {
       return;
     }
-    console.log('[>] Go Next Round'.green, currentRoundIndex);
+    console.log('[>] Go Next Round'.green, currentRoundIndex, round1.length);
     if (currentRoundIndex === -1) {
       currentRoundIndex = 0;
+      saveManager.updateNextRoundIndex(currentRoundIndex);
       return doGlobalMove(g_socket, getCurrentUserPosition(), round1[0], function() {
         return goNextRound();
       });
     } else {
       currentRoundIndex += 1;
       currentRoundIndex = currentRoundIndex % round1.length;
+      saveManager.updateNextRoundIndex(currentRoundIndex);
       return doGlobalMove(g_socket, getCurrentUserPosition(), round1[currentRoundIndex], function() {
         return goNextRound();
       });
-
     }
+
   }
 
   var evolvingPokemonId = 0;
@@ -704,10 +706,10 @@
           function setEgg(incubator, p1, p2, p3) {
             var egg = null;
 
-            console.log('SET EGG'.green, p1, p2, p3, data.eggs[p1]);
+            // console.log('SET EGG'.green, p1, p2, p3, data.eggs[p1]);
 
-            if (p2 === undefined && p3 === undefined && data.eggs[p1] !== undefined && data.eggs[p1][0] !== undefined) {
-              console.log('THERE IS NO'.red, p1, 'EGG'.red);
+            if (p2 === undefined && p3 === undefined && data.eggs[p1] !== undefined && data.eggs[p1][0] === undefined) {
+              // console.log('THERE IS NO'.red, p1, 'EGG'.red);
               return false;
             }
 
@@ -857,7 +859,7 @@
       cluster.fork();
       //if the worker dies, restart it.
       cluster.on('exit', function(worker) {
-        var nextRun = 30000 + Math.floor(Math.random() * 30000) + 1;
+        var nextRun = 60000 + Math.floor(Math.random() * 30000) + 1;
         console.log('Worker ' + worker.id + ' died..'.red);
         console.log('Start Next Session In ' + (nextRun / 1e3) + ' Seconds'.green);
         setTimeout(function() {
@@ -868,6 +870,7 @@
       console.log('Hello Pokebot'.blue);
 
       saveManager.load();
+      currentRoundIndex = saveManager.getNextRoundIndex();
       setupExpress();
       initPGApi();
 

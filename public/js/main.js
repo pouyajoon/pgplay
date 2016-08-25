@@ -8,8 +8,20 @@
 
 
 
-  socket.on('user-new-position', function(position) {
+  socket.on('user-new-position', function(position, locations) {
     // console.log('user position', position);
+    console.log('locations', locations);
+    var path = new google.maps.Polyline({
+      path: locations.circuits.paris1,
+      geodesic: true,
+      strokeColor: '#0000FF',
+      strokeOpacity: 0.25,
+      strokeWeight: 2
+    });
+    path.setMap(map);
+
+
+
     if (me) {
       me.setPosition(new google.maps.LatLng(position.lat, position.lng));
     }

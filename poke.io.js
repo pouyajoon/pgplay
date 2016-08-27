@@ -836,12 +836,14 @@ function Pokeio() {
 
   self.GetGymDetails = function(gym, callback) {
     //get_gym_details
+    console.log('GetGymDetails', gym.FortId, self.playerInfo.latitude, self.playerInfo.longitude, gym.Latitude, gym.Longitude);
     doApiCall(134, 'GymDetailsRequest', 'GymDetailsResponse', {
       gym_id: gym.FortId,
       player_latitude: self.playerInfo.latitude,
       player_longitude: self.playerInfo.longitude,
       gym_latitude: gym.Latitude,
       gym_longitude: gym.Longitude
+      // client_version: null
     }, callback);
   };
 

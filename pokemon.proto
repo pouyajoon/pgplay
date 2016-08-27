@@ -130,6 +130,7 @@ message FortDeployPokemonMessage {
     required double player_longitude = 3;    
     required double gym_latitude = 4;
     required double gym_longitude = 5;
+    //required string client_version = 6;
   }
 
   //rpc id : 137

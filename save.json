@@ -1,11 +1,11 @@
 {
   "destination": {
-    "lat": 48.863534,
-    "lng": 2.3252
+    "lat": 48.853899,
+    "lng": 2.351872
   },
   "currentPosition": {
-    "lat": 48.864802499999996,
-    "lng": 2.3260925
+    "lat": 48.85706,
+    "lng": 2.34704
   },
-  "nextRoundIndex": 1
+  "nextRoundIndex": 2
 }

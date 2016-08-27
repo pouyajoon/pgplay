@@ -27,7 +27,7 @@
   var Pokeio, current_pos, pokeio, g_socket, data, close_distance = 0.039,
     interval, gmAPI = new(require('./libs/GMap'))();
 
-  Pokeio = require('./Pokemon-GO-node-api/poke.io.js');
+  Pokeio = require('./pgnode/poke.io.js');
 
   current_pos = {
     type: 'coords',

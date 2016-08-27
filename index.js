@@ -22,6 +22,7 @@
   //  var start_point = locations.points.jim_morison,
   //    round1;
 
+  var missions = [];
 
   var Pokeio, current_pos, pokeio, g_socket, data, close_distance = 0.039,
     interval, gmAPI = new(require('./libs/GMap'))();
@@ -135,7 +136,7 @@
       }
 
       if (allforts.length > 0) {
-        console.log('UPDATE FORTS', allforts.length);
+        // console.log('UPDATE FORTS', allforts.length);
         data.fortsById = {};
         allforts.forEach(function(f) {
           if (f.CooldownCompleteMs) {
@@ -151,10 +152,10 @@
         pokeio.EncounterPokemon(currentPokemon, function(err, encounterData) {
           var cp = encounterData.WildPokemon.pokemon.cp;
           var pokeball = 1;
-          if (cp > 150 && data.items && data.items[constants.inventoryItemTypes.ITEM_GREAT_BALL] && data.items[constants.inventoryItemTypes.ITEM_GREAT_BALL] > 0) {
+          if (cp > 100 && data.items && data.items[constants.inventoryItemTypes.ITEM_GREAT_BALL] && data.items[constants.inventoryItemTypes.ITEM_GREAT_BALL] > 0) {
             pokeball = constants.inventoryItemTypes.ITEM_GREAT_BALL;
           }
-          if (cp > 500 && data.items && data.items[constants.inventoryItemTypes.ITEM_ULTRA_BALL] && data.items[constants.inventoryItemTypes.ITEM_ULTRA_BALL] > 0) {
+          if (cp > 400 && data.items && data.items[constants.inventoryItemTypes.ITEM_ULTRA_BALL] && data.items[constants.inventoryItemTypes.ITEM_ULTRA_BALL] > 0) {
             pokeball = constants.inventoryItemTypes.ITEM_ULTRA_BALL;
           }
           console.log(('[*] Encountering pokemon ' + pokedexInfo.name + '... With CP (' + cp + ') Catch Will Ball (' + pokeball + ')').magenta);
@@ -213,6 +214,7 @@
 
   function doGlobalMove(socket, source, target, callback) {
     moveId += 1;
+    moves = {};
     var myMoveId = moveId;
     moves[myMoveId] = true;
 
@@ -280,7 +282,7 @@
 
     function getCustomPoints(source, target) {
       var points = [],
-        dist = 2 / 1e6,
+        dist = constants.speed,
         move = dist;
       while (Math.abs(source.lat - target.lat) > dist || Math.abs(source.lon - target.lng) > dist) {
         if (source.lat > target.lat) {
@@ -387,6 +389,7 @@
 
     io.on('connection', function(socket) {
       g_socket = socket;
+      pokeio.socket = socket;
       console.log('[S] User connected');
       socket.on('disconnect', function() {
         console.log('[S] User disconnected');
@@ -418,7 +421,6 @@
 
         moves = {};
         doGlobalMove(socket, source, target, function() {
-          currentRoundIndex = -1;
           goNextRound();
         });
       });
@@ -534,6 +536,7 @@
             actionHandler.appendAsyncAction({
               m: pokeio.TransferPokemon,
               args: [p.id],
+              silence: true,
               name: 'Transfer Pokemon With Type Id ' + pId + ', CP ' + p.cp
             });
           });
@@ -759,21 +762,86 @@
       }
 
       function updateGyms() {
+        console.log('UPDATE GYMS'.blue);
         var fortId, fort, dist, allgyms = [];
         for (fortId in data.fortsById) {
           if (data.fortsById.hasOwnProperty(fortId)) {
             fort = data.fortsById[fortId];
-            if (fort.FortType !== 1 && fort.Team === 3) {
+            if (fort.FortType !== 1) {
               if (fort.GymPoints) {
                 fort.GymPointsInt = parseInt(fort.GymPoints.toString(), 10);
               }
-              // gm.addExtraInfoToGym(fort);
-              gm.deployPokemon(data, fort);
+              // gm.addExtraInfoToGym(data, fort);
               allgyms.push(fort);
             }
           }
         }
         data.allgyms = allgyms;
+
+        // return;
+
+        var distList = data.allgyms.filter(function(f) {
+          return f.Team === 3;
+        }).map(function(f) {
+          return {
+            fort: f,
+            dist: tools.distance(pokeio.playerInfo.latitude, pokeio.playerInfo.longitude, f.Latitude, f.Longitude)
+          };
+        });
+
+
+        if (missions.length === 0) {
+          var myTeamForts = data.allgyms.filter(function(f) {
+            return f.Team === 3 && f.IsInBattle !== true;
+          });
+          console.log('CHECK FORTS'.blue, data.allgyms.length, myTeamForts.length);
+          myTeamForts.forEach(function(f) {
+            gm.setDeployGymMissionIfGoodToDeploy(f, function(err, res) {
+              if (err) {
+                return false;
+              }
+              console.log('SetDeploy GymMission If Good To Deploy'.blue, err, res.gym.info.name.green, res.ok);
+              if (res.ok === true && missions.length === 0) {
+                var gym = res.gym;
+                missions.push(gym);
+                console.log('FIND MY TEAM FORT AND GOING THERE'.blue);
+                doGlobalMove(g_socket, saveManager.getPosition(), {
+                  lat: gym.Latitude,
+                  lng: gym.Longitude
+                }, function() {
+                  console.log('REACH FORT TROP DEPLOY POKEMON'.blue);
+                  gm.deployPokemon(data, gym, function() {
+                    missions = [];
+                  });
+                });
+              }
+            });
+          });
+        }
+
+        function getMinDistFort(forts) {
+          var min, minIndex = 0,
+            i = 0;
+
+          if (forts.length === 0) {
+            return null;
+          }
+          forts.forEach(function(f) {
+            if (min === undefined) {
+              min = f.dist;
+            } else {
+              min = Math.min(f.dist, min);
+              if (f.dist < min) {
+                minIndex = i;
+              }
+            }
+            i += 1;
+          });
+          return forts[minIndex];
+        }
+
+        var minDistFort = getMinDistFort(distList);
+
       }
 
       function asyncHatchedEggs() {
@@ -814,7 +882,6 @@
             console.log('LevelUpRewards'.green, err, res);
           }
         });
-
       }
 
 
@@ -825,7 +892,9 @@
 
       setTimeout(asyncGetLevelReward, 30 * 1e3);
 
-      // setTimeout(updateGyms, 10000);
+      setTimeout(updateGyms, 5 * 1000);
+      allIntervals.push(setInterval(updateGyms, 15 * 1e3));
+
       setTimeout(asyncCatchPokemonInterval, 1000);
       setTimeout(asyncHatchedEggs, 1000);
       setTimeout(function() {

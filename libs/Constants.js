@@ -3,6 +3,8 @@
 
   var constants = {};
 
+
+
   constants.candidateForEvolution = {
     10: 12,
     13: 12,
@@ -36,7 +38,7 @@
   constants.inventoryItemTypesMax[constants.inventoryItemTypes.ITEM_SUPER_POTION] = 10;
   constants.inventoryItemTypesMax[constants.inventoryItemTypes.ITEM_HYPER_POTION] = 10;
   constants.inventoryItemTypesMax[constants.inventoryItemTypes.ITEM_MAX_POTION] = 50;
-  constants.inventoryItemTypesMax[constants.inventoryItemTypes.ITEM_REVIVE] = 10;
+  constants.inventoryItemTypesMax[constants.inventoryItemTypes.ITEM_REVIVE] = 20;
   constants.inventoryItemTypesMax[constants.inventoryItemTypes.RAZZ_BERRY] = 15;
 
   constants.maximunPokemonsStorage = {
@@ -119,8 +121,13 @@
     return this.value + Math.floor(Math.random() * this.length) + 1;
   };
 
+  constants.speed = 2 / 1e2;
+  constants.step_distance_meter = new Random(25, 5);
+  
+  // constants.speed = 2 / 1e6;
+  // constants.step_distance_meter = new Random(2.5, 0.8);
 
-  constants.step_distance_meter = new Random(2.5, 0.8);
+
   constants.walking_interval = new Random(800, 400);
 
   exports.constants = constants;

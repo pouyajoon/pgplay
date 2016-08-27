@@ -3,15 +3,19 @@
   /*global io, angular, google, moment*/
 
   var socket, app, map, me, fortMarkers = {},
-    list = [];
+    list = [],
+    path;
   socket = io();
 
 
 
   socket.on('user-new-position', function(position, locations) {
+    if (path) {
+      path.setMap(null);
+    }
     // console.log('user position', position);
-    console.log('locations', locations);
-    var path = new google.maps.Polyline({
+    // console.log('locations', locations);
+    path = new google.maps.Polyline({
       path: locations.circuits.paris1,
       geodesic: true,
       strokeColor: '#0000FF',
@@ -20,15 +24,17 @@
     });
     path.setMap(map);
 
-
-
     if (me) {
       me.setPosition(new google.maps.LatLng(position.lat, position.lng));
     }
   });
 
   function setMarkerColor(marker, color) {
-    marker.setIcon('http://maps.google.com/mapfiles/ms/icons/' + color + '-dot.png');
+    if (color === 'pacman') {
+      marker.setIcon('http://www.pac-rom.com/images/linksbar/pac.png');
+    } else {
+      marker.setIcon('http://maps.google.com/mapfiles/ms/icons/' + color + '-dot.png');
+    }
   }
 
   socket.on('fort-taken', function(fortId) {
@@ -37,6 +43,12 @@
       setMarkerColor(fortMarkers[fortId], 'red');
     }
   });
+
+
+  socket.on('match-gym', function(gym) {
+    console.log('match-gym', gym);
+  });
+
 
   function addMarker(map, lat, lon, title, color, infoContent) {
     var marker, infowindow;
@@ -84,17 +96,22 @@
         if (fortMarkers[f.FortId] === undefined) {
           fortMarkers[f.FortId] = addMarker(map, f.Latitude, f.Longitude, f.Latitude + ', ' + f.Longitude, 'blue', JSON.stringify(f, null, 2));
         }
-        marker = fortMarkers[f.FortId];
 
         if (f.FortType !== 1) {
-          setMarkerColor(marker, 'yellow');
+          marker = fortMarkers[f.FortId];
+          if (f.Team === 3) {
+
+            setMarkerColor(marker, 'pacman');
+          } else {
+            setMarkerColor(marker, 'yellow');
+          }
         } else {
           fortMarkers[f.FortId].setOpacity(0.25);
           if (f.CooldownCompleteMs_TimeStamp) {
             if (Date.now() < f.CooldownCompleteMs_TimeStamp) {
-              setMarkerColor(marker, 'red');
+              // setMarkerColor(marker, 'red');
             } else {
-              setMarkerColor(marker, 'purple');
+              // setMarkerColor(marker, 'purple');
             }
           }
         }
@@ -445,6 +462,8 @@
       $scope.pokemons_sorted_by_cp.sort(function(a, b) {
         return b.cp - a.cp;
       });
+
+      console.log('pokemons_sorted_by_cp', $scope.pokemons_sorted_by_cp);
 
       // console.log(data.user_stats.km_walked);
       // console.log(data.incubators.map(function(inc) {

@@ -1,8 +1,9 @@
 <td><img class="p-img" ng-src="{{p.reference.img}}"></td>
-<td>#{{p.reference.name}}</td>
+<td>#{{p.reference.name}} <span style="color:red;font-size: 2em">{{p.deployed_fort_id}}</span></td>
 <td>#{{p.pokemon_id}}</td>
 <td>{{p.cp}}</td>
 <td>{{p.height_m.toFixed(2)}} m</td>
 <td>{{p.weight_kg.toFixed(2)}} kg</td>
 <td ng-if="show_date === true">{{p.catched_time_from_now}}</td>
+<td><span ng-show="p.stamina < p.stamina_max">{{p.stamina}} / {{p.stamina_max}}</span></td>
 

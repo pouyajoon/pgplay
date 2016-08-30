@@ -505,6 +505,7 @@
         console.log('ERROR ON STARTUP'.red, err);
         return false;
       }
+      console.log('INIT PG API DONE'.green);
       actionHandler = new AsyncActionHandler(pokeio, evolvingPokemons);
       var gm = new(require('./libs/GymManager'))(pokeio, actionHandler);
 

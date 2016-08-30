@@ -1,14 +1,18 @@
-(function() {
+(function () {
   'use strict';
   /*global io, angular, google, moment*/
 
   var socket, app, map, me, fortMarkers = {},
     list = [],
     path;
-  socket = io({transports: ['websocket'], upgrade: false});
+  socket = io({
+    transports: ['websocket'],
+    upgrade: false,
+    log: true
+  });
 
 
-  socket.on('user-new-position', function(position, locations) {
+  socket.on('user-new-position', function (position, locations) {
     if (path) {
       path.setMap(null);
     }
@@ -36,7 +40,7 @@
     }
   }
 
-  socket.on('fort-taken', function(fortId) {
+  socket.on('fort-taken', function (fortId) {
     console.log('fort-taken', fortId);
     if (fortMarkers) {
       setMarkerColor(fortMarkers[fortId], 'red');
@@ -44,7 +48,7 @@
   });
 
 
-  socket.on('match-gym', function(gym) {
+  socket.on('match-gym', function (gym) {
     console.log('match-gym', gym);
   });
 
@@ -62,7 +66,7 @@
       icon: 'http://maps.google.com/mapfiles/ms/icons/' + color + '-dot.png'
     });
 
-    marker.addListener('click', function() {
+    marker.addListener('click', function () {
       infowindow.open(map, marker);
     });
     return marker;
@@ -79,14 +83,14 @@
         }
       }
     }
-    removeList.forEach(function(fId) {
+    removeList.forEach(function (fId) {
       fm = fortMarkers[fId];
       fm.setMap(null);
       delete fortMarkers[fId];
     });
   }
 
-  socket.on('get-forts', function(fortsById) {
+  socket.on('get-forts', function (fortsById) {
     var f, fortId, marker;
     removeAllFortMarkers(fortsById);
     for (fortId in fortsById) {
@@ -122,7 +126,7 @@
   // var streetPoints = [];
   var paths = {};
 
-  socket.on('g-move-path', function(positions) {
+  socket.on('g-move-path', function (positions) {
     // console.log('g-move-path', positions);
 
     var flightPath, flightPath2;
@@ -180,14 +184,14 @@
   directionsDisplay.setMap(map);
 
 
-  var getPathForDirection = function(start, end, callback) {
+  var getPathForDirection = function (start, end, callback) {
     var directionsService = new google.maps.DirectionsService();
     var request = {
       origin: start,
       destination: end,
       travelMode: google.maps.TravelMode.WALKING
     };
-    directionsService.route(request, function(response, status) {
+    directionsService.route(request, function (response, status) {
 
       if (status === google.maps.DirectionsStatus.OK) {
         if (response.routes && response.routes[0]) {
@@ -290,7 +294,7 @@
     me = addMarker(map, lat, lon, 'myPosition', 'green', 'Me!!');
     me.setZIndex(1000);
 
-    google.maps.event.addListener(map, 'click', function(event) {
+    google.maps.event.addListener(map, 'click', function (event) {
       var target = {
         lat: event.latLng.lat(),
         lng: event.latLng.lng()
@@ -302,35 +306,35 @@
       // }
       // console.log(list, JSON.stringify(list));
 
-      socket.emit('move-to', target, function(res) {
+      socket.emit('move-to', target, function (res) {
         console.log('move-to', 'done', res);
       });
     });
   }
 
   app = angular.module('myApp', []);
-  app.directive('singlePokemon', function() {
+  app.directive('singlePokemon', function () {
     return {
       restrict: 'A',
       templateUrl: '/templates/single.pokemon.ng.html'
     };
   });
 
-  app.directive('tableList', function() {
+  app.directive('tableList', function () {
     return {
       restrict: 'A',
       templateUrl: '/templates/table-list.ng.html'
     };
   });
 
-  app.controller('MainController', function($scope, $http, $rootScope) {
+  app.controller('MainController', function ($scope, $http, $rootScope) {
 
     $rootScope.moment = moment;
     $scope.logs = [];
 
-    $http.get('https://raw.githubusercontent.com/Armax/Pokemon-GO-node-api/master/items.json').success(function(res) {
+    $http.get('https://raw.githubusercontent.com/Armax/Pokemon-GO-node-api/master/items.json').success(function (res) {
       var items = {};
-      res.items.forEach(function(i) {
+      res.items.forEach(function (i) {
         items[i.id] = i;
       });
       $scope.itemsReference = items;
@@ -338,10 +342,10 @@
       // console.log('OK', $scope.itemsReference, items);
     });
 
-    $http.get('https://raw.githubusercontent.com/Biuni/PokemonGO-Pokedex/master/pokedex.json').success(function(res) {
+    $http.get('https://raw.githubusercontent.com/Biuni/PokemonGO-Pokedex/master/pokedex.json').success(function (res) {
       var pokemonsReference = {},
         candiesReference = {};
-      res.pokemon.forEach(function(i) {
+      res.pokemon.forEach(function (i) {
         pokemonsReference[i.id] = i;
         if (candiesReference[i.candy] === undefined) {
           candiesReference[i.candy] = -1;
@@ -357,23 +361,23 @@
 
     });
 
-    var $on = function(key, callback) {
-      socket.on(key, function(res) {
-        $scope.$apply(function() {
+    var $on = function (key, callback) {
+      socket.on(key, function (res) {
+        $scope.$apply(function () {
           return callback(res);
         });
       });
     };
 
-    var $emit = function(key, callback) {
-      socket.emit(key, function(res) {
-        $scope.$apply(function() {
+    var $emit = function (key, callback) {
+      socket.emit(key, function (res) {
+        $scope.$apply(function () {
           return callback && callback(res);
         });
       });
     };
 
-    $on('catch-pokemon', function(info) {
+    $on('catch-pokemon', function (info) {
       // console.log('catch-pokemon', info);
       $scope.logs.unshift(info);
     });
@@ -386,19 +390,21 @@
 
     function updateAllPokemonsById() {
       $scope.allPokemonsById = {};
-      $scope.allPokemonsReferenceList.forEach(function(p) {
-        if ($scope.pokemonsById[p.id] === undefined) {
-          $scope.allPokemonsById[p.id] = p;
-        } else {
-          $scope.allPokemonsById[p.id] = $scope.pokemonsById[p.id];
-        }
-      });
+      if ($scope.pokemonsById) {
+        $scope.allPokemonsReferenceList.forEach(function (p) {
+          if ($scope.pokemonsById[p.id] === undefined) {
+            $scope.allPokemonsById[p.id] = p;
+          } else {
+            $scope.allPokemonsById[p.id] = $scope.pokemonsById[p.id];
+          }
+        });
+      }
     }
 
     function updateNextEvolutions(data) {
       var nextPokemon, nextId;
       if ($scope.pokemonsReference && data.pokemonsById) {
-        Object.keys(data.pokemonsById).forEach(function(pId) {
+        Object.keys(data.pokemonsById).forEach(function (pId) {
           var currentPokemonRef, candyCountForPId, candyCountForNextPId;
           currentPokemonRef = $scope.pokemonsReference[pId];
           if (currentPokemonRef && currentPokemonRef.next_evolution) {
@@ -448,17 +454,17 @@
 
       $scope.pokemons_sorted_by_capture_date = JSON.parse(JSON.stringify(data.pokemons));
 
-      $scope.pokemons_sorted_by_capture_date.sort(function(a, b) {
+      $scope.pokemons_sorted_by_capture_date.sort(function (a, b) {
         return b.creation_time_ms_Timestamp - a.creation_time_ms_Timestamp;
       });
 
-      $scope.pokemons_sorted_by_capture_date.forEach(function(p) {
+      $scope.pokemons_sorted_by_capture_date.forEach(function (p) {
         p.catched_time_from_now = moment(p.creation_time_ms_Timestamp).fromNow();
       });
 
       $scope.pokemons_sorted_by_cp = JSON.parse(JSON.stringify(data.pokemons));
 
-      $scope.pokemons_sorted_by_cp.sort(function(a, b) {
+      $scope.pokemons_sorted_by_cp.sort(function (a, b) {
         return b.cp - a.cp;
       });
 
@@ -470,22 +476,22 @@
       // }));
     }
 
-    $on('get-inventory', function(data) {
+    $on('get-inventory', function (data) {
       console.log('get-inventory', data);
       updateScopeWithData(data);
     });
 
-    $emit('get-user-position', function(res) {
+    $emit('get-user-position', function (res) {
       console.log('get-user-position', res);
       setMap(res.lat, res.lng);
     });
 
-    $scope.evolvePokemon = function(p) {
+    $scope.evolvePokemon = function (p) {
       console.log('evolve-pokemon', p);
       socket.emit('evolve-pokemon', p);
     };
 
-    $emit('get-profile', function(res) {
+    $emit('get-profile', function (res) {
       console.log(res);
       updateScopeWithData(res.data);
       // res.data.inventory.inventory_delta.inventory_items.forEach(function(i) {

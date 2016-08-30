@@ -227,13 +227,14 @@ function Pokeio() {
         }
 
         console.log('f_ret', f_ret);
+        console.log('BODY RESPONSE', body);
+
         if (f_ret) {
           if (f_ret.auth_ticket) {
             self.playerInfo.authTicket = f_ret.auth_ticket;
           }
           return callback(null, f_ret);
         } else {
-          console.log(body, response);
           api_req(api_endpoint, access_token, req, callback);
         }
       });

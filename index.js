@@ -1,6 +1,10 @@
 (function() {
   'use strict';
 
+  console.log('LOG TEST');
+  console.error('ERROR TEST');
+  console.info('INFO TEST');
+
   var saveManager = require('./libs/SaveManager').SaveManager,
     AsyncActionHandler = require('./libs/AsyncActionHandler'),
     moment = require('moment'),
@@ -380,6 +384,7 @@
     app = express();
     http = require('http').Server(app);
     io = require('socket.io')(http);
+    io.set('transports', ['websocket']);
 
     app.use(express.static('public'));
 
@@ -634,7 +639,6 @@
       }
 
       function getInventory(callback) {
-        // console.log('GET INVENTORY');
         pokeio.GetInventory(function(err, inventory) {
           if (err) {
             console.error('GetInventory', err);

@@ -398,7 +398,7 @@
 
     function updateNextEvolutions(data) {
       var nextPokemon, nextId;
-      if ($scope.pokemonsReference) {
+      if ($scope.pokemonsReference && data.pokemonsById) {
         Object.keys(data.pokemonsById).forEach(function(pId) {
           var currentPokemonRef, candyCountForPId, candyCountForNextPId;
           currentPokemonRef = $scope.pokemonsReference[pId];

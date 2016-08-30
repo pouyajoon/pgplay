@@ -121,3 +121,32 @@
 2016-08-30T13:07:06.320204+00:00 app[web.1]: CHECK BOOM TIMER 3 minutes WAITING 11 minutes
 2016-08-30T13:07:17.738245+00:00 heroku[web.1]: Restarting
 2016-08-30T13:07:17.738977+00:00 heroku[web.1]: State changed from up to starting
+2016-08-30T13:07:27.460855+00:00 heroku[web.1]: Starting process with command `node index.js`
+2016-08-30T13:07:28.102138+00:00 heroku[web.1]: Stopping all processes with SIGTERM
+2016-08-30T13:07:28.603926+00:00 heroku[router]: at=info method=GET path="/socket.io/?EIO=3&transport=websocket" host=pgplay.herokuapp.com request_id=d5b884ad-2e75-4930-a946-d64396f2d775 fwd="84.233.144.186" dyno=web.1 connect=0ms service=100302ms status=101 bytes=175
+2016-08-30T13:07:28.697026+00:00 heroku[web.1]: Process exited with status 143
+2016-08-30T13:07:29.278259+00:00 app[web.1]: LOG TEST
+2016-08-30T13:07:29.279430+00:00 app[web.1]: ERROR TEST
+2016-08-30T13:07:29.279737+00:00 app[web.1]: WARN TEST
+2016-08-30T13:07:29.279773+00:00 app[web.1]: INFO TEST
+2016-08-30T13:07:29.479433+00:00 app[web.1]: setup gmap
+2016-08-30T13:07:29.893607+00:00 app[web.1]: cluster true
+2016-08-30T13:07:29.987334+00:00 app[web.1]: LOG TEST
+2016-08-30T13:07:29.988778+00:00 app[web.1]: ERROR TEST
+2016-08-30T13:07:29.989278+00:00 app[web.1]: WARN TEST
+2016-08-30T13:07:29.989280+00:00 app[web.1]: INFO TEST
+2016-08-30T13:07:30.191344+00:00 app[web.1]: setup gmap
+2016-08-30T13:07:30.647926+00:00 app[web.1]: cluster false
+2016-08-30T13:07:30.648288+00:00 app[web.1]: Hello Pokebot
+2016-08-30T13:07:31.145334+00:00 app[web.1]: listening on *:3000
+2016-08-30T13:07:31.243396+00:00 app[web.1]: update location { latitude: 48.846988, longitude: 2.334972, altitude: 0 }
+2016-08-30T13:07:31.243584+00:00 app[web.1]: [i] Logging with user: pouyapokemon2
+2016-08-30T13:07:31.702803+00:00 heroku[web.1]: State changed from starting to up
+2016-08-30T13:07:31.868165+00:00 app[web.1]: [i] Received Google access token!
+2016-08-30T13:07:31.868424+00:00 app[web.1]: get access token done.
+2016-08-30T13:07:31.879550+00:00 app[web.1]: send request post { url: 'https://pgorelease.nianticlabs.com/plfe/rpc',
+2016-08-30T13:07:31.879552+00:00 app[web.1]:   body: <Buffer 08 02 18 80 80 80 80 b0 83 92 b2 14 22 02 08 02 22 02 08 7e 22 02 08 04 22 03 08 81 01 22 02 08 05 39 5f 0d 50 1a 6a 6c 48 40 41 0f 9b c8 cc 05 ae 02 ... >,
+2016-08-30T13:07:31.879553+00:00 app[web.1]:   encoding: null,
+2016-08-30T13:07:31.879554+00:00 app[web.1]:   headers: { 'User-Agent': 'Niantic App' } }
+2016-08-30T13:07:32.032435+00:00 app[web.1]: f_ret undefined undefined
+2016-08-30T13:08:00.666474+00:00 app[web.1]: CHECK BOOM TIMER 0 minutes WAITING 9 minutes

@@ -86,8 +86,10 @@
     74: 2,
     77: 2,
     79: 2,
+    81: 3,
     84: 2,
     85: 3,
+    90:3,
     92: 2,
     96: 2,
     98: 2,
@@ -102,7 +104,9 @@
     118: 2,
     120: 2,
     121: 3,
+    123:3,
     124: 3,
+    125: 3,
     126: 3,
     127: 3,
     129: 2, // magicarp
@@ -121,11 +125,11 @@
     return this.value + Math.floor(Math.random() * this.length) + 1;
   };
 
-  constants.speed = 2 / 1e2;
-  constants.step_distance_meter = new Random(25, 5);
+  // constants.speed = 2 / 1e2;
+  // constants.step_distance_meter = new Random(25, 5);
   
-  // constants.speed = 2 / 1e6;
-  // constants.step_distance_meter = new Random(2.5, 0.8);
+  constants.speed = 2 / 1e6;
+  constants.step_distance_meter = new Random(2.5, 0.8);
 
 
   constants.walking_interval = new Random(800, 400);

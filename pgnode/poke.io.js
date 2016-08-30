@@ -207,6 +207,9 @@ function Pokeio() {
 
       console.log('send request post', options);
       self.request.post(options, function (err, response, body) {
+
+        console.log('POST RES', response, body);
+
         if (err) {
           console.log('error request post', err);
           return callback(new Error('Error'));

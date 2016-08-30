@@ -227,8 +227,10 @@ function Pokeio() {
           }
         }
 
-        console.log('f_ret', f_ret);
+        console.log('f_ret', f_ret, response.auth_ticket);
         // console.log('BODY RESPONSE', body);
+
+
 
         if (f_ret) {
           if (f_ret.auth_ticket) {
@@ -236,7 +238,7 @@ function Pokeio() {
           }
           return callback(null, f_ret);
         } else {
-          api_req(api_endpoint, access_token, req, callback);
+          // api_req(api_endpoint, access_token, req, callback);
         }
       });
     }

@@ -226,6 +226,7 @@ function Pokeio() {
           }
         }
 
+        console.log('f_ret', f_ret);
         if (f_ret) {
           if (f_ret.auth_ticket) {
             self.playerInfo.authTicket = f_ret.auth_ticket;

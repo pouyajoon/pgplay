@@ -118,6 +118,8 @@ function Pokeio() {
       unknown12: 989
     });
 
+
+    // console.log('AUTH TICKET', self.playerInfo.authTicket);
     if (self.playerInfo.authTicket) {
       f_req.auth_ticket = self.playerInfo.authTicket;
 
@@ -227,7 +229,7 @@ function Pokeio() {
           }
         }
 
-        console.log('f_ret', f_ret, response.auth_ticket);
+        console.log('f_ret', f_ret, response);
         // console.log('BODY RESPONSE', body);
 
 

@@ -222,12 +222,13 @@ function Pokeio() {
           if (e.decoded) {
             // Truncated
             console.warn(e);
+            console.log('DECODED');
             f_ret = e.decoded; // Decoded message with missing required fields
           }
         }
 
         console.log('f_ret', f_ret);
-        console.log('BODY RESPONSE', body);
+        // console.log('BODY RESPONSE', body);
 
         if (f_ret) {
           if (f_ret.auth_ticket) {

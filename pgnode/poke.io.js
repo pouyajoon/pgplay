@@ -103,7 +103,6 @@ function Pokeio() {
       token: new RequestEnvelop.AuthInfo.JWT(access_token, 59)
     });
 
-
     //console.log(req);
 
     var f_req = new RequestEnvelop({
@@ -202,6 +201,7 @@ function Pokeio() {
         }
       };
 
+      // console.log(options)
 
       console.log('send request post', options);
       self.request.post(options, function (err, response, body) {
@@ -310,6 +310,7 @@ function Pokeio() {
 
     api_req(api_url, self.playerInfo.accessToken, req, function (err, f_ret) {
       if (err) {
+        console.err('error api_req', err);
         return callback(err);
       }
       var api_endpoint = 'https://' + f_ret.api_url + '/rpc';

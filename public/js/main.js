@@ -5,8 +5,7 @@
   var socket, app, map, me, fortMarkers = {},
     list = [],
     path;
-  socket = io();
-
+  socket = io({transports: ['websocket'], upgrade: false});
 
 
   socket.on('user-new-position', function(position, locations) {

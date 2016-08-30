@@ -118,3 +118,6 @@
 2016-08-30T13:05:48.472432+00:00 heroku[router]: at=info method=GET path="/templates/table-list.ng.html" host=pgplay.herokuapp.com request_id=7581c45f-51b0-4498-9a8a-69649872fc75 fwd="84.233.144.186" dyno=web.1 connect=0ms service=2ms status=200 bytes=588
 2016-08-30T13:06:06.296007+00:00 app[web.1]: CHECK BOOM TIMER 2 minutes WAITING 11 minutes
 2016-08-30T13:06:36.316208+00:00 app[web.1]: CHECK BOOM TIMER 2 minutes WAITING 11 minutes
+2016-08-30T13:07:06.320204+00:00 app[web.1]: CHECK BOOM TIMER 3 minutes WAITING 11 minutes
+2016-08-30T13:07:17.738245+00:00 heroku[web.1]: Restarting
+2016-08-30T13:07:17.738977+00:00 heroku[web.1]: State changed from up to starting

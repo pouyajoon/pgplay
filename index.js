@@ -406,7 +406,7 @@
 
       socket.on('get-profile', function(callback) {
         return callback && callback({
-          all: pokeio,
+          // all: pokeio,
           info: pokeio.playerInfo,
           data: data
         });

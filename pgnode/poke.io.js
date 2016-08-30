@@ -202,8 +202,11 @@ function Pokeio() {
         }
       };
 
+
+      console.log('send request post');
       self.request.post(options, function (err, response, body) {
         if (err) {
+          console.log('error request post', err);
           return callback(new Error('Error'));
         }
 
@@ -253,7 +256,7 @@ function Pokeio() {
       }
       // Getting access token
       self.GetAccessToken(username, password, function (err, token) {
-        console.log('get access token')
+        console.log('get access token done.')
         if (err) {
           console.log('error access token', err);
           return callback(err);

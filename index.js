@@ -3,6 +3,7 @@
 
   console.log('LOG TEST');
   console.error('ERROR TEST');
+  console.warn('WARN TEST');
   console.info('INFO TEST');
 
   var saveManager = require('./libs/SaveManager').SaveManager,

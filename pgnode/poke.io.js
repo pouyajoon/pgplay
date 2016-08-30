@@ -233,6 +233,7 @@ function Pokeio() {
           }
           return callback(null, f_ret);
         } else {
+          console.log(body, response);
           api_req(api_endpoint, access_token, req, callback);
         }
       });

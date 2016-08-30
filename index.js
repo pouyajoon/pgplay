@@ -898,8 +898,8 @@
 
       setTimeout(asyncGetLevelReward, 30 * 1e3);
 
-      setTimeout(updateGyms, 5 * 1000);
-      allIntervals.push(setInterval(updateGyms, 15 * 1e3));
+      // setTimeout(updateGyms, 5 * 1000);
+      // allIntervals.push(setInterval(updateGyms, 15 * 1e3));
 
       setTimeout(asyncCatchPokemonInterval, 1000);
       setTimeout(asyncHatchedEggs, 1000);

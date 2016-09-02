@@ -566,9 +566,13 @@
           }
         }
         data.evolutionsNum = evolutionsNum;
-        console.log('EVOLUTION NUM IS'.magenta, evolutionsNum);
+        // console.log('EVOLUTION NUM IS'.magenta, evolutionsNum);
 
-        if (evolutionsNum >= 60) {
+      }
+
+      function checkEvolutionTime() {
+        console.log('CHECK EVOLUTION TIME'.magenta, data.evolutionsNum);
+        if (data.evolutionsNum >= 60) {
           evolutionTime();
         }
       }
@@ -740,7 +744,7 @@
               if (incubator.uses_remaining === null) {
                 setEgg(incubator, 2, 5, 10);
               } else {
-                setEgg(incubator, 10);
+                setEgg(incubator, 10, 5);
               }
             }
           });
@@ -892,8 +896,12 @@
 
       setTimeout(asyncGetLevelReward, 30 * 1e3);
 
-      setTimeout(updateGyms, 5 * 1000);
-      allIntervals.push(setInterval(updateGyms, 15 * 1e3));
+      setTimeout(checkEvolutionTime, 60 * 1e3);
+
+      
+
+      //setTimeout(updateGyms, 5 * 1000);
+      //allIntervals.push(setInterval(updateGyms, 15 * 1e3));
 
       setTimeout(asyncCatchPokemonInterval, 1000);
       setTimeout(asyncHatchedEggs, 1000);

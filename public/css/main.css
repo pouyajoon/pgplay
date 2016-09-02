@@ -79,3 +79,8 @@ div.top-bar{
 [ng-click]:hover{
     text-decoration: underline;
 }
+
+
+tr.dead{
+  background-color: red;
+}

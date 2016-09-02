@@ -103,6 +103,7 @@
     120: 2,
     121: 3,
     124: 3,
+    125: 3,
     126: 3,
     127: 3,
     129: 2, // magicarp
@@ -121,10 +122,11 @@
     return this.value + Math.floor(Math.random() * this.length) + 1;
   };
 
-  constants.speed = 2 / 1e2;
-  constants.step_distance_meter = new Random(25, 5);
+  // constants.speed = 2 / 1e2;
+  // constants.step_distance_meter = new Random(25, 5);
+  constants.step_distance_meter = new Random(5, 5);
   
-  // constants.speed = 2 / 1e6;
+  constants.speed = 2 / 1e5;
   // constants.step_distance_meter = new Random(2.5, 0.8);
 
 

@@ -463,7 +463,7 @@
         return b.cp - a.cp;
       });
 
-      console.log('pokemons_sorted_by_cp', $scope.pokemons_sorted_by_cp);
+      // console.log('pokemons_sorted_by_cp', $scope.pokemons_sorted_by_cp);
 
       // console.log(data.user_stats.km_walked);
       // console.log(data.incubators.map(function(inc) {

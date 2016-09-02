@@ -1,13 +1,16 @@
 {
   "name": "pgplay",
-  "version": "1.0.1",
+  "version": "1.0.23",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "engines": {
+    "node": "6.4.0"
+  },
+  "author": "pouya mohtacham",
+  "license": "MIT",
   "dependencies": {
     "colors": "^1.1.2",
     "express": "^4.14.0",

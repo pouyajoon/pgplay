@@ -1,4 +1,4 @@
-(function() {
+(function () {
   'use strict';
 
   var constants = {};
@@ -11,8 +11,8 @@
     16: 12,
     19: 25,
     21: 50,
-    41: 50,
-    60: 25
+    41: 50
+      // 60: 25
   };
 
   constants.inventoryItemTypes = {
@@ -40,6 +40,25 @@
   constants.inventoryItemTypesMax[constants.inventoryItemTypes.ITEM_MAX_POTION] = 50;
   constants.inventoryItemTypesMax[constants.inventoryItemTypes.ITEM_REVIVE] = 20;
   constants.inventoryItemTypesMax[constants.inventoryItemTypes.RAZZ_BERRY] = 15;
+
+
+  constants.maximunPokemonsStorageReverse = {
+    103: 3,
+    123: 3,
+    125: 3,
+    126: 3,
+    127: 3,
+    130: 3,
+    133: 6,
+    134: 3,
+    135: 3,
+    136: 3,
+    142: 3,
+    143: 3,
+    144: 3,
+    145: 3,
+    146: 3
+  };
 
   constants.maximunPokemonsStorage = {
     1: 3,
@@ -86,8 +105,10 @@
     74: 2,
     77: 2,
     79: 2,
+    81: 3,
     84: 2,
     85: 3,
+    90: 3,
     92: 2,
     96: 2,
     98: 2,
@@ -102,6 +123,7 @@
     118: 2,
     120: 2,
     121: 3,
+    123: 3,
     124: 3,
     125: 3,
     126: 3,
@@ -118,17 +140,19 @@
     this.length = length;
   }
 
-  Random.prototype.getRandom = function() {
+  Random.prototype.getRandom = function () {
     return this.value + Math.floor(Math.random() * this.length) + 1;
   };
 
   // constants.speed = 2 / 1e2;
   // constants.step_distance_meter = new Random(25, 5);
-  constants.step_distance_meter = new Random(5, 5);
-  
-  constants.speed = 2 / 1e5;
-  // constants.step_distance_meter = new Random(2.5, 0.8);
+  // constants.step_distance_meter = new Random(5, 5);
+  // constants.speed = 2 / 1e5;
+  // constants.speed = 2 / 1e2;
+  // constants.step_distance_meter = new Random(25, 5);
 
+  constants.speed = 2 / 1e6;
+  constants.step_distance_meter = new Random(2.5, 0.8);
 
   constants.walking_interval = new Random(800, 400);
 

@@ -53,8 +53,8 @@
   };
 
   locations.points.gym_porte_montreuil = {
-    lat: 48.853921,
-    lng: 2.410750
+    lat: 48.853911,
+    lng: 2.410743
   };
 
   locations.gyms.porte_montreuil = {

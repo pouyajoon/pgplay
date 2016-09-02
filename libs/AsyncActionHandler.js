@@ -1,8 +1,8 @@
-(function () {
+(function() {
   'use strict';
 
 
-  var AsyncActionHandler = function (pokeio, evolvingPokemons) {
+  var AsyncActionHandler = function(pokeio, evolvingPokemons) {
     this.asyncActionList = [];
     this.parkedAsyncActionList = [];
 
@@ -12,19 +12,19 @@
     this.executeAsyncActionList();
   };
 
-  AsyncActionHandler.prototype.flushParkedList = function () {
+  AsyncActionHandler.prototype.flushParkedList = function() {
     this.asyncActionList = this.asyncActionList.concat(this.parkedAsyncActionList);
     this.parkedAsyncActionList = [];
   };
 
-  AsyncActionHandler.prototype.setupNextAsyncCall = function (nextAsyncTime) {
+  AsyncActionHandler.prototype.setupNextAsyncCall = function(nextAsyncTime) {
     var nextTimeMin = nextAsyncTime || 500;
     setTimeout(this.executeAsyncActionList.bind(this), nextTimeMin + Math.floor(Math.random() * 200) + 1);
   };
 
-  AsyncActionHandler.prototype.appendAsyncAction = function (action) {
-    if (this.evolvingPokemons.FIGHT && action.type !== 'FIGHT') {
-      console.log('FIGHT'.red, 'ESCAPE', action.name);
+  AsyncActionHandler.prototype.appendAsyncAction = function(action) {
+    if (this.evolvingPokemons.FIGHT !== undefined && action.type !== 'FIGHT') {
+      // console.log('FIGHT'.red, 'ESCAPE', action.name);
       return;
     }
     if (['EVOLVE', 'FIGHT'].indexOf(action.type) === -1 && Object.keys(this.evolvingPokemons).length > 0) {
@@ -37,10 +37,9 @@
     this.asyncActionList.push(action);
   };
 
-  AsyncActionHandler.prototype.prependAsyncAction = function (action) {
-    if (this.evolvingPokemons.FIGHT && action.type !== 'FIGHT') {
-      console.log('FIGHT'.red, 'ESCAPE', action.name);
-
+  AsyncActionHandler.prototype.prependAsyncAction = function(action) {
+    if (this.evolvingPokemons.FIGHT !== undefined && action.type !== 'FIGHT') {
+      // console.log('FIGHT'.red, 'ESCAPE', action.name, this.evolvingPokemons);
       return;
     }
     if (Object.keys(this.evolvingPokemons).length > 0) {
@@ -49,16 +48,16 @@
     this.asyncActionList.unshift(action);
   };
 
-  AsyncActionHandler.prototype.executeAsyncActionList = function () {
+  AsyncActionHandler.prototype.executeAsyncActionList = function() {
     var action, args, that = this;
     if (this.asyncActionList.length) {
       action = this.asyncActionList.shift();
       args = action.args;
-      args.push(function (err, res) {
+      args.push(function(err, res) {
         if (err) {
           console.log('ASYNC ACTION ERROR'.red, (new Date(Date.now())).toISOString(), err, action.name);
         } else {
-          if (false && action.silence === true) {
+          if (action.silence === true) {
             process.stdout.write('.');
           } else {
             console.log('ASYNC ACTION DONE'.green, (new Date(Date.now())).toISOString(), action.name);

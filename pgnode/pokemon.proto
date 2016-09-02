@@ -353,7 +353,7 @@ message BattleAction {
   message AttackGymMessage {
   required string gym_id = 1;
   required string battle_id = 2;
-  repeated BattleAction attack_actions = 3;
+  repeated BattleAction attack_actions = 3 [packed=true];
   optional BattleAction last_retrieved_actions = 4;
   required double player_latitude = 5;
   required double player_longitude = 6;
@@ -1522,6 +1522,44 @@ message FortDeployPokemonResponse {
       ERROR_LOCATION_UNSET = 5;
     }
   }
+
+
+message UseItemPotionMessage {
+  required ItemId item_id = 1;
+  required fixed64 pokemon_id = 2;
+}
+
+message UseItemPotionResponse {
+  optional Result result = 1;
+  optional int32 stamina = 2;
+
+  enum Result {
+    UNSET = 0;
+    SUCCESS = 1;
+    ERROR_NO_POKEMON = 2;
+    ERROR_CANNOT_USE = 3;
+    ERROR_DEPLOYED_TO_FORT = 4;
+  }
+}
+
+
+message UseItemReviveMessage {
+ required ItemId item_id = 1;
+  required fixed64 pokemon_id = 2;
+}
+
+message UseItemReviveResponse {
+  optional Result result = 1;
+  optional int32 stamina = 2;
+
+  enum Result {
+    UNSET = 0;
+    SUCCESS = 1;
+    ERROR_NO_POKEMON = 2;
+    ERROR_CANNOT_USE = 3;
+    ERROR_DEPLOYED_TO_FORT = 4;
+  }
+}
 
 
 

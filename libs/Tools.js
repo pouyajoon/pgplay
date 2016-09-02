@@ -13,7 +13,7 @@
   };
 
   exports.getPrettyPokemonName = function(p) {
-    return p.reference.name + ' (' + p.cp + ')';
+    return p.reference.name + ' (' + p.cp + ':' + p.stamina + '/' + p.stamina_max + ')';
   };
 
 }());

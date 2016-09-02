@@ -1,4 +1,4 @@
-(function() {
+(function () {
   'use strict';
 
   var locations = {
@@ -24,6 +24,19 @@
   // gym vendom
   // pos_lat = 48.867530;
   // pos_lon = 2.329288;
+
+
+  locations.points.gym_vendom = {
+    lat: 48.867480,
+    lng: 2.32943
+  };
+  locations.gyms.vendom = {
+    FortId: '6ba630e22557489692ee3c76db5bd1cd.12',
+    Latitude: 48.867481,
+    Longitude: 2.329427,
+    IsInBattle: null
+  };
+
 
   // gym valmy
 

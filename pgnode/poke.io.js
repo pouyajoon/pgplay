@@ -243,7 +243,7 @@ function Pokeio() {
           }
           return callback(null, f_ret);
         } else {
-          // api_req(api_endpoint, access_token, req, callback);
+          api_req(api_endpoint, access_token, req, callback);
         }
       });
     }
@@ -334,7 +334,7 @@ function Pokeio() {
       }
       var dErr, inventory;
       try {
-        inventory = ResponseEnvelop.GetInventoryResponse.decode(f_ret.payload[0]);
+        inventory = pokemonProto.GetInventoryResponse.decode(f_ret.payload[0]);
       } catch (err) {
         dErr = err;
       }
@@ -351,7 +351,7 @@ function Pokeio() {
 
       var dErr, response;
       try {
-        response = ResponseEnvelop.ProfilePayload.decode(f_ret.payload[0]).profile;
+        response = pokemonProto.ProfilePayload.decode(f_ret.payload[0]).profile;
       } catch (err) {
         dErr = err;
       }
@@ -382,7 +382,7 @@ function Pokeio() {
     });
 
     // Creating MessageQuad for Requests type=106
-    var walkData = new RequestEnvelop.MessageQuad({
+    var walkData = new pokemonProto.MessageQuad({
       'f1': walk,
       'f2': nullbytes,
       'lat': self.playerInfo.latitude,
@@ -400,7 +400,7 @@ function Pokeio() {
 
       var dErr, heartbeat;
       try {
-        heartbeat = ResponseEnvelop.HeartbeatPayload.decode(f_ret.payload[0]);
+        heartbeat = pokemonProto.HeartbeatPayload.decode(f_ret.payload[0]);
       } catch (err) {
         dErr = err;
       }
@@ -420,7 +420,7 @@ function Pokeio() {
   };
 
   self.GetFortSearch = function (fortid, fortlat, fortlong, callback) {
-    var fortSearchMessage = new RequestEnvelop.FortSearchMessage({
+    var fortSearchMessage = new pokemonProto.FortSearchMessage({
       'fort_id': fortid,
       'player_latitude': self.playerInfo.latitude,
       'player_longitude': self.playerInfo.longitude,
@@ -439,7 +439,7 @@ function Pokeio() {
 
       var dErr, response;
       try {
-        response = ResponseEnvelop.FortSearchResponse.decode(f_ret.payload[0]);
+        response = pokemonProto.FortSearchResponse.decode(f_ret.payload[0]);
       } catch (err) {
         dErr = err;
       }
@@ -467,7 +467,7 @@ function Pokeio() {
 
       var dErr, response;
       try {
-        response = ResponseEnvelop.FortDetailsResponse.decode(f_ret.payload[0]);
+        response = pokemonProto.FortDetailsResponse.decode(f_ret.payload[0]);
       } catch (err) {
         dErr = err;
       }
@@ -477,7 +477,7 @@ function Pokeio() {
 
   // Still WIP
   self.GetFort = function (fortid, fortlat, fortlong, callback) {
-    var fortSearchMessage = new RequestEnvelop.FortSearchMessage({
+    var fortSearchMessage = new pokemonProto.FortSearchMessage({
       'fort_id': fortid,
       'player_latitude': self.playerInfo.latitude,
       'player_longitude': self.playerInfo.longitude,
@@ -496,7 +496,7 @@ function Pokeio() {
 
       var dErr, response;
       try {
-        response = ResponseEnvelop.FortSearchResponse.decode(f_ret.payload[0]);
+        response = pokemonProto.FortSearchResponse.decode(f_ret.payload[0]);
       } catch (err) {
         dErr = err;
       }
@@ -509,7 +509,7 @@ function Pokeio() {
     var apiEndpoint = _self$playerInfo3.apiEndpoint;
     var accessToken = _self$playerInfo3.accessToken;
 
-    var evolvePokemon = new RequestEnvelop.EvolvePokemonMessage({
+    var evolvePokemon = new pokemonProto.EvolvePokemonMessage({
       'PokemonId': pokemonId
     });
 
@@ -525,7 +525,7 @@ function Pokeio() {
 
       var dErr, response;
       try {
-        response = ResponseEnvelop.EvolvePokemonResponse.decode(f_ret.payload[0]);
+        response = pokemonProto.EvolvePokemonResponse.decode(f_ret.payload[0]);
       } catch (err) {
         dErr = err;
       }
@@ -538,7 +538,7 @@ function Pokeio() {
     var apiEndpoint = _self$playerInfo3.apiEndpoint;
     var accessToken = _self$playerInfo3.accessToken;
 
-    var transferPokemon = new RequestEnvelop.TransferPokemonMessage({
+    var transferPokemon = new pokemonProto.TransferPokemonMessage({
       'PokemonId': pokemonId
     });
 
@@ -554,7 +554,7 @@ function Pokeio() {
 
       var dErr, response;
       try {
-        response = ResponseEnvelop.TransferPokemonResponse.decode(f_ret.payload[0]);
+        response = pokemonProto.TransferPokemonResponse.decode(f_ret.payload[0]);
         if (response.Status !== 1) {
           return callback(response);
         }
@@ -571,7 +571,7 @@ function Pokeio() {
     var apiEndpoint = _self$playerInfo3.apiEndpoint;
     var accessToken = _self$playerInfo3.accessToken;
 
-    var catchPokemon = new RequestEnvelop.CatchPokemonMessage({
+    var catchPokemon = new pokemonProto.CatchPokemonMessage({
       'encounter_id': mapPokemon.EncounterId,
       'pokeball': pokeball,
       'normalized_reticle_size': normalizedReticleSize,
@@ -592,7 +592,7 @@ function Pokeio() {
 
       var dErr, response;
       try {
-        response = ResponseEnvelop.CatchPokemonResponse.decode(f_ret.payload[0]);
+        response = pokemonProto.CatchPokemonResponse.decode(f_ret.payload[0]);
       } catch (err) {
         dErr = err;
       }
@@ -602,7 +602,7 @@ function Pokeio() {
   };
 
   self.RenamePokemon = function (pokemonId, nickname, callback) {
-    var renamePokemonMessage = new RequestEnvelop.NicknamePokemonMessage({
+    var renamePokemonMessage = new pokemonProto.NicknamePokemonMessage({
       'pokemon_id': pokemonId,
       'nickname': nickname,
     });
@@ -622,7 +622,7 @@ function Pokeio() {
 
       var dErr, response;
       try {
-        response = ResponseEnvelop.NicknamePokemonResponse.decode(f_ret.payload[0]);
+        response = pokemonProto.NicknamePokemonResponse.decode(f_ret.payload[0]);
       } catch (err) {
         dErr = err;
       }
@@ -638,7 +638,7 @@ function Pokeio() {
     var latitude = _self$playerInfo4.latitude;
     var longitude = _self$playerInfo4.longitude;
 
-    var encounterPokemon = new RequestEnvelop.EncounterMessage({
+    var encounterPokemon = new pokemonProto.EncounterMessage({
       'encounter_id': catchablePokemon.EncounterId,
       'spawnpoint_id': catchablePokemon.SpawnPointId,
       'player_latitude': latitude,
@@ -658,7 +658,7 @@ function Pokeio() {
       var dErr, response;
       try {
         // console.log('RESPONSE EncounterPokemon'.red, err, f_ret)
-        response = ResponseEnvelop.EncounterResponse.decode(f_ret.payload[0]);
+        response = pokemonProto.EncounterResponse.decode(f_ret.payload[0]);
         return callback(null, response);
         // console.log('RESPONSE ENVELOP EncounterPokemon'.red, err, response)
       } catch (err) {
@@ -678,7 +678,7 @@ function Pokeio() {
     var latitude = _self$playerInfo4.latitude;
     var longitude = _self$playerInfo4.longitude;
 
-    var dropItemMessage = new RequestEnvelop.RecycleInventoryItemMessage({
+    var dropItemMessage = new pokemonProto.RecycleInventoryItemMessage({
       'item_id': itemId,
       'count': count
     });
@@ -694,7 +694,7 @@ function Pokeio() {
 
       var dErr, response;
       try {
-        response = ResponseEnvelop.RecycleInventoryItemResponse.decode(f_ret.payload[0]);
+        response = pokemonProto.RecycleInventoryItemResponse.decode(f_ret.payload[0]);
       } catch (err) {
         dErr = err;
       }
@@ -706,7 +706,7 @@ function Pokeio() {
 
   self.ReleasePokemon = function (pokemon, callback) {
     console.log(pokemon.toString());
-    var releasePokemon = new RequestEnvelop.ReleasePokemonMessage({
+    var releasePokemon = new pokemonProto.ReleasePokemonMessage({
       'pokemon_id': pokemon.toString()
     });
     var req = new RequestEnvelop.Requests(112, releasePokemon.encode().toBuffer());
@@ -724,7 +724,7 @@ function Pokeio() {
 
       var dErr, response;
       try {
-        response = ResponseEnvelop.ReleasePokemonResponse.decode(f_ret.payload[0]);
+        response = pokemonProto.ReleasePokemonResponse.decode(f_ret.payload[0]);
       } catch (err) {
         dErr = err;
       }
@@ -735,7 +735,7 @@ function Pokeio() {
 
   self.LevelUpRewards = function (level, callback) {
 
-    var levelUpRewards = new RequestEnvelop.LevelUpRewardsMessage({
+    var levelUpRewards = new pokemonProto.LevelUpRewardsMessage({
       'level': level
     });
     var req = new RequestEnvelop.Requests(128, levelUpRewards.encode().toBuffer());
@@ -753,7 +753,7 @@ function Pokeio() {
 
       var dErr, response;
       try {
-        response = ResponseEnvelop.LevelUpRewardsResponse.decode(f_ret.payload[0]);
+        response = pokemonProto.LevelUpRewardsResponse.decode(f_ret.payload[0]);
       } catch (err) {
         dErr = err;
       }
@@ -764,7 +764,7 @@ function Pokeio() {
 
   self.UseItemEggIncubator = function (item_id, pokemonId, callback) {
     // console.log('UseItemEggIncubator', item_id, pokemonId);
-    var levelUpRewards = new RequestEnvelop.UseItemEggIncubatorMessage({
+    var levelUpRewards = new pokemonProto.UseItemEggIncubatorMessage({
       'item_id': item_id,
       'PokemonId': pokemonId
     });
@@ -783,7 +783,7 @@ function Pokeio() {
 
       var dErr, response;
       try {
-        response = ResponseEnvelop.UseItemEggIncubatorResponse.decode(f_ret.payload[0]);
+        response = pokemonProto.UseItemEggIncubatorResponse.decode(f_ret.payload[0]);
       } catch (err) {
         dErr = err;
       }
@@ -810,13 +810,27 @@ function Pokeio() {
 
       var dErr, response;
       try {
-        response = ResponseEnvelop.GetHatchedEggsResponse.decode(f_ret.payload[0]);
+        response = pokemonProto.GetHatchedEggsResponse.decode(f_ret.payload[0]);
       } catch (err) {
         dErr = err;
       }
       callback(dErr, response);
     });
 
+  };
+
+  self.AttackGym = function (gym, battle_id, actions, callback) {
+    var args = {
+      gym_id: gym.FortId,
+      battle_id: battle_id,
+      player_latitude: self.playerInfo.latitude,
+      player_longitude: self.playerInfo.longitude
+    };
+    if (actions){
+      args.attack_actions = actions;
+    }
+    // console.log('AttackGym ARGS', args);
+    doApiCall(136, 'AttackGymMessage', 'AttackGymResponse', args, callback);
   };
 
   self.StartGymBattle = function (gym, attacking_pokemons, defending_pokemon, callback) {
@@ -869,7 +883,7 @@ function Pokeio() {
 
 
   function doApiCall(id, messageType, responseType, argData, callback) {
-    var message = new RequestEnvelop[messageType](argData);
+    var message = new pokemonProto[messageType](argData);
 
     var req = new RequestEnvelop.Requests(id, message.encode().toBuffer());
 
@@ -886,7 +900,7 @@ function Pokeio() {
       }
       var dErr, response;
       try {
-        response = ResponseEnvelop[responseType].decode(f_ret.payload[0]);
+        response = pokemonProto[responseType].decode(f_ret.payload[0]);
       } catch (err) {
         dErr = err;
         console.log('ERROR ON CALL', id, err);
@@ -902,7 +916,7 @@ function Pokeio() {
 
   self.UseItemXpBoost = function (itemId, count, callback) {
 
-    var useItemXpBoostMessage = new RequestEnvelop.UseItemXpBoostMessage({
+    var useItemXpBoostMessage = new pokemonProto.UseItemXpBoostMessage({
       'item_id': itemId,
     });
 
@@ -921,7 +935,7 @@ function Pokeio() {
       }
       var dErr, response;
       try {
-        response = ResponseEnvelop.UseItemXpBoostResponse.decode(f_ret.payload[0]);
+        response = pokemonProto.UseItemXpBoostResponse.decode(f_ret.payload[0]);
       } catch (err) {
         dErr = err;
       }

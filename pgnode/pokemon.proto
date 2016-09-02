@@ -45,104 +45,6 @@ message RequestEnvelop {
     }
   }
 
-  message MessageQuad {
-    repeated uint64 f1 = 1 [packed=true];
-    repeated int64 f2 = 2 [packed=true];
-    required double lat = 3;
-    required double long = 4;
-  }
-
-  message CatchPokemonMessage {
-    required fixed64 encounter_id = 1;
-    required int32 pokeball = 2;
-    required double normalized_reticle_size = 3;
-    required string spawnpoint_id = 4;
-    required bool hit_pokemon = 5;
-    required double spin_modifier = 6;
-    required double normalized_hit_position = 7;
-   }
-
-  message EvolvePokemonMessage {
-    required fixed64 PokemonId = 1;
-  }
-
-  message TransferPokemonMessage {
-    required fixed64 PokemonId = 1;
-  }
-
-  message LevelUpRewardsMessage {
-		required int32 level = 1;
-	}
-
-  message UseItemEggIncubatorMessage {
-    required string item_id = 1;
-    required uint64 PokemonId = 2;
-	}
-
-  message GetHatchedEggsMessage {
-  // nothin..
-  }
-  message UseItemXpBoostMessage {
-		required int32 item_id = 1;
-	}
-
-  message EncounterMessage {
-    repeated fixed64 encounter_id = 1;
-    required string spawnpoint_id = 2;
-    required double player_latitude = 3;
-    required double player_longitude = 4;
-  }
-
-  message FortSearchMessage {
-	  required string fort_id = 1;
-	  required double player_latitude = 2;
-	  required double player_longitude = 3;
-	  required double fort_latitude = 4;
-    required double fort_longitude = 5;
-  }
-
-  message StartGymBattleRequest{
-    required string gym_id = 1;
-    repeated fixed64 attacking_pokemons_id = 2;
-    optional fixed64 defending_pokemon_id = 3;  
-    required double player_latitude = 4;
-    required double player_longitude = 5;
-  }
-
-message FortDeployPokemonMessage {
- required string fort_id = 1;
-  required fixed64 pokemon_id = 2;
-  required double player_latitude = 3;
- required double player_longitude = 4;
-}
-
-	message FortDetailsRequest
-	{
-  	required string fort_id = 1;
- 	  required double fort_latitude = 2;
-    required double fort_longitude = 3;
-	}
-
-  message GymDetailsRequest
-  {
-    required string gym_id = 1;
-    required double player_latitude = 2;
-    required double player_longitude = 3;    
-    required double gym_latitude = 4;
-    required double gym_longitude = 5;
-    //required string client_version = 6;
-  }
-
-  //rpc id : 137
-  message RecycleInventoryItemMessage {
-      required int32 item_id = 1;
-      required int32 count = 2;
-  }
-
-  message ReleasePokemonMessage {
-    optional fixed64 pokemon_id = 1;
-    repeated fixed64 pokemon_ids = 2;
-  }
 }
 
 message ResponseEnvelop {
@@ -172,6 +74,127 @@ message ResponseEnvelop {
 		optional bytes end = 3;
 	}
 
+
+
+
+
+
+}
+
+message Signature {
+
+    message LocationFix {
+        optional string provider = 1; // "network", "gps", "fused", possibly others
+        optional uint64 timestamp_since_start = 2; // in ms
+        optional float latitude = 13;
+        optional float longitude = 14;
+
+        // ??? shows up in struct, dunno where these go
+        // float device_speed;
+        // float device_course;
+        optional float horizontal_accuracy = 20; // iOS only? (range seems to be -1 to +1)
+        optional float altitude = 21;
+        optional float vertical_accuracy = 22; // iOS only? (range seems to be ~10-12)
+        optional uint64 provider_status = 26; // Usually 3 (possibly GPS status: 1 = no fix, 2 = acquiring/inaccurate, 3 = fix acquired)
+        optional uint32 floor = 27; // No idea what this is, seems to be optional
+        optional  uint64 location_type = 28; // Always 1 (if there is data at all)
+    }
+
+    // don't really care about this since we're not using it
+    message AndroidGpsInfo {
+        optional uint64 time_to_fix = 1;
+        repeated int32 satellites_prn = 2;
+        repeated float snr = 3;
+        repeated float azimuth = 4;
+        repeated float elevation = 5;
+        repeated bool has_almanac = 6;
+        repeated bool has_ephemeris = 7;
+        repeated bool used_in_fix = 8;
+    }
+
+    message SensorInfo {
+        optional uint64 timestamp_snapshot = 1; // in ms
+        optional double magnetometer_x = 3;
+        optional double magnetometer_y = 4;
+        optional double magnetometer_z = 5;
+        optional double angle_normalized_x = 6;
+        optional double angle_normalized_y = 7;
+        optional double angle_normalized_z = 8;
+        optional double accel_raw_x = 10;
+        optional double accel_raw_y = 11;
+        optional double accel_raw_z = 12;
+        optional double gyroscope_raw_x = 13;
+        optional double gyroscope_raw_y = 14;
+        optional double gyroscope_raw_z = 15;
+        optional double accel_normalized_x = 16;
+        optional double accel_normalized_y = 17;
+        optional double accel_normalized_z = 18;
+        optional uint64 accelerometer_axes = 19; // Always 3
+    }
+
+    message DeviceInfo {
+        optional string device_id = 1; // Hex string
+        optional string android_board_name = 2;
+        optional string android_bootloader = 3;
+        optional  string device_brand = 4; // On Android: product.brand
+        optional  string device_model = 5; // On Android: product.device
+        optional  string device_model_identifier = 6; // Android only, build.display.id
+        optional  string device_model_boot = 7;  // On Android: boot.hardware
+        optional   string hardware_manufacturer = 8; // On Android: product.manufacturer
+        optional  string hardware_model = 9;  // On Android: product.model
+        optional   string firmware_brand = 10; // On Android: product.name, on iOS: "iPhone OS"
+        optional  string firmware_tags = 12; // Android only, build.tags
+        optional  string firmware_type = 13; // On Android: build.type, on iOS instead: iOS version
+        optional  string firmware_fingerprint = 14; // Android only, build.fingerprint
+    }
+
+    message ActivityStatus {
+        // all of these had 1 as their value
+        optional   uint64 start_time_ms = 1;
+        optional   bool unknown_status = 2;
+        optional   bool walking = 3;
+        optional       bool running = 4;
+        optional       bool stationary = 5;
+        optional       bool automotive = 6;
+        optional       bool tilting = 7;
+        optional       bool cycling = 8;
+        optional   bytes status = 9;
+    }
+
+    optional uint64 timestamp_since_start = 2; // in ms
+    repeated LocationFix location_fix = 4;
+    optional AndroidGpsInfo gps_info = 5;
+    optional SensorInfo sensor_info = 7;
+    optional DeviceInfo device_info = 8;
+    optional ActivityStatus activity_status = 9;
+    optional uint32 location_hash1 = 10; // Location1 hashed based on the auth_token - xxHash32
+    optional uint32 location_hash2 = 20; // Location2 hashed based on the auth_token - xxHash32
+    optional bytes unk22 = 22; // possibly replay check. Generation unknown but pointed to by 0001B8614
+    optional uint64 timestamp = 23; // epoch timestamp in ms
+    repeated uint64 request_hash = 24; // hashes of each request message in a hashArray - xxhash64
+
+    // Addresses for the corresponding hash functions:
+    //    xxHash32              00054D28
+    //    xxhash64              000546C8 - Feeds into 00053D40
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//      ********************************************
+
   message HeartbeatPayload {
     repeated ClientMapCell cells = 1;
   }
@@ -189,6 +212,188 @@ message ResponseEnvelop {
     repeated MapPokemonProto MapPokemon = 10;
     repeated NearbyPokemonProto NearbyPokemon = 11;
   }
+  message MessageQuad {
+    repeated uint64 f1 = 1 [packed=true];
+    repeated int64 f2 = 2 [packed=true];
+    required double lat = 3;
+    required double long = 4;
+  }
+
+  message CatchPokemonMessage {
+    required fixed64 encounter_id = 1;
+    required int32 pokeball = 2;
+    required double normalized_reticle_size = 3;
+    required string spawnpoint_id = 4;
+    required bool hit_pokemon = 5;
+    required double spin_modifier = 6;
+    required double normalized_hit_position = 7;
+   }
+
+  message EvolvePokemonMessage {
+    required fixed64 PokemonId = 1;
+  }
+
+  message TransferPokemonMessage {
+    required fixed64 PokemonId = 1;
+  }
+
+  message LevelUpRewardsMessage {
+    required int32 level = 1;
+  }
+
+  message UseItemEggIncubatorMessage {
+    required string item_id = 1;
+    required uint64 PokemonId = 2;
+  }
+
+  message GetHatchedEggsMessage {
+  // nothin..
+  }
+  message UseItemXpBoostMessage {
+    required int32 item_id = 1;
+  }
+
+  message EncounterMessage {
+    repeated fixed64 encounter_id = 1;
+    required string spawnpoint_id = 2;
+    required double player_latitude = 3;
+    required double player_longitude = 4;
+  }
+
+  message FortSearchMessage {
+    required string fort_id = 1;
+    required double player_latitude = 2;
+    required double player_longitude = 3;
+    required double fort_latitude = 4;
+    required double fort_longitude = 5;
+  }
+
+  message StartGymBattleRequest{
+    required string gym_id = 1;
+    repeated fixed64 attacking_pokemons_id = 2;
+    required fixed64 defending_pokemon_id = 3;  
+    required double player_latitude = 4;
+    required double player_longitude = 5;
+  }
+
+message BattlePokemonInfo {
+  optional PokemonData pokemon_data = 1;
+  optional int32 current_health = 2;
+  optional int32 current_energy = 3;
+}
+
+message BattleParticipant {
+  optional BattlePokemonInfo active_pokemon = 1;
+  optional PlayerPublicProfile trainer_public_profile = 2;
+  optional BattlePokemonInfo reverse_pokemon = 3;
+  optional BattlePokemonInfo defeated_pokemon = 4;
+}
+
+message BattleResults {
+  optional GymState gym_state = 1;
+  repeated BattleParticipant attackers = 2;
+  repeated int32 player_experience_awarded = 3 [packed=true];
+  optional int64 next_defender_pokemon_id = 4;
+  optional int32 gym_points_delta = 5;
+}
+
+enum BattleActionType {
+  ACTION_UNSET = 0;
+  ACTION_ATTACK = 1;
+  ACTION_DODGE = 2;
+  ACTION_SPECIAL_ATTACK = 3;
+  ACTION_SWAP_POKEMON = 4;
+  ACTION_FAINT = 5;
+  ACTION_PLAYER_JOIN = 6;
+  ACTION_PLAYER_QUIT = 7;
+  ACTION_VICTORY = 8;
+  ACTION_DEFEAT = 9;
+  ACTION_TIMED_OUT = 10;
+}
+
+message BattleAction {
+  optional BattleActionType type = 1;
+  optional int64 action_start_ms = 2;
+  optional int32 duration_ms = 3;
+  optional int32 energy_delta = 5;
+  optional int32 attacker_index = 6;
+  optional int32 target_index = 7;
+  optional fixed64 active_pokemon_id = 8;
+  optional BattleParticipant player_joined = 9;
+  optional BattleResults battle_results = 10;
+  optional int64 damage_windows_start_timestamp_mss = 11;
+  optional int64 damage_windows_end_timestamp_mss = 12;
+  optional BattleParticipant player_left = 13;
+  optional fixed64 target_pokemon_id = 14;
+}
+
+
+  message BattleLog {
+    optional BattleState state = 1;
+    optional BattleType battle_type = 2;
+    optional int64 server_ms = 3;
+    optional BattleAction battle_actions = 4;
+    optional int64 battle_start_timestamp_ms = 5;
+    optional int64 battle_end_timestamp_ms = 6;
+
+    enum BattleType {
+      BATTLE_TYPE_UNSET = 0;
+      NORMAL = 1;
+      TRAINING = 2;
+    }
+    enum BattleState {
+      STATE_UNSET = 0;
+      ACTIVE = 1;
+      VICTORY = 2;
+      DEFEATED = 3;
+      TIMED_OUT = 4;
+    }    
+  }
+
+  message AttackGymMessage {
+  required string gym_id = 1;
+  required string battle_id = 2;
+  repeated BattleAction attack_actions = 3;
+  optional BattleAction last_retrieved_actions = 4;
+  required double player_latitude = 5;
+  required double player_longitude = 6;
+}
+
+message FortDeployPokemonMessage {
+ required string fort_id = 1;
+  required fixed64 pokemon_id = 2;
+  required double player_latitude = 3;
+ required double player_longitude = 4;
+}
+
+  message FortDetailsRequest
+  {
+    required string fort_id = 1;
+    required double fort_latitude = 2;
+    required double fort_longitude = 3;
+  }
+
+  message GymDetailsRequest
+  {
+    required string gym_id = 1;
+    required double player_latitude = 2;
+    required double player_longitude = 3;    
+    required double gym_latitude = 4;
+    required double gym_longitude = 5;
+    //required string client_version = 6;
+  }
+
+  //rpc id : 137
+  message RecycleInventoryItemMessage {
+      required int32 item_id = 1;
+      required int32 count = 2;
+  }
+
+  message ReleasePokemonMessage {
+    optional fixed64 pokemon_id = 1;
+    repeated fixed64 pokemon_ids = 2;
+  }
+
 
   message MapPokemonProto {
     required string SpawnPointId = 1;
@@ -997,6 +1202,21 @@ message ResponseEnvelop {
       }
   }
 
+message AttackGymResponse {
+ optional Result result = 1;
+ optional BattleLog battle_log = 2;
+ optional string battle_id = 3;
+optional  BattlePokemonInfo active_defender = 4;
+optional  BattlePokemonInfo active_attacker = 5;
+
+    enum Result {
+    UNSET = 0;
+    SUCCESS = 1;
+    ERROR_INVALID_ATTACK_ACTIONS = 2;
+    ERROR_NOT_IN_RANGE = 3;
+    }
+}
+
   message StartGymBattleResponse{
     optional Result result = 1;
     optional int64 battle_start_timestamp_ms = 2;
@@ -1088,21 +1308,21 @@ message ResponseEnvelop {
   }
 
   message FortSearchResponse {
-  	optional Result result = 1;
-  	repeated ItemAward items_awarded = 2;
-  	optional int32 gems_awarded = 3;
-  	optional PokemonData pokemon_data_egg = 4;
-  	optional int32 experience_awarded = 5;
-  	optional int64 cooldown_complete_timestamp_ms = 6;
-  	optional int32 chain_hack_sequence_number = 7;
+    optional Result result = 1;
+    repeated ItemAward items_awarded = 2;
+    optional int32 gems_awarded = 3;
+    optional PokemonData pokemon_data_egg = 4;
+    optional int32 experience_awarded = 5;
+    optional int64 cooldown_complete_timestamp_ms = 6;
+    optional int32 chain_hack_sequence_number = 7;
 
-  	enum Result {
-  		NO_RESULT_SET = 0;
-  		SUCCESS = 1;
-  		OUT_OF_RANGE = 2;
-  		IN_COOLDOWN_PERIOD = 3;
-  		INVENTORY_FULL = 4;
-	  }
+    enum Result {
+      NO_RESULT_SET = 0;
+      SUCCESS = 1;
+      OUT_OF_RANGE = 2;
+      IN_COOLDOWN_PERIOD = 3;
+      INVENTORY_FULL = 4;
+    }
   }
 
   message FortDetailsResponse {
@@ -1220,14 +1440,14 @@ message FortDeployPokemonResponse {
     optional int32 ExpAwarded = 3;
     optional int32 CandyAwarded = 4;
 
-  	enum EvolvePokemonStatus {
-  		POKEMON_EVOLVED_UNSET = 0;
-  		POKEMON_EVOLVED_SUCCESS = 1;
-  		FAILED_POKEMON_MISSING = 2;
-  		FAILED_INSUFFICIENT_RESOURCES = 3;
-  		FAILED_POKEMON_CANNOT_EVOLVE = 4;
-  		FAILED_POKEMON_IS_DEPLOYED = 5;
-  	}
+    enum EvolvePokemonStatus {
+      POKEMON_EVOLVED_UNSET = 0;
+      POKEMON_EVOLVED_SUCCESS = 1;
+      FAILED_POKEMON_MISSING = 2;
+      FAILED_INSUFFICIENT_RESOURCES = 3;
+      FAILED_POKEMON_CANNOT_EVOLVE = 4;
+      FAILED_POKEMON_IS_DEPLOYED = 5;
+    }
     message Pokemon {
       optional fixed64 Id = 1;
       optional PokemonId PokemonId = 2;
@@ -1305,180 +1525,3 @@ message FortDeployPokemonResponse {
 
 
 
-message BattlePokemonInfo {
-  optional PokemonData pokemon_data = 1;
-  optional int32 current_health = 2;
-  optional int32 current_energy = 3;
-}
-
-message BattleParticipant {
-  optional BattlePokemonInfo active_pokemon = 1;
-  optional PlayerPublicProfile trainer_public_profile = 2;
-  optional BattlePokemonInfo reverse_pokemon = 3;
-  optional BattlePokemonInfo defeated_pokemon = 4;
-}
-
-message BattleResults {
-  optional GymState gym_state = 1;
-  repeated BattleParticipant attackers = 2;
-  repeated int32 player_experience_awarded = 3;
-  optional int64 next_defender_pokemon_id = 4;
-  optional int32 gym_points_delta = 5;
-}
-
-enum BattleActionType {
-  ACTION_UNSET = 0;
-  ACTION_ATTACK = 1;
-  ACTION_DODGE = 2;
-  ACTION_SPECIAL_ATTACK = 3;
-  ACTION_SWAP_POKEMON = 4;
-  ACTION_FAINT = 5;
-  ACTION_PLAYER_JOIN = 6;
-  ACTION_PLAYER_QUIT = 7;
-  ACTION_VICTORY = 8;
-  ACTION_DEFEAT = 9;
-  ACTION_TIMED_OUT = 10;
-}
-
-message BattleAction {
-  optional BattleActionType Type = 1;
-  optional int64 action_start_ms = 2;
-  optional int32 duration_ms = 3;
-  optional int32 energy_delta = 5;
-  optional int32 attacker_index = 6;
-  optional int32 target_index = 7;
-  optional fixed64 active_pokemon_id = 8;
-  optional BattleParticipant player_joined = 9;
-  optional BattleResults battle_results = 10;
-  optional int64 damage_windows_start_timestamp_mss = 11;
-  optional int64 damage_windows_end_timestamp_mss = 12;
-  optional BattleParticipant player_left = 13;
-  optional fixed64 target_pokemon_id = 14;
-}
-
-
-  message BattleLog {
-    optional BattleState state = 1;
-    optional BattleType battle_type = 2;
-    optional int64 server_ms = 3;
-    optional BattleAction battle_actions = 4;
-    optional int64 battle_start_timestamp_ms = 5;
-    optional int64 battle_end_timestamp_ms = 6;
-
-    enum BattleType {
-      BATTLE_TYPE_UNSET = 0;
-      NORMAL = 1;
-      TRAINING = 2;
-    }
-    enum BattleState {
-      STATE_UNSET = 0;
-      ACTIVE = 1;
-      VICTORY = 2;
-      DEFEATED = 3;
-      TIMED_OUT = 4;
-    }    
-  }
-
-
-
-
-
-}
-
-message Signature {
-
-    message LocationFix {
-        optional string provider = 1; // "network", "gps", "fused", possibly others
-        optional uint64 timestamp_since_start = 2; // in ms
-        optional float latitude = 13;
-        optional float longitude = 14;
-
-        // ??? shows up in struct, dunno where these go
-        // float device_speed;
-        // float device_course;
-        optional float horizontal_accuracy = 20; // iOS only? (range seems to be -1 to +1)
-        optional float altitude = 21;
-        optional float vertical_accuracy = 22; // iOS only? (range seems to be ~10-12)
-        optional uint64 provider_status = 26; // Usually 3 (possibly GPS status: 1 = no fix, 2 = acquiring/inaccurate, 3 = fix acquired)
-        optional uint32 floor = 27; // No idea what this is, seems to be optional
-        optional  uint64 location_type = 28; // Always 1 (if there is data at all)
-    }
-
-    // don't really care about this since we're not using it
-    message AndroidGpsInfo {
-        optional uint64 time_to_fix = 1;
-        repeated int32 satellites_prn = 2;
-        repeated float snr = 3;
-        repeated float azimuth = 4;
-        repeated float elevation = 5;
-        repeated bool has_almanac = 6;
-        repeated bool has_ephemeris = 7;
-        repeated bool used_in_fix = 8;
-    }
-
-    message SensorInfo {
-        optional uint64 timestamp_snapshot = 1; // in ms
-        optional double magnetometer_x = 3;
-        optional double magnetometer_y = 4;
-        optional double magnetometer_z = 5;
-        optional double angle_normalized_x = 6;
-        optional double angle_normalized_y = 7;
-        optional double angle_normalized_z = 8;
-        optional double accel_raw_x = 10;
-        optional double accel_raw_y = 11;
-        optional double accel_raw_z = 12;
-        optional double gyroscope_raw_x = 13;
-        optional double gyroscope_raw_y = 14;
-        optional double gyroscope_raw_z = 15;
-        optional double accel_normalized_x = 16;
-        optional double accel_normalized_y = 17;
-        optional double accel_normalized_z = 18;
-        optional uint64 accelerometer_axes = 19; // Always 3
-    }
-
-    message DeviceInfo {
-        optional string device_id = 1; // Hex string
-        optional string android_board_name = 2;
-        optional string android_bootloader = 3;
-        optional  string device_brand = 4; // On Android: product.brand
-        optional  string device_model = 5; // On Android: product.device
-        optional  string device_model_identifier = 6; // Android only, build.display.id
-        optional  string device_model_boot = 7;  // On Android: boot.hardware
-        optional   string hardware_manufacturer = 8; // On Android: product.manufacturer
-        optional  string hardware_model = 9;  // On Android: product.model
-        optional   string firmware_brand = 10; // On Android: product.name, on iOS: "iPhone OS"
-        optional  string firmware_tags = 12; // Android only, build.tags
-        optional  string firmware_type = 13; // On Android: build.type, on iOS instead: iOS version
-        optional  string firmware_fingerprint = 14; // Android only, build.fingerprint
-    }
-
-    message ActivityStatus {
-        // all of these had 1 as their value
-        optional   uint64 start_time_ms = 1;
-        optional   bool unknown_status = 2;
-        optional   bool walking = 3;
-        optional       bool running = 4;
-        optional       bool stationary = 5;
-        optional       bool automotive = 6;
-        optional       bool tilting = 7;
-        optional       bool cycling = 8;
-        optional   bytes status = 9;
-    }
-
-    optional uint64 timestamp_since_start = 2; // in ms
-    repeated LocationFix location_fix = 4;
-    optional AndroidGpsInfo gps_info = 5;
-    optional SensorInfo sensor_info = 7;
-    optional DeviceInfo device_info = 8;
-    optional ActivityStatus activity_status = 9;
-    optional uint32 location_hash1 = 10; // Location1 hashed based on the auth_token - xxHash32
-    optional uint32 location_hash2 = 20; // Location2 hashed based on the auth_token - xxHash32
-    optional bytes unk22 = 22; // possibly replay check. Generation unknown but pointed to by 0001B8614
-    optional uint64 timestamp = 23; // epoch timestamp in ms
-    repeated uint64 request_hash = 24; // hashes of each request message in a hashArray - xxhash64
-
-    // Addresses for the corresponding hash functions:
-    //    xxHash32              00054D28
-    //    xxhash64              000546C8 - Feeds into 00053D40
-
-}

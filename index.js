@@ -20,16 +20,17 @@
   var allIntervals = [];
 
   // var start_point = locations.points.avron,
-  // var start_point = locations.points.gym_porte_montreuil,
+  var start_point = locations.points.gym_porte_montreuil,
   // var start_point = locations.points.gym_vendom,
-  var start_point = locations.points.gym_madelaine,
+  // var start_point = locations.points.gym_madelaine,
     // round1 = locations.circuits.avron1;
     // round1 = locations.circuits.scribe1;
     // round1 = locations.circuits.paris1;
     round1;
 
   // var attack_gym = locations.gyms.vendom;
-  var attack_gym = locations.gyms.madelaine;
+  // var attack_gym = locations.gyms.madelaine;
+  var attack_gym = locations.gyms.porte_montreuil;
 
   //  var start_point = locations.points.jim_morison,
   //    round1;

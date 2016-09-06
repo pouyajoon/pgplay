@@ -153,7 +153,7 @@
 
   GymManager.prototype.attackGym = function (gym, battle, input_action, last_retrieved_actions, callback) {
     var that = this;
-    // console.log('PERFORM ATTACK WITH ACTION'.red, input_action);
+    console.log('PERFORM ATTACK WITH ACTION'.red, Date.now(), input_action);
     that.pokeio.AttackGym(gym, battle.battle_id, input_action, last_retrieved_actions, function (err, res) {
       // console.log('RES ATTACK GYM'.red, err, res);
       if (err) {
@@ -171,15 +171,11 @@
         // , res.battle_log
         console.log('battle log srever ms'.yellow, res.battle_log.server_ms.toString());
       }
-
-
       if (res.result !== null && res.result !== 1) {
         console.log('Attack Gym Result'.red, res);
       }
-
       if (res.result === null || res.result === 2) {
         // 
-        // console.log('THE ATTACK FAILS - RES NULL'.blue, err, res);
         // return callback && callback('ATTACK FAILS');
         return setTimeout(function () {
           that.attackGym(gym, battle, null, null, callback);
@@ -188,9 +184,9 @@
 
       if (res.result === 1) {
         // console.log(res.active_attacker, res.active_defender);
-        console.log('attacker'.blue, res.active_attacker.pokemon_data.stamina, '/', res.active_attacker.pokemon_data.stamina_max, res.active_attacker.current_health, 'energy', res.active_attacker.current_energy, 'cp', res.active_attacker.pokemon_data.cp);
+        console.log('attacker'.blue, res.active_attacker.current_health, '/', res.active_attacker.pokemon_data.stamina_max, 'energy', res.active_attacker.current_energy, 'cp', res.active_attacker.pokemon_data.cp);
         if (res.active_defender) {
-          console.log('defender'.magenta, res.active_defender.pokemon_data.stamina, '/', res.active_defender.pokemon_data.stamina_max, res.active_defender.current_health, 'energy', res.active_defender.current_energy, 'cp', res.active_defender.pokemon_data.cp);
+          console.log('defender'.magenta, res.active_defender.current_health, '/', res.active_defender.pokemon_data.stamina_max, 'energy', res.active_defender.current_energy, 'cp', res.active_defender.pokemon_data.cp);
         }
         if (res.battle_log === 2 || res.battle_log === 3 || res.battle_log === 4) {
           console.log('BATTLE ENDS'.red);
@@ -209,33 +205,33 @@
           // return rsub.BattleAction(Type=1, action_start_ms=stime, duration_ms=move_duration, target_index=-1, active_pokemon_id=self.currAttacker, damage_windows_start_timestamp_mss=(stime+move_duration-200), damage_windows_end_timestamp_mss=(stime+move_duration))
 
           // now += 200 + 200 * i;
-          console.log(now, 'duration', duration, 'ed', energy_delta);
+          console.log(serverTime, now, 'duration', duration, 'ed', energy_delta);
           action = {
             type: 1,
             action_start_ms: now,
             // action_start_ms: Long.fromValue(now),
             duration_ms: duration,
             target_index: -1,
-            attacker_index: -1,
-            energy_delta: energy_delta,
+            // attacker_index: -1,
+            // energy_delta: energy_delta,
             // target_pokemon_id: res.active_attacker.pokemon_data.id,
-            // active_pokemon_id: res.active_defender.pokemon_data.id,
-            // damage_windows_start_timestamp_mss: Long.fromValue(now + duration - 200),
+            // active_pokemon_id: parseInt(res.active_defender.pokemon_data.id,toString()),
+            damage_windows_start_timestamp_mss: Long.fromValue(now + duration - 200),
             // damage_windows_end_timestamp_mss: Long.fromValue(now + duration)
-            damage_windows_start_timestamp_mss: now + duration - 200,
-            damage_windows_end_timestamp_mss: now + duration
+            // damage_windows_start_timestamp_mss: now + duration - 200,
+            // damage_windows_end_timestamp_mss: now + duration
           };
           actions.push(action);
-          now += duration + 70;
+          now += duration + 65;
         }
-        console.log(actions);
+        // console.log(actions);
 
         // console.log('BATTLE LOGS ACTIONS'.blue, res.battle_log.battle_actions);
 
         return setTimeout(function () {
           that.attackGym(gym, battle, actions, res.battle_log.battle_actions[res.battle_log.battle_actions.length - 1], callback);
           // that.attackGym(gym, battle, actions, res.battle_log.battle_actions[0], callback);
-        }, 1565);
+        }, 3000);
 
         // setTimeout(function() {
         //   for (i = 0; i < 1; i += 1) {

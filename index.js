@@ -1,4 +1,4 @@
-(function() {
+(function () {
   'use strict';
 
   console.log('LOG TEST');
@@ -20,12 +20,16 @@
   var allIntervals = [];
 
   // var start_point = locations.points.avron,
+  // var start_point = locations.points.gym_porte_montreuil,
   // var start_point = locations.points.gym_vendom,
-  var start_point = locations.points.gym_porte_montreuil,
+  var start_point = locations.points.gym_madelaine,
     // round1 = locations.circuits.avron1;
     // round1 = locations.circuits.scribe1;
     // round1 = locations.circuits.paris1;
     round1;
+
+  // var attack_gym = locations.gyms.vendom;
+  var attack_gym = locations.gyms.madelaine;
 
   //  var start_point = locations.points.jim_morison,
   //    round1;
@@ -68,13 +72,16 @@
       args: [fortId, lat, lon],
       silence: true,
       name: 'Get Fort Boost : ' + fortId,
-      callback: function(err, res) {
+      callback: function (err, res) {
+        // if (res) {
+        // console.log(res);
+        // }
         // console.log('[*] Get Fort Boost'.green, fortId);
         if (res.result !== 1) {
-          // console.log('FORT BOOST RESULT IS NOT CORRECT'.red, res);
+          console.log('FORT BOOST RESULT IS NOT CORRECT'.red, res);
         } else {
           if (data.fortsById[fortId]) {
-            // data.fortsById[fortId].CooldownCompleteMs = res.cooldown_complete_timestamp_ms;
+            data.fortsById[fortId].CooldownCompleteMs = res.cooldown_complete_timestamp_ms;
           } else {
             console.log('FORT ID IS MISSING'.red, res, fortId);
           }
@@ -82,14 +89,14 @@
       }
     });
 
-    pokeio.GetFortSearch(fortId, lat, lon, function(err, fort) {
-      if (err) {
-        return console.log('getFortBoost', err, fort);
-      }
-      // if (g_socket) {
-      //   g_socket.emit('fort-taken', fortId);
-      // }
-    });
+    // pokeio.GetFortSearch(fortId, lat, lon, function (err, fort) {
+    //   if (err) {
+    //     return console.log('getFortBoost', err, fort);
+    //   }
+    //   // if (g_socket) {
+    //   //   g_socket.emit('fort-taken', fortId);
+    //   // }
+    // });
   }
 
   function takeNearForts(callback) {
@@ -104,6 +111,7 @@
           // console.log('distance ok', dist, fort.FortId, fort.CooldownCompleteMs);
           if (fort.CooldownCompleteMs) {
             readyTimeStamp = parseInt(fort.CooldownCompleteMs.toString(), 10);
+            // console.log(readyTimeStamp, Date.now());
             if (Date.now() > readyTimeStamp) {
               getFortBoost(fort.FortId, fort.Latitude, fort.Longitude);
             }
@@ -120,7 +128,7 @@
     if (g_socket) {
       g_socket.emit('get-forts', data.fortsById);
     }
-    pokeio.Heartbeat(function(err, hb) {
+    pokeio.Heartbeat(function (err, hb) {
       var alltocatch, allforts, i, o, j, currentPokemon;
       if (err || !hb) {
         // console.log('Heartbeat', err);
@@ -146,7 +154,7 @@
       if (allforts.length > 0) {
         // console.log('UPDATE FORTS', allforts.length);
         data.fortsById = {};
-        allforts.forEach(function(f) {
+        allforts.forEach(function (f) {
           if (f.CooldownCompleteMs) {
             f.CooldownCompleteMs_TimeStamp = parseInt(f.CooldownCompleteMs.toString(), 10);
           }
@@ -157,7 +165,7 @@
       function catchPokemon(currentPokemon, callback) {
         var pokedexInfo = pokeio.pokemonlist[parseInt(currentPokemon.PokedexTypeId, 10) - 1];
         console.log('[+] There is a ' + pokedexInfo.name + ' near!! I can try to catch it!', (new Date(Date.now())).toISOString());
-        pokeio.EncounterPokemon(currentPokemon, function(err, encounterData) {
+        pokeio.EncounterPokemon(currentPokemon, function (err, encounterData) {
           var cp = encounterData.WildPokemon.pokemon.cp;
           var pokeball = 1;
           if (cp > 100 && data.items && data.items[constants.inventoryItemTypes.ITEM_GREAT_BALL] && data.items[constants.inventoryItemTypes.ITEM_GREAT_BALL] > 0) {
@@ -168,7 +176,7 @@
           }
           console.log(('[*] Encountering pokemon ' + pokedexInfo.name + '... With CP (' + cp + ') Catch Will Ball (' + pokeball + ')').magenta);
 
-          pokeio.CatchPokemon(currentPokemon, 1, 1.950, 1, pokeball, function(xsuc, xdat) {
+          pokeio.CatchPokemon(currentPokemon, 1, 1.950, 1, pokeball, function (xsuc, xdat) {
             var res, status;
             if (xsuc) {
               console.log('ERROR CatchPokemon'.red, xsuc);
@@ -195,15 +203,15 @@
       }
 
       function tryCatch(currentPokemon, callback) {
-        catchPokemon(currentPokemon, function(err, catched) {
+        catchPokemon(currentPokemon, function (err, catched) {
           return callback && callback(err, catched);
         });
       }
 
       if (alltocatch.length > 0) {
         alltocatch = [alltocatch[0]];
-        alltocatch.forEach(function(p) {
-          tryCatch(p, function(err, catched) {
+        alltocatch.forEach(function (p) {
+          tryCatch(p, function (err, catched) {
             return callback && callback(err, catched);
           });
         });
@@ -335,7 +343,7 @@
             }],
             silence: true,
             name: 'Move To : ' + nextPos.lat + ', ' + nextPos.lng + ' | Remaining Points :' + points.length,
-            callback: function(err, res) {
+            callback: function (err, res) {
               //console.log('do move', err, res);
               if (g_socket) {
                 g_socket.emit('user-new-position', nextPos, locations);
@@ -368,7 +376,7 @@
 
     var positionToGo;
 
-    gmAPI.getPathForDirection(source, target, function(points) {
+    gmAPI.getPathForDirection(source, target, function (points) {
       //console.log('GPOints', points);
       var positions = addExtraPointsOnDirectionPoints(points);
       if (socket) {
@@ -392,28 +400,28 @@
 
     app.use(express.static('public'));
 
-    http.listen(process.env.PORT || 3000, function() {
+    http.listen(process.env.PORT || 3000, function () {
       console.log('listening on *:3000');
     });
 
-    io.on('connection', function(socket) {
+    io.on('connection', function (socket) {
       g_socket = socket;
       pokeio.socket = socket;
       console.log('[S] User connected');
-      socket.on('disconnect', function() {
+      socket.on('disconnect', function () {
         console.log('[S] User disconnected');
       });
 
-      socket.on('get-move-path', function(callback) {
+      socket.on('get-move-path', function (callback) {
         return callback && callback(positionToGo);
       });
 
-      socket.on('evolve-pokemon', function(pokemon) {
+      socket.on('evolve-pokemon', function (pokemon) {
         console.log('evolve-pokemon'.blue, pokemon.reference.id, pokemon.id);
         evolvePokemon(pokemon.reference.id, pokemon);
       });
 
-      socket.on('get-profile', function(callback) {
+      socket.on('get-profile', function (callback) {
         return callback && callback({
           // all: pokeio,
           info: pokeio.playerInfo,
@@ -421,7 +429,7 @@
         });
       });
 
-      socket.on('move-to', function(target, callback) {
+      socket.on('move-to', function (target, callback) {
 
         var source = {
           lat: pokeio.playerInfo.latitude,
@@ -429,12 +437,12 @@
         };
 
         moves = {};
-        doGlobalMove(socket, source, target, function() {
+        doGlobalMove(socket, source, target, function () {
           goNextRound();
         });
       });
 
-      socket.on('get-user-position', function(callback) {
+      socket.on('get-user-position', function (callback) {
         return callback && callback({
           lat: pokeio.playerInfo.latitude,
           lng: pokeio.playerInfo.longitude
@@ -453,14 +461,14 @@
     if (currentRoundIndex === -1) {
       currentRoundIndex = 0;
       saveManager.updateNextRoundIndex(currentRoundIndex);
-      return doGlobalMove(g_socket, getCurrentUserPosition(), round1[0], function() {
+      return doGlobalMove(g_socket, getCurrentUserPosition(), round1[0], function () {
         return goNextRound();
       });
     } else {
       currentRoundIndex += 1;
       currentRoundIndex = currentRoundIndex % round1.length;
       saveManager.updateNextRoundIndex(currentRoundIndex);
-      return doGlobalMove(g_socket, getCurrentUserPosition(), round1[currentRoundIndex], function() {
+      return doGlobalMove(g_socket, getCurrentUserPosition(), round1[currentRoundIndex], function () {
         return goNextRound();
       });
     }
@@ -483,7 +491,7 @@
         type: 'EVOLVE',
         name: 'EVOLVE POKEMON ' + data.all_pokemons[typeId].name,
         nextAsyncTime: 10000,
-        callback: function(err, res) {
+        callback: function (err, res) {
           if (!err) {
             console.log('EVOLUTION DONE'.green, 'ID IS', evolutionId.toString().blue, res);
           }
@@ -504,7 +512,7 @@
   function initPGApi() {
     var position = saveManager.getPGPosition() || current_pos;
 
-    pokeio.init('pouyapokemon2', 'pokemonGO', position, 'google', function(err) {
+    pokeio.init('pouyapokemon2', 'pokemonGO', position, 'google', function (err) {
       if (err) {
         console.log('ERROR ON STARTUP'.red, err);
         return false;
@@ -517,7 +525,7 @@
         return console.log('initPG', err);
       }
       // console.log(err);
-      pokeio.pokemonlist.forEach(function(p) {
+      pokeio.pokemonlist.forEach(function (p) {
         data.all_pokemons[p.id] = p;
       });
 
@@ -531,7 +539,7 @@
       }
 
       function getProfile() {
-        pokeio.GetProfile(function(err, p) {
+        pokeio.GetProfile(function (err, p) {
           if (err) {
             return console.error('GetProfile', err);
           }
@@ -542,7 +550,7 @@
 
       function cleanPokemons() {
         function releaePokemons(pId, transferPokemons) {
-          transferPokemons.forEach(function(p) {
+          transferPokemons.forEach(function (p) {
             actionHandler.appendAsyncAction({
               m: pokeio.TransferPokemon,
               args: [p.id],
@@ -594,7 +602,7 @@
           if (data.pokemonsById.hasOwnProperty(pId)) {
             if (constants.candidateForEvolution[pId] !== undefined) {
               samePokemons = data.pokemonsById[pId];
-              samePokemons.forEach(function(p) {
+              samePokemons.forEach(function (p) {
                 evolvePokemon(pId, p);
               });
             }
@@ -604,15 +612,24 @@
 
       function checkPokemonsHealth(data) {
 
-        data.pokemons.filter(function(p) {
+        var dead = data.pokemons.filter(function (p) {
           return p.stamina === null;
-        }).forEach(function(p) {
+        });
+
+
+        var needPotion = data.pokemons.filter(function (p) {
+          return p.stamina !== p.stamina_max && p.stamina !== null;
+        });
+
+        console.log('checkPokemonsHealth', dead.length, needPotion.length);
+
+        dead.forEach(function (p) {
           if (data.items[constants.inventoryItemTypes.ITEM_REVIVE] > 0) {
             actionHandler.prependAsyncAction({
               m: pokeio.UseRevive,
               args: [p, constants.inventoryItemTypes.ITEM_REVIVE],
               name: 'USE REVIVE FOR ' + tools.getPrettyPokemonName(p),
-              callback: function(err, res) {
+              callback: function (err, res) {
                 console.log('REVIVE', err, res);
               }
             });
@@ -620,15 +637,32 @@
         });
 
 
-        data.pokemons.filter(function(p) {
-          return p.stamina !== p.stamina_max && p.stamina !== null;
-        }).forEach(function(p) {
-          if (data.items[constants.inventoryItemTypes.ITEM_SUPER_POTION] > 0) {
+
+        function getPotionType() {
+          var orderOfPotions = [
+              constants.inventoryItemTypes.ITEM_POTION,
+              constants.inventoryItemTypes.ITEM_SUPER_POTION,
+              constants.inventoryItemTypes.ITEM_HYPER_POTION,
+              constants.inventoryItemTypes.ITEM_MAX_POTION
+            ],
+            p = 0;
+
+          orderOfPotions.forEach(function (pIndex) {
+            if (p === 0 && data.items[pIndex] > 0) {
+              p = pIndex;
+            }
+          });
+          return p;
+        }
+
+        needPotion.forEach(function (p) {
+          var potionType = getPotionType();
+          if (potionType > 0) {
             actionHandler.prependAsyncAction({
               m: pokeio.UsePotion,
-              args: [p, constants.inventoryItemTypes.ITEM_SUPER_POTION],
+              args: [p, potionType],
               name: 'USE POTION FOR ' + tools.getPrettyPokemonName(p),
-              callback: function(err, res) {
+              callback: function (err, res) {
                 console.log('POTION', err, res);
               }
             });
@@ -648,7 +682,7 @@
           args: [constants.inventoryItemTypes.ITEM_LUCKY_EGG, 1],
           name: 'USE ITEM_LUCKY_EGG',
           nextAsyncTime: 2000,
-          callback: function(err, res) {
+          callback: function (err, res) {
             if (!err) {
               console.log('LUGY EGG ENABLED'.green, res);
               evolveThemAll();
@@ -683,7 +717,7 @@
       }
 
       function getInventory(callback) {
-        pokeio.GetInventory(function(err, inventory) {
+        pokeio.GetInventory(function (err, inventory) {
           if (err) {
             console.error('GetInventory', err);
             return callback && callback(err);
@@ -702,7 +736,7 @@
           data.candies = [];
           data.pokemonsById = {};
           if (inventory.inventory_delta !== null) {
-            inventory.inventory_delta.inventory_items.forEach(function(i) {
+            inventory.inventory_delta.inventory_items.forEach(function (i) {
               p = i.inventory_item_data.pokemon;
               if (p !== null) {
                 if (p.is_egg === null) {
@@ -736,10 +770,10 @@
             });
           }
 
-          data.pokemons = data.pokemons.sort(function(a, b) {
+          data.pokemons = data.pokemons.sort(function (a, b) {
             return a.pokemonid - b.pokemon_id;
           });
-          data.pokemons.forEach(function(p) {
+          data.pokemons.forEach(function (p) {
             p.reference = data.all_pokemons[p.pokemon_id];
             if (data.pokemonsById[p.pokemon_id] === undefined) {
               data.pokemonsById[p.pokemon_id] = [];
@@ -788,7 +822,7 @@
             }
           }
 
-          data.incubators.forEach(function(incubator) {
+          data.incubators.forEach(function (incubator) {
             if (incubator.pokemon_id === null) {
               if (incubator.uses_remaining === null) {
                 setEgg(incubator, 2, 5, 10);
@@ -808,7 +842,7 @@
       }
 
       function getHatchedEggs(callback) {
-        pokeio.GetHatchedEggs(function(err, res) {
+        pokeio.GetHatchedEggs(function (err, res) {
           // console.log('GetHatchedEggs', err, res);
           return callback && callback(err, res);
         });
@@ -836,7 +870,7 @@
         // return;
         console.log(allgyms);
 
-        var myTeamsForts = data.allgyms.filter(function(f) {
+        var myTeamsForts = data.allgyms.filter(function (f) {
           return f.Team === 3;
         });
         // var otherTeamsForts = data.allgyms.filter(function (f) {
@@ -844,7 +878,7 @@
         // });
         // console.log('OTHER TEAMS FORTS', otherTeamsForts);
 
-        var distList = myTeamsForts.map(function(f) {
+        var distList = myTeamsForts.map(function (f) {
             return {
               fort: f,
               dist: tools.distance(pokeio.playerInfo.latitude, pokeio.playerInfo.longitude, f.Latitude, f.Longitude)
@@ -857,12 +891,12 @@
 
 
         if (missions.length === 0) {
-          var myTeamForts = data.allgyms.filter(function(f) {
+          var myTeamForts = data.allgyms.filter(function (f) {
             return f.Team === 3 && f.IsInBattle !== true;
           });
           console.log('CHECK FORTS'.blue, data.allgyms.length, myTeamForts.length);
-          myTeamForts.forEach(function(f) {
-            gm.setDeployGymMissionIfGoodToDeploy(f, function(err, res) {
+          myTeamForts.forEach(function (f) {
+            gm.setDeployGymMissionIfGoodToDeploy(f, function (err, res) {
               if (err) {
                 return false;
               }
@@ -874,9 +908,9 @@
                 doGlobalMove(g_socket, saveManager.getPosition(), {
                   lat: gym.Latitude,
                   lng: gym.Longitude
-                }, function() {
+                }, function () {
                   console.log('REACH FORT TROP DEPLOY POKEMON'.blue);
-                  gm.deployPokemon(data, gym, function() {
+                  gm.deployPokemon(data, gym, function () {
                     missions = [];
                   });
                 });
@@ -892,7 +926,7 @@
           if (forts.length === 0) {
             return null;
           }
-          forts.forEach(function(f) {
+          forts.forEach(function (f) {
             if (min === undefined) {
               min = f.dist;
             } else {
@@ -944,7 +978,7 @@
           silence: true,
           args: [data.user_stats.level],
           name: 'Level Up Rewards',
-          callback: function(err, res) {
+          callback: function (err, res) {
             console.log('LevelUpRewards'.green, err, res);
           }
         });
@@ -965,15 +999,15 @@
 
       setTimeout(asyncCatchPokemonInterval, 1000);
       setTimeout(asyncHatchedEggs, 1000);
-      setTimeout(function() {
-        asyncGetInventory(function() {
+      setTimeout(function () {
+        asyncGetInventory(function () {
 
-          // gm.tryBattleWithGym(locations.gyms.porte_montreuil, data, function(err, res) {
-          //   if (err) {
-          //     return console.log('INDEX TRY BATTLE'.red, err, res);
-          //   }
-          //   console.log('INDEX Try Battle With Gym'.red, err, res.state.green, res);
-          // });
+          gm.tryBattleWithGym(attack_gym, data, function (err, res) {
+            if (err) {
+              return console.log('INDEX TRY BATTLE'.red, err, res);
+            }
+            console.log('INDEX Try Battle With Gym'.red, err, res.state.green, res);
+          });
 
           // gm.getGymDetails(locations.gyms.porte_montreuil, function (err, gym) {
           //   gm.deployPokemon(data, gym, function (err, res) {
@@ -994,8 +1028,8 @@
 
       var destination = saveManager.getDestination();
       if (destination && saveManager.getPosition()) {
-        setTimeout(function() {
-          doGlobalMove(g_socket, saveManager.getPosition(), destination, function() {
+        setTimeout(function () {
+          doGlobalMove(g_socket, saveManager.getPosition(), destination, function () {
             setTimeout(goNextRound, 2500);
           });
         }, 2500);
@@ -1012,11 +1046,11 @@
     if (cluster.isMaster) {
       cluster.fork();
       //if the worker dies, restart it.
-      cluster.on('exit', function(worker) {
+      cluster.on('exit', function (worker) {
         var nextRun = 60000 + Math.floor(Math.random() * 30000) + 1;
         console.log('Worker ' + worker.id + ' died..'.red);
         console.log('Start Next Session In ' + (nextRun / 1e3) + ' Seconds'.green);
-        setTimeout(function() {
+        setTimeout(function () {
           cluster.fork();
         }, nextRun);
       });
@@ -1028,7 +1062,7 @@
       setupExpress();
       initPGApi();
 
-      process.on('uncaughtException', function(err) {
+      process.on('uncaughtException', function (err) {
         if (err) {
           console.log(err);
         }

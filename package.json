@@ -13,19 +13,19 @@
   "license": "MIT",
   "dependencies": {
     "colors": "^1.1.2",
-    "express": "^4.14.0",
-    "googlemaps": "^1.11.1",
-    "moment": "^2.14.1",
-    "socket.io": "^1.4.8",
     "events": "^1.1.1",
+    "express": "^4.14.0",
     "geocoder": "^0.2.2",
+    "googlemaps": "^1.11.1",
     "gpsoauthnode": "^0.0.5",
     "istanbul": "^0.4.4",
     "long": "^3.2.0",
+    "moment": "^2.14.1",
     "node-pogo-signature": "^2.0.0",
     "protobufjs": "^5.0.1",
     "request": "^2.73.0",
     "s2-geometry": "^1.2.7",
+    "socket.io": "^1.4.8",
     "tape": "^4.6.0"
   }
 }

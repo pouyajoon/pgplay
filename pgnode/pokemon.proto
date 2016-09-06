@@ -332,7 +332,7 @@ message BattleAction {
     optional BattleState state = 1;
     optional BattleType battle_type = 2;
     optional int64 server_ms = 3;
-    optional BattleAction battle_actions = 4;
+    repeated BattleAction battle_actions = 4;
     optional int64 battle_start_timestamp_ms = 5;
     optional int64 battle_end_timestamp_ms = 6;
 

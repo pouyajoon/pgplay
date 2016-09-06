@@ -1,0 +1,1232 @@
+{
+    "13": {
+        "Category": "Charge",
+        "DPS": 6.3,
+        "EPS": -5.0,
+        "Energy": -20.0,
+        "Move": "Wrap",
+        "Power": 25.0,
+        "Sec.": 4.0,
+        "Type": "Normal"
+    },
+    "14": {
+        "Category": "Charge",
+        "DPS": 24.0,
+        "EPS": -20.0,
+        "Energy": -100.0,
+        "Move": "Hyper Beam",
+        "Power": 120.0,
+        "Sec.": 5.0,
+        "Type": "Normal"
+    },
+    "16": {
+        "Category": "Charge",
+        "DPS": 12.9,
+        "EPS": -9.4,
+        "Energy": -33.0,
+        "Move": "Dark Pulse",
+        "Power": 45.0,
+        "Sec.": 3.5,
+        "Type": "Dark"
+    },
+    "18": {
+        "Category": "Charge",
+        "DPS": 11.5,
+        "EPS": -9.6,
+        "Energy": -25.0,
+        "Move": "Sludge",
+        "Power": 30.0,
+        "Sec.": 2.6,
+        "Type": "Poison"
+    },
+    "20": {
+        "Category": "Charge",
+        "DPS": 11.9,
+        "EPS": -9.5,
+        "Energy": -20.0,
+        "Move": "Vice Grip",
+        "Power": 25.0,
+        "Sec.": 2.1,
+        "Type": "Normal"
+    },
+    "21": {
+        "Category": "Charge",
+        "DPS": 8.7,
+        "EPS": -5.4,
+        "Energy": -25.0,
+        "Move": "Flame Wheel",
+        "Power": 40.0,
+        "Sec.": 4.6,
+        "Type": "Fire"
+    },
+    "22": {
+        "Category": "Charge",
+        "DPS": 25.0,
+        "EPS": -31.3,
+        "Energy": -100.0,
+        "Move": "Megahorn",
+        "Power": 80.0,
+        "Sec.": 3.2,
+        "Type": "Bug"
+    },
+    "24": {
+        "Category": "Charge",
+        "DPS": 19.0,
+        "EPS": -17.2,
+        "Energy": -50.0,
+        "Move": "Flamethrower",
+        "Power": 55.0,
+        "Sec.": 2.9,
+        "Type": "Fire"
+    },
+    "26": {
+        "Category": "Charge",
+        "DPS": 12.1,
+        "EPS": -5.7,
+        "Energy": -33.0,
+        "Move": "Dig",
+        "Power": 70.0,
+        "Sec.": 5.8,
+        "Type": "Ground"
+    },
+    "28": {
+        "Category": "Charge",
+        "DPS": 30.0,
+        "EPS": -50.0,
+        "Energy": -100.0,
+        "Move": "Cross Chop",
+        "Power": 60.0,
+        "Sec.": 2.0,
+        "Type": "Fighting"
+    },
+    "30": {
+        "Category": "Charge",
+        "DPS": 10.5,
+        "EPS": -6.6,
+        "Energy": -25.0,
+        "Move": "Psybeam",
+        "Power": 40.0,
+        "Sec.": 3.8,
+        "Type": "Psychic"
+    },
+    "31": {
+        "Category": "Charge",
+        "DPS": 23.8,
+        "EPS": -23.8,
+        "Energy": -100.0,
+        "Move": "Earthquake",
+        "Power": 100.0,
+        "Sec.": 4.2,
+        "Type": "Ground"
+    },
+    "32": {
+        "Category": "Charge",
+        "DPS": 25.8,
+        "EPS": -32.3,
+        "Energy": -100.0,
+        "Move": "Stone Edge",
+        "Power": 80.0,
+        "Sec.": 3.1,
+        "Type": "Rock"
+    },
+    "33": {
+        "Category": "Charge",
+        "DPS": 12.9,
+        "EPS": -9.4,
+        "Energy": -33.0,
+        "Move": "Ice Punch",
+        "Power": 45.0,
+        "Sec.": 3.5,
+        "Type": "Ice"
+    },
+    "35": {
+        "Category": "Charge",
+        "DPS": 14.0,
+        "EPS": -13.2,
+        "Energy": -33.0,
+        "Move": "Discharge",
+        "Power": 35.0,
+        "Sec.": 2.5,
+        "Type": "Electric"
+    },
+    "36": {
+        "Category": "Charge",
+        "DPS": 15.4,
+        "EPS": -8.5,
+        "Energy": -33.0,
+        "Move": "Flash Cannon",
+        "Power": 60.0,
+        "Sec.": 3.9,
+        "Type": "Steel"
+    },
+    "38": {
+        "Category": "Charge",
+        "DPS": 14.8,
+        "EPS": -12.2,
+        "Energy": -33.0,
+        "Move": "Drill Peck",
+        "Power": 40.0,
+        "Sec.": 2.7,
+        "Type": "Flying"
+    },
+    "39": {
+        "Category": "Charge",
+        "DPS": 17.8,
+        "EPS": -13.7,
+        "Energy": -50.0,
+        "Move": "Ice Beam",
+        "Power": 65.0,
+        "Sec.": 3.65,
+        "Type": "Ice"
+    },
+    "40": {
+        "Category": "Charge",
+        "DPS": 25.6,
+        "EPS": -25.6,
+        "Energy": -100.0,
+        "Move": "Blizzard",
+        "Power": 100.0,
+        "Sec.": 3.9,
+        "Type": "Ice"
+    },
+    "42": {
+        "Category": "Charge",
+        "DPS": 21.1,
+        "EPS": -26.3,
+        "Energy": -100.0,
+        "Move": "Heat Wave",
+        "Power": 80.0,
+        "Sec.": 3.8,
+        "Type": "Fire"
+    },
+    "45": {
+        "Category": "Charge",
+        "DPS": 10.3,
+        "EPS": -8.6,
+        "Energy": -25.0,
+        "Move": "Aerial Ace",
+        "Power": 30.0,
+        "Sec.": 2.9,
+        "Type": "Flying"
+    },
+    "46": {
+        "Category": "Charge",
+        "DPS": 14.7,
+        "EPS": -9.7,
+        "Energy": -33.0,
+        "Move": "Drill Run",
+        "Power": 50.0,
+        "Sec.": 3.4,
+        "Type": "Ground"
+    },
+    "47": {
+        "Category": "Charge",
+        "DPS": 20.3,
+        "EPS": -15.6,
+        "Energy": -50.0,
+        "Move": "Petal Blizzard",
+        "Power": 65.0,
+        "Sec.": 3.2,
+        "Type": "Grass"
+    },
+    "49": {
+        "Category": "Charge",
+        "DPS": 17.6,
+        "EPS": -11.8,
+        "Energy": -50.0,
+        "Move": "Bug Buzz",
+        "Power": 75.0,
+        "Sec.": 4.25,
+        "Type": "Bug"
+    },
+    "50": {
+        "Category": "Charge",
+        "DPS": 10.4,
+        "EPS": -8.3,
+        "Energy": -20.0,
+        "Move": "Poison Fang",
+        "Power": 25.0,
+        "Sec.": 2.4,
+        "Type": "Poison"
+    },
+    "51": {
+        "Category": "Charge",
+        "DPS": 11.1,
+        "EPS": -9.3,
+        "Energy": -25.0,
+        "Move": "Night Slash",
+        "Power": 30.0,
+        "Sec.": 2.7,
+        "Type": "Dark"
+    },
+    "53": {
+        "Category": "Charge",
+        "DPS": 10.3,
+        "EPS": -8.6,
+        "Energy": -25.0,
+        "Move": "Bubble Beam",
+        "Power": 30.0,
+        "Sec.": 2.9,
+        "Type": "Water"
+    },
+    "54": {
+        "Category": "Charge",
+        "DPS": 14.3,
+        "EPS": -15.7,
+        "Energy": -33.0,
+        "Move": "Submission",
+        "Power": 30.0,
+        "Sec.": 2.1,
+        "Type": "Fighting"
+    },
+    "56": {
+        "Category": "Charge",
+        "DPS": 13.3,
+        "EPS": -11.1,
+        "Energy": -25.0,
+        "Move": "Low Sweep",
+        "Power": 30.0,
+        "Sec.": 2.25,
+        "Type": "Fighting"
+    },
+    "57": {
+        "Category": "Charge",
+        "DPS": 10.6,
+        "EPS": -8.5,
+        "Energy": -20.0,
+        "Move": "Aqua Jet",
+        "Power": 25.0,
+        "Sec.": 2.35,
+        "Type": "Water"
+    },
+    "58": {
+        "Category": "Charge",
+        "DPS": 19.1,
+        "EPS": -21.3,
+        "Energy": -50.0,
+        "Move": "Aqua Tail",
+        "Power": 45.0,
+        "Sec.": 2.35,
+        "Type": "Water"
+    },
+    "59": {
+        "Category": "Charge",
+        "DPS": 16.7,
+        "EPS": -13.8,
+        "Energy": -33.0,
+        "Move": "Seed Bomb",
+        "Power": 40.0,
+        "Sec.": 2.4,
+        "Type": "Grass"
+    },
+    "60": {
+        "Category": "Charge",
+        "DPS": 14.8,
+        "EPS": -12.2,
+        "Energy": -33.0,
+        "Move": "Psyshock",
+        "Power": 40.0,
+        "Sec.": 2.7,
+        "Type": "Psychic"
+    },
+    "62": {
+        "Category": "Charge",
+        "DPS": 9.7,
+        "EPS": -6.9,
+        "Energy": -25.0,
+        "Move": "Ancient Power",
+        "Power": 35.0,
+        "Sec.": 3.6,
+        "Type": "Rock"
+    },
+    "63": {
+        "Category": "Charge",
+        "DPS": 8.8,
+        "EPS": -7.4,
+        "Energy": -25.0,
+        "Move": "Rock Tomb",
+        "Power": 30.0,
+        "Sec.": 3.4,
+        "Type": "Rock"
+    },
+    "64": {
+        "Category": "Charge",
+        "DPS": 15.6,
+        "EPS": -10.3,
+        "Energy": -33.0,
+        "Move": "Rock Slide",
+        "Power": 50.0,
+        "Sec.": 3.2,
+        "Type": "Rock"
+    },
+    "65": {
+        "Category": "Charge",
+        "DPS": 13.8,
+        "EPS": -11.4,
+        "Energy": -33.0,
+        "Move": "Power Gem",
+        "Power": 40.0,
+        "Sec.": 2.9,
+        "Type": "Rock"
+    },
+    "69": {
+        "Category": "Charge",
+        "DPS": 9.7,
+        "EPS": -8.1,
+        "Energy": -25.0,
+        "Move": "Ominous Wind",
+        "Power": 30.0,
+        "Sec.": 3.1,
+        "Type": "Ghost"
+    },
+    "70": {
+        "Category": "Charge",
+        "DPS": 14.6,
+        "EPS": -10.7,
+        "Energy": -33.0,
+        "Move": "Shadow Ball",
+        "Power": 45.0,
+        "Sec.": 3.08,
+        "Type": "Ghost"
+    },
+    "72": {
+        "Category": "Charge",
+        "DPS": 10.7,
+        "EPS": -8.9,
+        "Energy": -25.0,
+        "Move": "Magnet Bomb",
+        "Power": 30.0,
+        "Sec.": 2.8,
+        "Type": "Steel"
+    },
+    "74": {
+        "Category": "Charge",
+        "DPS": 15.0,
+        "EPS": -16.5,
+        "Energy": -33.0,
+        "Move": "Iron Head",
+        "Power": 30.0,
+        "Sec.": 2.0,
+        "Type": "Steel"
+    },
+    "77": {
+        "Category": "Charge",
+        "DPS": 16.7,
+        "EPS": -13.8,
+        "Energy": -33.0,
+        "Move": "Thunder Punch",
+        "Power": 40.0,
+        "Sec.": 2.4,
+        "Type": "Electric"
+    },
+    "78": {
+        "Category": "Charge",
+        "DPS": 23.3,
+        "EPS": -23.3,
+        "Energy": -100.0,
+        "Move": "Thunder",
+        "Power": 100.0,
+        "Sec.": 4.3,
+        "Type": "Electric"
+    },
+    "79": {
+        "Category": "Charge",
+        "DPS": 20.4,
+        "EPS": -18.5,
+        "Energy": -50.0,
+        "Move": "Thunderbolt",
+        "Power": 55.0,
+        "Sec.": 2.7,
+        "Type": "Electric"
+    },
+    "80": {
+        "Category": "Charge",
+        "DPS": 9.3,
+        "EPS": -7.4,
+        "Energy": -20.0,
+        "Move": "Twister",
+        "Power": 25.0,
+        "Sec.": 2.7,
+        "Type": "Dragon"
+    },
+    "82": {
+        "Category": "Charge",
+        "DPS": 18.1,
+        "EPS": -13.9,
+        "Energy": -50.0,
+        "Move": "Dragon Pulse",
+        "Power": 65.0,
+        "Sec.": 3.6,
+        "Type": "Dragon"
+    },
+    "83": {
+        "Category": "Charge",
+        "DPS": 21.9,
+        "EPS": -31.3,
+        "Energy": -50.0,
+        "Move": "Dragon Claw",
+        "Power": 35.0,
+        "Sec.": 1.6,
+        "Type": "Dragon"
+    },
+    "84": {
+        "Category": "Charge",
+        "DPS": 6.4,
+        "EPS": -5.1,
+        "Energy": -20.0,
+        "Move": "Disarming Voice",
+        "Power": 25.0,
+        "Sec.": 3.9,
+        "Type": "Fairy"
+    },
+    "85": {
+        "Category": "Charge",
+        "DPS": 8.9,
+        "EPS": -7.1,
+        "Energy": -20.0,
+        "Move": "Draining Kiss",
+        "Power": 25.0,
+        "Sec.": 2.8,
+        "Type": "Fairy"
+    },
+    "86": {
+        "Category": "Charge",
+        "DPS": 13.1,
+        "EPS": -7.9,
+        "Energy": -33.0,
+        "Move": "Dazzling Gleam",
+        "Power": 55.0,
+        "Sec.": 4.2,
+        "Type": "Fairy"
+    },
+    "87": {
+        "Category": "Charge",
+        "DPS": 20.7,
+        "EPS": -24.4,
+        "Energy": -100.0,
+        "Move": "Moonblast",
+        "Power": 85.0,
+        "Sec.": 4.1,
+        "Type": "Fairy"
+    },
+    "88": {
+        "Category": "Charge",
+        "DPS": 19.0,
+        "EPS": -17.2,
+        "Energy": -50.0,
+        "Move": "Play Rough",
+        "Power": 55.0,
+        "Sec.": 2.9,
+        "Type": "Fairy"
+    },
+    "89": {
+        "Category": "Charge",
+        "DPS": 16.7,
+        "EPS": -16.7,
+        "Energy": -25.0,
+        "Move": "Cross Poison",
+        "Power": 25.0,
+        "Sec.": 1.5,
+        "Type": "Poison"
+    },
+    "90": {
+        "Category": "Charge",
+        "DPS": 21.2,
+        "EPS": -19.2,
+        "Energy": -50.0,
+        "Move": "Sludge Bomb",
+        "Power": 55.0,
+        "Sec.": 2.6,
+        "Type": "Poison"
+    },
+    "91": {
+        "Category": "Charge",
+        "DPS": 20.6,
+        "EPS": -29.4,
+        "Energy": -100.0,
+        "Move": "Sludge Wave",
+        "Power": 70.0,
+        "Sec.": 3.4,
+        "Type": "Poison"
+    },
+    "92": {
+        "Category": "Charge",
+        "DPS": 21.7,
+        "EPS": -33.3,
+        "Energy": -100.0,
+        "Move": "Gunk Shot",
+        "Power": 65.0,
+        "Sec.": 3.0,
+        "Type": "Poison"
+    },
+    "94": {
+        "Category": "Charge",
+        "DPS": 15.6,
+        "EPS": -15.6,
+        "Energy": -25.0,
+        "Move": "Bone Club",
+        "Power": 25.0,
+        "Sec.": 1.6,
+        "Type": "Ground"
+    },
+    "95": {
+        "Category": "Charge",
+        "DPS": 10.3,
+        "EPS": -7.4,
+        "Energy": -25.0,
+        "Move": "Bulldoze",
+        "Power": 35.0,
+        "Sec.": 3.4,
+        "Type": "Ground"
+    },
+    "96": {
+        "Category": "Charge",
+        "DPS": 11.5,
+        "EPS": -9.6,
+        "Energy": -25.0,
+        "Move": "Mud Bomb",
+        "Power": 30.0,
+        "Sec.": 2.6,
+        "Type": "Ground"
+    },
+    "99": {
+        "Category": "Charge",
+        "DPS": 14.5,
+        "EPS": -10.6,
+        "Energy": -33.0,
+        "Move": "Signal Beam",
+        "Power": 45.0,
+        "Sec.": 3.1,
+        "Type": "Bug"
+    },
+    "100": {
+        "Category": "Charge",
+        "DPS": 16.7,
+        "EPS": -15.7,
+        "Energy": -33.0,
+        "Move": "X-Scissor",
+        "Power": 35.0,
+        "Sec.": 2.1,
+        "Type": "Bug"
+    },
+    "101": {
+        "Category": "Charge",
+        "DPS": 8.1,
+        "EPS": -6.5,
+        "Energy": -20.0,
+        "Move": "Flame Charge",
+        "Power": 25.0,
+        "Sec.": 3.1,
+        "Type": "Fire"
+    },
+    "102": {
+        "Category": "Charge",
+        "DPS": 14.3,
+        "EPS": -11.9,
+        "Energy": -25.0,
+        "Move": "Flame Burst",
+        "Power": 30.0,
+        "Sec.": 2.1,
+        "Type": "Fire"
+    },
+    "103": {
+        "Category": "Charge",
+        "DPS": 24.4,
+        "EPS": -24.4,
+        "Energy": -100.0,
+        "Move": "Fire Blast",
+        "Power": 100.0,
+        "Sec.": 4.1,
+        "Type": "Fire"
+    },
+    "104": {
+        "Category": "Charge",
+        "DPS": 10.4,
+        "EPS": -10.4,
+        "Energy": -25.0,
+        "Move": "Brine",
+        "Power": 25.0,
+        "Sec.": 2.4,
+        "Type": "Water"
+    },
+    "105": {
+        "Category": "Charge",
+        "DPS": 10.6,
+        "EPS": -7.6,
+        "Energy": -25.0,
+        "Move": "Water Pulse",
+        "Power": 35.0,
+        "Sec.": 3.3,
+        "Type": "Water"
+    },
+    "106": {
+        "Category": "Charge",
+        "DPS": 13.8,
+        "EPS": -8.3,
+        "Energy": -33.0,
+        "Move": "Scald",
+        "Power": 55.0,
+        "Sec.": 4.0,
+        "Type": "Water"
+    },
+    "107": {
+        "Category": "Charge",
+        "DPS": 23.7,
+        "EPS": -26.3,
+        "Energy": -100.0,
+        "Move": "Hydro Pump",
+        "Power": 90.0,
+        "Sec.": 3.8,
+        "Type": "Water"
+    },
+    "108": {
+        "Category": "Charge",
+        "DPS": 19.6,
+        "EPS": -17.9,
+        "Energy": -50.0,
+        "Move": "Psychic",
+        "Power": 55.0,
+        "Sec.": 2.8,
+        "Type": "Psychic"
+    },
+    "111": {
+        "Category": "Charge",
+        "DPS": 6.6,
+        "EPS": -5.3,
+        "Energy": -20.0,
+        "Move": "Icy Wind",
+        "Power": 25.0,
+        "Sec.": 3.8,
+        "Type": "Ice"
+    },
+    "115": {
+        "Category": "Charge",
+        "DPS": 14.3,
+        "EPS": -11.8,
+        "Energy": -33.0,
+        "Move": "Fire Punch",
+        "Power": 40.0,
+        "Sec.": 2.8,
+        "Type": "Fire"
+    },
+    "116": {
+        "Category": "Charge",
+        "DPS": 24.5,
+        "EPS": -20.4,
+        "Energy": -100.0,
+        "Move": "Solar Beam",
+        "Power": 120.0,
+        "Sec.": 4.9,
+        "Type": "Grass"
+    },
+    "117": {
+        "Category": "Charge",
+        "DPS": 19.6,
+        "EPS": -17.9,
+        "Energy": -50.0,
+        "Move": "Leaf Blade",
+        "Power": 55.0,
+        "Sec.": 2.8,
+        "Type": "Grass"
+    },
+    "118": {
+        "Category": "Charge",
+        "DPS": 25.0,
+        "EPS": -35.7,
+        "Energy": -100.0,
+        "Move": "Power Whip",
+        "Power": 70.0,
+        "Sec.": 2.8,
+        "Type": "Grass"
+    },
+    "121": {
+        "Category": "Charge",
+        "DPS": 9.1,
+        "EPS": -7.6,
+        "Energy": -25.0,
+        "Move": "Air Cutter",
+        "Power": 30.0,
+        "Sec.": 3.3,
+        "Type": "Flying"
+    },
+    "122": {
+        "Category": "Charge",
+        "DPS": 25.0,
+        "EPS": -31.3,
+        "Energy": -100.0,
+        "Move": "Hurricane",
+        "Power": 80.0,
+        "Sec.": 3.2,
+        "Type": "Flying"
+    },
+    "123": {
+        "Category": "Charge",
+        "DPS": 18.8,
+        "EPS": -20.6,
+        "Energy": -33.0,
+        "Move": "Brick Break",
+        "Power": 30.0,
+        "Sec.": 1.6,
+        "Type": "Fighting"
+    },
+    "125": {
+        "Category": "Charge",
+        "DPS": 10.0,
+        "EPS": -8.3,
+        "Energy": -25.0,
+        "Move": "Swift",
+        "Power": 30.0,
+        "Sec.": 3.0,
+        "Type": "Normal"
+    },
+    "126": {
+        "Category": "Charge",
+        "DPS": 11.4,
+        "EPS": -11.4,
+        "Energy": -25.0,
+        "Move": "Horn Attack",
+        "Power": 25.0,
+        "Sec.": 2.2,
+        "Type": "Normal"
+    },
+    "127": {
+        "Category": "Charge",
+        "DPS": 14.3,
+        "EPS": -11.9,
+        "Energy": -25.0,
+        "Move": "Stomp",
+        "Power": 30.0,
+        "Sec.": 2.1,
+        "Type": "Normal"
+    },
+    "129": {
+        "Category": "Charge",
+        "DPS": 16.7,
+        "EPS": -15.7,
+        "Energy": -33.0,
+        "Move": "Hyper Fang",
+        "Power": 35.0,
+        "Sec.": 2.1,
+        "Type": "Normal"
+    },
+    "131": {
+        "Category": "Charge",
+        "DPS": 25.6,
+        "EPS": -32.1,
+        "Energy": -50.0,
+        "Move": "Body Slam",
+        "Power": 40.0,
+        "Sec.": 1.56,
+        "Type": "Normal"
+    },
+    "133": {
+        "Category": "Charge",
+        "DPS": 8.8,
+        "EPS": -11.8,
+        "Energy": -20.0,
+        "Move": "Struggle",
+        "Power": 15.0,
+        "Sec.": 1.7,
+        "Type": "Normal"
+    },
+    "200": {
+        "Category": "Fast",
+        "DPS": 7.5,
+        "EPS": 30.0,
+        "Energy": 12.0,
+        "Move": "Fury Cutter",
+        "Power": 3.0,
+        "Sec.": 0.4,
+        "Type": "Bug"
+    },
+    "201": {
+        "Category": "Fast",
+        "DPS": 11.1,
+        "EPS": 15.6,
+        "Energy": 7.0,
+        "Move": "Bug Bite",
+        "Power": 5.0,
+        "Sec.": 0.45,
+        "Type": "Bug"
+    },
+    "202": {
+        "Category": "Fast",
+        "DPS": 12.0,
+        "EPS": 14.0,
+        "Energy": 7.0,
+        "Move": "Bite",
+        "Power": 6.0,
+        "Sec.": 0.5,
+        "Type": "Dark"
+    },
+    "203": {
+        "Category": "Fast",
+        "DPS": 10.0,
+        "EPS": 5.7,
+        "Energy": 4.0,
+        "Move": "Sucker Punch",
+        "Power": 7.0,
+        "Sec.": 0.7,
+        "Type": "Dark"
+    },
+    "204": {
+        "Category": "Fast",
+        "DPS": 12.0,
+        "EPS": 14.0,
+        "Energy": 7.0,
+        "Move": "Dragon Breath",
+        "Power": 6.0,
+        "Sec.": 0.5,
+        "Type": "Dragon"
+    },
+    "205": {
+        "Category": "Fast",
+        "DPS": 8.3,
+        "EPS": 11.7,
+        "Energy": 7.0,
+        "Move": "Thunder Shock",
+        "Power": 5.0,
+        "Sec.": 0.6,
+        "Type": "Electric"
+    },
+    "206": {
+        "Category": "Fast",
+        "DPS": 10.0,
+        "EPS": 5.7,
+        "Energy": 4.0,
+        "Move": "Spark",
+        "Power": 7.0,
+        "Sec.": 0.7,
+        "Type": "Electric"
+    },
+    "207": {
+        "Category": "Fast",
+        "DPS": 8.3,
+        "EPS": 11.7,
+        "Energy": 7.0,
+        "Move": "Low Kick",
+        "Power": 5.0,
+        "Sec.": 0.6,
+        "Type": "Fighting"
+    },
+    "208": {
+        "Category": "Fast",
+        "DPS": 7.5,
+        "EPS": 8.8,
+        "Energy": 7.0,
+        "Move": "Karate Chop",
+        "Power": 6.0,
+        "Sec.": 0.8,
+        "Type": "Fighting"
+    },
+    "209": {
+        "Category": "Fast",
+        "DPS": 9.5,
+        "EPS": 6.7,
+        "Energy": 7.0,
+        "Move": "Ember",
+        "Power": 10.0,
+        "Sec.": 1.05,
+        "Type": "Fire"
+    },
+    "210": {
+        "Category": "Fast",
+        "DPS": 12.0,
+        "EPS": 9.3,
+        "Energy": 7.0,
+        "Move": "Wing Attack",
+        "Power": 9.0,
+        "Sec.": 0.75,
+        "Type": "Flying"
+    },
+    "211": {
+        "Category": "Fast",
+        "DPS": 8.7,
+        "EPS": 8.7,
+        "Energy": 10.0,
+        "Move": "Peck",
+        "Power": 10.0,
+        "Sec.": 1.15,
+        "Type": "Flying"
+    },
+    "212": {
+        "Category": "Fast",
+        "DPS": 10.0,
+        "EPS": 14.0,
+        "Energy": 7.0,
+        "Move": "Lick",
+        "Power": 5.0,
+        "Sec.": 0.5,
+        "Type": "Ghost"
+    },
+    "213": {
+        "Category": "Fast",
+        "DPS": 11.6,
+        "EPS": 7.4,
+        "Energy": 7.0,
+        "Move": "Shadow Claw",
+        "Power": 11.0,
+        "Sec.": 0.95,
+        "Type": "Ghost"
+    },
+    "214": {
+        "Category": "Fast",
+        "DPS": 10.8,
+        "EPS": 10.8,
+        "Energy": 7.0,
+        "Move": "Vine Whip",
+        "Power": 7.0,
+        "Sec.": 0.65,
+        "Type": "Grass"
+    },
+    "215": {
+        "Category": "Fast",
+        "DPS": 10.3,
+        "EPS": 4.8,
+        "Energy": 7.0,
+        "Move": "Razor Leaf",
+        "Power": 15.0,
+        "Sec.": 1.45,
+        "Type": "Grass"
+    },
+    "216": {
+        "Category": "Fast",
+        "DPS": 10.9,
+        "EPS": 12.7,
+        "Energy": 7.0,
+        "Move": "Mud Shot",
+        "Power": 6.0,
+        "Sec.": 0.55,
+        "Type": "Ground"
+    },
+    "217": {
+        "Category": "Fast",
+        "DPS": 10.7,
+        "EPS": 5.0,
+        "Energy": 7.0,
+        "Move": "Ice Shard",
+        "Power": 15.0,
+        "Sec.": 1.4,
+        "Type": "Ice"
+    },
+    "218": {
+        "Category": "Fast",
+        "DPS": 11.1,
+        "EPS": 8.6,
+        "Energy": 7.0,
+        "Move": "Frost Breath",
+        "Power": 9.0,
+        "Sec.": 0.81,
+        "Type": "Ice"
+    },
+    "219": {
+        "Category": "Fast",
+        "DPS": 7.5,
+        "EPS": 5.3,
+        "Energy": 7.0,
+        "Move": "Quick Attack",
+        "Power": 10.0,
+        "Sec.": 1.33,
+        "Type": "Normal"
+    },
+    "220": {
+        "Category": "Fast",
+        "DPS": 12.0,
+        "EPS": 14.0,
+        "Energy": 7.0,
+        "Move": "Scratch",
+        "Power": 6.0,
+        "Sec.": 0.5,
+        "Type": "Normal"
+    },
+    "221": {
+        "Category": "Fast",
+        "DPS": 10.9,
+        "EPS": 6.4,
+        "Energy": 7.0,
+        "Move": "Tackle",
+        "Power": 12.0,
+        "Sec.": 1.1,
+        "Type": "Normal"
+    },
+    "222": {
+        "Category": "Fast",
+        "DPS": 13.0,
+        "EPS": 13.0,
+        "Energy": 7.0,
+        "Move": "Pound",
+        "Power": 7.0,
+        "Sec.": 0.54,
+        "Type": "Normal"
+    },
+    "224": {
+        "Category": "Fast",
+        "DPS": 11.4,
+        "EPS": 6.7,
+        "Energy": 7.0,
+        "Move": "Poison Jab",
+        "Power": 12.0,
+        "Sec.": 1.05,
+        "Type": "Poison"
+    },
+    "225": {
+        "Category": "Fast",
+        "DPS": 9.5,
+        "EPS": 6.7,
+        "Energy": 7.0,
+        "Move": "Acid",
+        "Power": 10.0,
+        "Sec.": 1.05,
+        "Type": "Poison"
+    },
+    "226": {
+        "Category": "Fast",
+        "DPS": 12.3,
+        "EPS": 12.3,
+        "Energy": 7.0,
+        "Move": "Psycho Cut",
+        "Power": 7.0,
+        "Sec.": 0.57,
+        "Type": "Psychic"
+    },
+    "227": {
+        "Category": "Fast",
+        "DPS": 8.8,
+        "EPS": 5.1,
+        "Energy": 7.0,
+        "Move": "Rock Throw",
+        "Power": 12.0,
+        "Sec.": 1.36,
+        "Type": "Rock"
+    },
+    "228": {
+        "Category": "Fast",
+        "DPS": 12.7,
+        "EPS": 11.1,
+        "Energy": 7.0,
+        "Move": "Metal Claw",
+        "Power": 8.0,
+        "Sec.": 0.63,
+        "Type": "Steel"
+    },
+    "229": {
+        "Category": "Fast",
+        "DPS": 8.3,
+        "EPS": 5.8,
+        "Energy": 7.0,
+        "Move": "Bullet Punch",
+        "Power": 10.0,
+        "Sec.": 1.2,
+        "Type": "Steel"
+    },
+    "230": {
+        "Category": "Fast",
+        "DPS": 12.0,
+        "EPS": 14.0,
+        "Energy": 7.0,
+        "Move": "Water Gun",
+        "Power": 6.0,
+        "Sec.": 0.5,
+        "Type": "Water"
+    },
+    "231": {
+        "Category": "Fast",
+        "DPS": 0.0,
+        "EPS": 5.7,
+        "Energy": 7.0,
+        "Move": "Splash",
+        "Power": 0.0,
+        "Sec.": 1.23,
+        "Type": "Water"
+    },
+    "232": {
+        "Category": "Fast",
+        "DPS": 12.0,
+        "EPS": 14.0,
+        "Energy": 7.0,
+        "Move": "Water Gun",
+        "Power": 6.0,
+        "Sec.": 0.5,
+        "Type": "Water"
+    },
+    "234": {
+        "Category": "Fast",
+        "DPS": 11.4,
+        "EPS": 3.8,
+        "Energy": 4.0,
+        "Move": "Zen Headbutt",
+        "Power": 12.0,
+        "Sec.": 1.05,
+        "Type": "Psychic"
+    },
+    "235": {
+        "Category": "Fast",
+        "DPS": 9.9,
+        "EPS": 4.6,
+        "Energy": 7.0,
+        "Move": "Confusion",
+        "Power": 15.0,
+        "Sec.": 1.51,
+        "Type": "Psychic"
+    },
+    "236": {
+        "Category": "Fast",
+        "DPS": 10.3,
+        "EPS": 6.9,
+        "Energy": 4.0,
+        "Move": "Poison Sting",
+        "Power": 6.0,
+        "Sec.": 0.58,
+        "Type": "Poison"
+    },
+    "237": {
+        "Category": "Fast",
+        "DPS": 10.9,
+        "EPS": 6.5,
+        "Energy": 15.0,
+        "Move": "Bubble",
+        "Power": 25.0,
+        "Sec.": 2.3,
+        "Type": "Water"
+    },
+    "238": {
+        "Category": "Fast",
+        "DPS": 11.5,
+        "EPS": 6.7,
+        "Energy": 7.0,
+        "Move": "Feint Attack",
+        "Power": 12.0,
+        "Sec.": 1.04,
+        "Type": "Dark"
+    },
+    "239": {
+        "Category": "Fast",
+        "DPS": 11.3,
+        "EPS": 3.0,
+        "Energy": 4.0,
+        "Move": "Steel Wing",
+        "Power": 15.0,
+        "Sec.": 1.33,
+        "Type": "Steel"
+    },
+    "240": {
+        "Category": "Fast",
+        "DPS": 11.9,
+        "EPS": 4.8,
+        "Energy": 4.0,
+        "Move": "Fire Fang",
+        "Power": 10.0,
+        "Sec.": 0.84,
+        "Type": "Fire"
+    },
+    "241": {
+        "Category": "Fast",
+        "DPS": 10.6,
+        "EPS": 5.0,
+        "Energy": 7.0,
+        "Move": "Rock Smash",
+        "Power": 15.0,
+        "Sec.": 1.41,
+        "Type": "Fighting"
+    }
+}

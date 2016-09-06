@@ -1,38 +1,43 @@
 // 25ad87add18548e8bc0d19e79f1c3fef.16
 
+// https://github.com/tejado/pgoapi/issues/175
+// http://pastebin.com/enDzFvUN
 
-(function() {
+(function () {
   'use strict';
 
   var GymManager, tools = require('./Tools'),
     myTeam = 3,
-    colors = require('colors');
+    colors = require('colors'),
+    Long = require("long");
 
+  var attacks = JSON.parse(require('fs').readFileSync('./libs/attacks.json', 'utf8'));
+  // console.log(attacks["234"]);
 
-  GymManager = function(pokeio, actionHandler, evolvingPokemons) {
+  GymManager = function (pokeio, actionHandler, evolvingPokemons) {
     // console.log('pokeio', typeof pokeio);
     this.pokeio = pokeio;
     this.actionHandler = actionHandler;
     this.evolvingPokemons = evolvingPokemons;
   };
 
-  GymManager.prototype.getGymInfo = function() {
+  GymManager.prototype.getGymInfo = function () {
     console.log('gym info');
   };
 
-  GymManager.prototype.getListOfBestPokemons = function(data, num) {
+  GymManager.prototype.getListOfBestPokemons = function (data, num) {
     var pokemons = JSON.parse(JSON.stringify(data.pokemons));
 
-    pokemons = pokemons.filter(function(p) {
+    pokemons = pokemons.filter(function (p) {
       return p.stamina === p.stamina_max;
-    }).sort(function(a, b) {
+    }).sort(function (a, b) {
       return b.cp - a.cp;
     });
     return pokemons.slice(0, num);
   };
 
 
-  GymManager.prototype.userMaxFromPoints = function(points) {
+  GymManager.prototype.userMaxFromPoints = function (points) {
     if (points <= 2000) {
       return 1;
     }
@@ -67,7 +72,7 @@
   };
 
 
-  GymManager.prototype.isGoodToDeploy = function(gym) {
+  GymManager.prototype.isGoodToDeploy = function (gym) {
     var points, max_users, that = this,
       userIn = this.isUserInGym(gym);
     if (gym.fort_data && gym.fort_data.GymPoints) {
@@ -81,22 +86,22 @@
     return userIn === false;
   };
 
-  GymManager.prototype.setDeployGymMissionIfGoodToDeploy = function(fort, callback) {
+  GymManager.prototype.setDeployGymMissionIfGoodToDeploy = function (fort, callback) {
     return this.isFortGoodToDeploy(fort, callback);
   };
 
-  GymManager.prototype.isUserInGym = function(gym) {
-    var user = gym.memberships.find(function(m) {
+  GymManager.prototype.isUserInGym = function (gym) {
+    var user = gym.memberships.find(function (m) {
       return m.trainer_public_profile.name === 'Pouyamonchu2';
     });
     // console.log('isUserInGym'.red, user);
     return user !== undefined;
   };
 
-  GymManager.prototype.isFortGoodToDeploy = function(f, callback) {
+  GymManager.prototype.isFortGoodToDeploy = function (f, callback) {
     var that = this;
     // console.log('isFortGoodToDeploy', typeof this.getGymDetails);
-    this.getGymDetails(f, function(err, gym) {
+    this.getGymDetails(f, function (err, gym) {
       // console.log('getGymDetails res', err);
       if (err) {
         console.error('deployPokemon', err);
@@ -109,7 +114,7 @@
     });
   };
 
-  GymManager.prototype.deployPokemon = function(data, gym, callback) {
+  GymManager.prototype.deployPokemon = function (data, gym, callback) {
     var that = this;
     // this.getGymDetails(f, function(err, gym) {
     //   if (err) {
@@ -129,7 +134,7 @@
         m: that.pokeio.FortDeployPokemon,
         args: [gym, pokemon],
         name: 'DEPLOY POKEMON ' + tools.getPrettyPokemonName(pokemon) + ' IN GYM ' + gym_name,
-        callback: function(err, res) {
+        callback: function (err, res) {
           console.log('END DEPLOY', gym_name, err, res);
           if (!err) {
             if (res.result === 1) {
@@ -146,53 +151,47 @@
   };
 
 
-  GymManager.prototype.attackGym = function(gym, battle, input_action, callback) {
+  GymManager.prototype.attackGym = function (gym, battle, input_action, last_retrieved_actions, callback) {
     var that = this;
     // console.log('PERFORM ATTACK WITH ACTION'.red, input_action);
-    that.pokeio.AttackGym(gym, battle.battle_id, input_action, function(err, res) {
-      // console.log(err, res);
-
-      var actions = [], i, action;
-      if (res && res.battle_log) {
-        // console.log('Attack Gym Result'.red, err, res.result, 'battle log state', res.battle_log.state, 'battle log type', res.battle_log.battle_type);
-        // , res.battle_log
-      }
-
-      for (i = 0; i < 1; i += 1) {
-        var now = Date.now();
-        now += 200 * i;
-        action = {
-          type: 1,
-          action_start_ms: now >>> 0,
-          duration_ms: 700,
-          // last_retrieved_actions: res && res.battle_actions || null,
-          target_index: -1
-        };
-        actions.push(action);
-      }
-
-      console.log(actions);
-      // console.log('Attack Gym Result'.red, err, res);
+    that.pokeio.AttackGym(gym, battle.battle_id, input_action, last_retrieved_actions, function (err, res) {
+      // console.log('RES ATTACK GYM'.red, err, res);
       if (err) {
         console.log('THE ATTACK FAILS'.red, err);
         // return callback && callback('ATTACK FAILS');
-        return setTimeout(function() {
-          that.attackGym(gym, battle, action, callback);
-        }, 250);
+        return setTimeout(function () {
+          that.attackGym(gym, battle, null, null, callback);
+        }, 2500);
       }
-      if (res.result === null) {
-// 
+
+      var actions = [],
+        i, action;
+      if (res && res.battle_log) {
+        // console.log('Attack Gym Result'.red, err, res.result, 'battle log state', res.battle_log.state, 'battle log type', res.battle_log.battle_type);
+        // , res.battle_log
+        console.log('battle log srever ms'.yellow, res.battle_log.server_ms.toString());
+      }
+
+
+      if (res.result !== null && res.result !== 1) {
+        console.log('Attack Gym Result'.red, res);
+      }
+
+      if (res.result === null || res.result === 2) {
+        // 
         // console.log('THE ATTACK FAILS - RES NULL'.blue, err, res);
         // return callback && callback('ATTACK FAILS');
-        return setTimeout(function() {
-          that.attackGym(gym, battle, actions, callback);
-        }, 500);
+        return setTimeout(function () {
+          that.attackGym(gym, battle, null, null, callback);
+        }, 1065);
       }
 
       if (res.result === 1) {
-        // console.log(res.active_attacker, res.active_attacker);
-        console.log('attacker'.blue, res.active_attacker.pokemon_data.stamina, '/', res.active_attacker.pokemon_data.stamina_max, res.active_attacker.current_health, 'energy', res.active_attacker.current_energy);
-        console.log('defender'.magenta, res.active_defender.pokemon_data.stamina, '/', res.active_defender.pokemon_data.stamina_max, res.active_defender.current_health, 'energy', res.active_defender.current_energy);
+        // console.log(res.active_attacker, res.active_defender);
+        console.log('attacker'.blue, res.active_attacker.pokemon_data.stamina, '/', res.active_attacker.pokemon_data.stamina_max, res.active_attacker.current_health, 'energy', res.active_attacker.current_energy, 'cp', res.active_attacker.pokemon_data.cp);
+        if (res.active_defender) {
+          console.log('defender'.magenta, res.active_defender.pokemon_data.stamina, '/', res.active_defender.pokemon_data.stamina_max, res.active_defender.current_health, 'energy', res.active_defender.current_energy, 'cp', res.active_defender.pokemon_data.cp);
+        }
         if (res.battle_log === 2 || res.battle_log === 3 || res.battle_log === 4) {
           console.log('BATTLE ENDS'.red);
           return callback && callback(null, {
@@ -201,9 +200,42 @@
           });
         }
 
-        return setTimeout(function() {
-          that.attackGym(gym, battle, actions, callback);
-        }, 250);
+        var serverTime = parseInt(res.battle_log.server_ms.toString(), 10);
+        var now = serverTime + 65; // + (i * duration + 65);
+
+        for (i = 0; i < 1; i += 1) {
+          var duration = attacks[res.active_attacker.pokemon_data.move_1]['Sec.'] * 1000;
+          var energy_delta = attacks[res.active_attacker.pokemon_data.move_1].Energy;
+          // return rsub.BattleAction(Type=1, action_start_ms=stime, duration_ms=move_duration, target_index=-1, active_pokemon_id=self.currAttacker, damage_windows_start_timestamp_mss=(stime+move_duration-200), damage_windows_end_timestamp_mss=(stime+move_duration))
+
+          // now += 200 + 200 * i;
+          console.log(now, 'duration', duration, 'ed', energy_delta);
+          action = {
+            type: 1,
+            action_start_ms: now,
+            // action_start_ms: Long.fromValue(now),
+            duration_ms: duration,
+            target_index: -1,
+            attacker_index: -1,
+            energy_delta: energy_delta,
+            // target_pokemon_id: res.active_attacker.pokemon_data.id,
+            // active_pokemon_id: res.active_defender.pokemon_data.id,
+            // damage_windows_start_timestamp_mss: Long.fromValue(now + duration - 200),
+            // damage_windows_end_timestamp_mss: Long.fromValue(now + duration)
+            damage_windows_start_timestamp_mss: now + duration - 200,
+            damage_windows_end_timestamp_mss: now + duration
+          };
+          actions.push(action);
+          now += duration + 70;
+        }
+        console.log(actions);
+
+        // console.log('BATTLE LOGS ACTIONS'.blue, res.battle_log.battle_actions);
+
+        return setTimeout(function () {
+          that.attackGym(gym, battle, actions, res.battle_log.battle_actions[res.battle_log.battle_actions.length - 1], callback);
+          // that.attackGym(gym, battle, actions, res.battle_log.battle_actions[0], callback);
+        }, 1565);
 
         // setTimeout(function() {
         //   for (i = 0; i < 1; i += 1) {
@@ -234,15 +266,19 @@
   };
 
 
-  GymManager.prototype.startBattle = function(gym, data, callback) {
+  GymManager.prototype.startBattle = function (gym, data, callback) {
 
+    var that = this;
     if (gym === undefined || gym.memberships.length === 0 || gym.Team === null) {
       console.log('IMPOSSIBLE TO START BATTLE'.red);
+      // return setTimeout(function () {
+      //   that.tryBattleWithGym(gym.fort_data, data, callback);
+      // }, 5000);
       return callback && callback('PROBLEM WITH BATTLE');
     }
 
     var team = gym.team,
-      bestPokemons, args, message, that = this;
+      bestPokemons, args, message;
 
     if (team !== 3) { // 3 = YELLOW
       bestPokemons = that.getListOfBestPokemons(data, 6);
@@ -260,35 +296,35 @@
       args: args,
       type: 'FIGHT',
       name: message,
-      callback: function(err, res) {
+      callback: function (err, res) {
         console.log('Start Battle Result'.red, err, res);
         if (res.result === null) {
-          return setTimeout(function() {
+          return setTimeout(function () {
             that.tryBattleWithGym(gym.fort_data, data, callback);
           }, 5000);
         }
         if (res.result === 1) {
-          return that.attackGym(gym, res, null, callback);
+          return that.attackGym(gym, res, null, null, callback);
         }
       }
     });
   };
 
-  GymManager.prototype.tryBattleWithGym = function(f, data, callback) {
+  GymManager.prototype.tryBattleWithGym = function (f, data, callback) {
     this.evolvingPokemons.FIGHT = true;
     var that = this,
       dist;
     dist = tools.distance(this.pokeio.playerInfo.latitude, this.pokeio.playerInfo.longitude, f.Latitude, f.Longitude);
     console.log('distance to gym is'.green, dist, f);
     if (dist * 1000 < 5) {
-      this.getGymDetails(f, function(err, gym) {
-        console.log(err, gym);
+      this.getGymDetails(f, function (err, gym) {
+        // console.log(err, gym);
         return that.startBattle(gym, data, callback);
       }, true);
     }
   };
 
-  GymManager.prototype.getGymDetails = function(f, callback) {
+  GymManager.prototype.getGymDetails = function (f, callback) {
     var that = this;
     // console.log('GET GYM DETAILS', f);
     this.actionHandler.appendAsyncAction({
@@ -296,9 +332,9 @@
       args: [f],
       silence: true,
       type: 'FIGHT',
-      nextAsyncTime: 5400,
+      nextAsyncTime: 5050,
       name: 'Get Gym Details ' + f.FortId,
-      callback: function(err, res) {
+      callback: function (err, res) {
         // console.log('GET GYM DETAILS', err, res);
         if (!res.gym_state) {
           console.log('NO GYM STATE', f.FortId, err, res);
@@ -313,7 +349,7 @@
     });
   };
 
-  GymManager.prototype.isGymInRange = function(f) {
+  GymManager.prototype.isGymInRange = function (f) {
     var dist = tools.distance(this.pokeio.playerInfo.latitude, this.pokeio.playerInfo.longitude, f.Latitude, f.Longitude);
     console.log('DISTANCE TO FORT'.blue, f, dist * 1e3, dist * 1e3 > 5 || f.IsInBattle !== null);
     if (dist * 1e3 > 5 || f.IsInBattle !== null) {
@@ -323,7 +359,7 @@
   };
 
 
-  GymManager.prototype.addExtraInfoToGym = function(data, f) {
+  GymManager.prototype.addExtraInfoToGym = function (data, f) {
     var that = this,
       dist;
 
@@ -338,7 +374,7 @@
       args: [f],
       silence: true,
       name: 'Get Gym Details ' + f.FortId,
-      callback: function(err, res) {
+      callback: function (err, res) {
 
         console.log(err, res);
         var args = [],
@@ -379,7 +415,7 @@
           m: that.pokeio.StartGymBattle,
           args: args,
           name: message,
-          callback: function(err, res) {
+          callback: function (err, res) {
             console.log('Start Battle Result'.red, err, res);
           }
         });

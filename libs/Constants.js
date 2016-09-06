@@ -36,9 +36,9 @@
   constants.inventoryItemTypesMax[constants.inventoryItemTypes.ITEM_MASTER_BALL] = 100;
   constants.inventoryItemTypesMax[constants.inventoryItemTypes.ITEM_POTION] = 5;
   constants.inventoryItemTypesMax[constants.inventoryItemTypes.ITEM_SUPER_POTION] = 50;
-  constants.inventoryItemTypesMax[constants.inventoryItemTypes.ITEM_HYPER_POTION] = 10;
+  constants.inventoryItemTypesMax[constants.inventoryItemTypes.ITEM_HYPER_POTION] = 50;
   constants.inventoryItemTypesMax[constants.inventoryItemTypes.ITEM_MAX_POTION] = 50;
-  constants.inventoryItemTypesMax[constants.inventoryItemTypes.ITEM_REVIVE] = 20;
+  constants.inventoryItemTypesMax[constants.inventoryItemTypes.ITEM_REVIVE] = 25;
   constants.inventoryItemTypesMax[constants.inventoryItemTypes.RAZZ_BERRY] = 10;
 
 
@@ -146,8 +146,9 @@
 
   // constants.speed = 2 / 1e2;
   // constants.step_distance_meter = new Random(25, 5);
+  // constants.speed = 2 / 1e3;
+  // constants.step_distance_meter = new Random(10, 5);
   // constants.step_distance_meter = new Random(5, 5);
-  // constants.speed = 2 / 1e5;
   // constants.speed = 2 / 1e2;
   // constants.step_distance_meter = new Random(25, 5);
 

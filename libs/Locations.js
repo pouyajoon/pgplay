@@ -37,6 +37,16 @@
     IsInBattle: null
   };
 
+  locations.points.gym_madelaine = {
+    lat: 48.869464,
+    lng: 2.324058
+  };
+  locations.gyms.madelaine = {
+    FortId: '24e242d4a22e4829905daad868789855.12',
+    Latitude: 48.869466,
+    Longitude: 2.324057,
+    IsInBattle: null
+  };
 
   // gym valmy
 
